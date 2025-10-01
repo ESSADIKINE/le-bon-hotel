@@ -13,10 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$theme_directory = get_stylesheet_directory_uri();
+$theme_directory_uri  = get_stylesheet_directory_uri();
+$theme_directory_path = function_exists( 'get_stylesheet_directory' ) ? trailingslashit( get_stylesheet_directory() ) : '';
 
-wp_enqueue_style( 'lbhotel-hotel', $theme_directory . '/hotel.css', array(), '1.0.0' );
-wp_enqueue_script( 'lbhotel-hotel', $theme_directory . '/hotel.js', array(), '1.0.0', true );
+if ( $theme_directory_path && file_exists( $theme_directory_path . 'hotel.css' ) ) {
+    wp_enqueue_style( 'lbhotel-hotel', $theme_directory_uri . '/hotel.css', array(), '1.0.0' );
+} else {
+    wp_enqueue_style( 'lbhotel-hotel', LBHOTEL_PLUGIN_URL . 'hotel.css', array(), LBHOTEL_VERSION );
+}
+
+if ( $theme_directory_path && file_exists( $theme_directory_path . 'hotel.js' ) ) {
+    wp_enqueue_script( 'lbhotel-hotel', $theme_directory_uri . '/hotel.js', array(), '1.0.0', true );
+} else {
+    wp_enqueue_script( 'lbhotel-hotel', LBHOTEL_PLUGIN_URL . 'hotel.js', array(), LBHOTEL_VERSION, true );
+}
 
 wp_localize_script(
     'lbhotel-hotel',

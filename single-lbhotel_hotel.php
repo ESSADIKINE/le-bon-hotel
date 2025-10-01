@@ -13,14 +13,25 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$theme_directory = get_stylesheet_directory_uri();
+$theme_directory_uri  = get_stylesheet_directory_uri();
+$theme_directory_path = function_exists( 'get_stylesheet_directory' ) ? trailingslashit( get_stylesheet_directory() ) : '';
 
+// Styles
 wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
-wp_enqueue_style( 'lbhotel-hotel', $theme_directory . '/hotel.css', array( 'leaflet' ), '1.0.0' );
+if ( $theme_directory_path && file_exists( $theme_directory_path . 'hotel.css' ) ) {
+    wp_enqueue_style( 'lbhotel-hotel', $theme_directory_uri . '/hotel.css', array( 'leaflet' ), '1.0.0' );
+} else {
+    wp_enqueue_style( 'lbhotel-hotel', LBHOTEL_PLUGIN_URL . 'hotel.css', array( 'leaflet' ), LBHOTEL_VERSION );
+}
 
+// Scripts
 wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
 wp_enqueue_script( 'esri-leaflet', 'https://unpkg.com/esri-leaflet@3.0.11/dist/esri-leaflet.js', array( 'leaflet' ), '3.0.11', true );
-wp_enqueue_script( 'lbhotel-hotel', $theme_directory . '/hotel.js', array( 'leaflet', 'esri-leaflet' ), '1.0.0', true );
+if ( $theme_directory_path && file_exists( $theme_directory_path . 'hotel.js' ) ) {
+    wp_enqueue_script( 'lbhotel-hotel', $theme_directory_uri . '/hotel.js', array( 'leaflet', 'esri-leaflet' ), '1.0.0', true );
+} else {
+    wp_enqueue_script( 'lbhotel-hotel', LBHOTEL_PLUGIN_URL . 'hotel.js', array( 'leaflet', 'esri-leaflet' ), LBHOTEL_VERSION, true );
+}
 
 $current_id    = get_queried_object_id();
 $current_lat   = $current_id ? get_post_meta( $current_id, 'lbhotel_latitude', true ) : null;

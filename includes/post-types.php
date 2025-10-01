@@ -61,6 +61,34 @@ function lbhotel_register_post_type() {
 }
 
 /**
+ * Customize single hotel permalinks to /hotel-{slug}.
+ *
+ * @param string  $permalink Generated permalink.
+ * @param WP_Post $post      Post object.
+ * @return string
+ */
+function lbhotel_filter_hotel_permalink( $permalink, $post ) {
+    if ( $post && 'lbhotel_hotel' === $post->post_type ) {
+        // Canonical single URL: /hotel/{slug}/
+        return home_url( '/hotel/' . $post->post_name . '/' );
+    }
+
+    return $permalink;
+}
+add_filter( 'post_type_link', 'lbhotel_filter_hotel_permalink', 10, 2 );
+
+/**
+ * Add rewrite rules for custom single permalink /hotel-{slug}.
+ */
+function lbhotel_add_hotel_rewrite_rules() {
+    // Canonical: /hotel/{slug}
+    add_rewrite_rule( '^hotel/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
+    // Backward-compat: /hotel-{slug} (maps to name={slug})
+    add_rewrite_rule( '^hotel-([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
+}
+add_action( 'init', 'lbhotel_add_hotel_rewrite_rules', 9 );
+
+/**
  * Add custom columns to hotel list table.
  *
  * @param array $columns Columns.

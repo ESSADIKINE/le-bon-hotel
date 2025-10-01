@@ -138,3 +138,28 @@ function lbhotel_sanitize_room_image( $value ) {
 function lbhotel_bootstrap_blocks() {
     // Placeholder for block registration using block.json files.
 }
+
+/**
+ * Ensure plugin templates are used for hotel archive and single views.
+ *
+ * @param string $template Current template path.
+ * @return string
+ */
+function lbhotel_template_include( $template ) {
+    if ( is_post_type_archive( 'lbhotel_hotel' ) ) {
+        $plugin_template = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'archive-lbhotel_hotel.php';
+        if ( file_exists( $plugin_template ) ) {
+            return $plugin_template;
+        }
+    }
+
+    if ( is_singular( 'lbhotel_hotel' ) ) {
+        $plugin_template = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'single-lbhotel_hotel.php';
+        if ( file_exists( $plugin_template ) ) {
+            return $plugin_template;
+        }
+    }
+
+    return $template;
+}
+add_filter( 'template_include', 'lbhotel_template_include', 20 );

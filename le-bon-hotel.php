@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'LBHOTEL_VERSION', '1.0.0' );
+define( 'LBHOTEL_REWRITE_VERSION', '2' );
 define( 'LBHOTEL_PLUGIN_FILE', __FILE__ );
 define( 'LBHOTEL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LBHOTEL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -29,7 +30,8 @@ require_once LBHOTEL_PLUGIN_DIR . 'includes/taxonomies.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-meta.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/settings.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/rest-api.php';
-require_once LBHOTEL_PLUGIN_DIR . 'includes/shortcodes.php';
+// Shortcodes are disabled per requirements
+// require_once LBHOTEL_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/assets.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-notices.php';
 require_once LBHOTEL_PLUGIN_DIR . 'migrations/migrate-restaurants.php';
@@ -48,6 +50,7 @@ add_action( 'plugins_loaded', 'lbhotel_load_textdomain' );
 function lbhotel_activate() {
     lbhotel_register_post_type();
     lbhotel_register_taxonomies();
+    lbhotel_add_hotel_rewrite_rules();
     flush_rewrite_rules();
 }
 register_activation_hook( LBHOTEL_PLUGIN_FILE, 'lbhotel_activate' );
@@ -67,7 +70,6 @@ function lbhotel_init() {
     lbhotel_register_post_type();
     lbhotel_register_taxonomies();
     lbhotel_register_meta_fields();
-    lbhotel_register_shortcodes();
     lbhotel_register_assets();
     lbhotel_register_rest_routes();
 }
@@ -90,6 +92,22 @@ function lbhotel_init_late() {
     lbhotel_bootstrap_blocks();
 }
 add_action( 'init', 'lbhotel_init_late', 20 );
+
+/**
+ * One-time rewrite rules flush when rules change.
+ */
+function lbhotel_maybe_flush_rewrite() {
+    $stored = get_option( 'lbhotel_rewrite_version' );
+    if ( LBHOTEL_REWRITE_VERSION !== $stored ) {
+        // Ensure rules are present before flushing.
+        if ( function_exists( 'lbhotel_add_hotel_rewrite_rules' ) ) {
+            lbhotel_add_hotel_rewrite_rules();
+        }
+        flush_rewrite_rules();
+        update_option( 'lbhotel_rewrite_version', LBHOTEL_REWRITE_VERSION );
+    }
+}
+add_action( 'init', 'lbhotel_maybe_flush_rewrite', 99 );
 
 /**
  * Detect legacy restaurant post type and provide migration prompt.
