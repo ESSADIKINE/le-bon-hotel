@@ -1,0 +1,251 @@
+/*
+ * Front-end styles for Le Bon Hotel.
+ * Palette: Navy #1b3b5f, Gold #d4a017, Light Gray #f5f7fa.
+ */
+
+.lbhotel-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.lbhotel-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(27, 59, 95, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lbhotel-card:hover,
+.lbhotel-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(27, 59, 95, 0.18);
+}
+
+.lbhotel-card__image {
+    background-color: #1b3b5f;
+    min-height: 180px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.lbhotel-card__image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.45) 100%);
+}
+
+.lbhotel-card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.lbhotel-card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1b3b5f;
+    margin: 0;
+}
+
+.lbhotel-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #4a5d78;
+}
+
+.lbhotel-card__meta .lbhotel-stars {
+    color: #d4a017;
+}
+
+.lbhotel-card__meta .lbhotel-price {
+    font-weight: 600;
+    color: #1b3b5f;
+}
+
+.lbhotel-card__actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.lbhotel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.lbhotel-button--primary {
+    background-color: #d4a017;
+    color: #1b3b5f;
+}
+
+.lbhotel-button--ghost {
+    background-color: rgba(27, 59, 95, 0.08);
+    color: #1b3b5f;
+}
+
+.lbhotel-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #4a5d78;
+}
+
+.lbhotel-amenity::before {
+    content: '\1F6CF'; /* Bed icon placeholder - replace with SVG sprite if needed. */
+    margin-right: 0.35rem;
+}
+
+.lbhotel-map {
+    width: 100%;
+    height: 340px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(27, 59, 95, 0.08);
+    margin-bottom: 2rem;
+}
+
+.lbhotel-map-info {
+    color: #1b3b5f;
+    max-width: 240px;
+}
+
+.lbhotel-map-info h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.lbhotel-map-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.lbhotel-map-button {
+    display: inline-block;
+    background-color: #d4a017;
+    color: #1b3b5f;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.lbhotel-single-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.lbhotel-single-gallery img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.lbhotel-single {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 12px 32px rgba(27, 59, 95, 0.12);
+    margin-bottom: 2rem;
+}
+
+.lbhotel-single .lbhotel-hero img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.lbhotel-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.lbhotel-room-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 6px 20px rgba(27, 59, 95, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.lbhotel-room-table th,
+.lbhotel-room-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f0f3f8;
+}
+
+.lbhotel-room-table th {
+    background-color: #1b3b5f;
+    color: #ffffff;
+    text-align: left;
+}
+
+.lbhotel-room-table tr:last-child td {
+    border-bottom: none;
+}
+
+.lbhotel-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.lbhotel-filters label {
+    font-weight: 600;
+    color: #1b3b5f;
+}
+
+.lbhotel-filters input,
+.lbhotel-filters select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(27, 59, 95, 0.25);
+}
+
+/* Icon placeholders: replace .lbhotel-icon-* background with hotel SVGs located in /assets/icons once provided. */
+.lbhotel-icon-bed,
+.lbhotel-icon-parking,
+.lbhotel-icon-breakfast {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: 0.5rem;
+}
+
+.lbhotel-icon-bed {
+    background-image: url('../images/icon-bed.svg');
+}
+
+.lbhotel-icon-parking {
+    background-image: url('../images/icon-parking.svg');
+}
+
+.lbhotel-icon-breakfast {
+    background-image: url('../images/icon-breakfast.svg');
+}

@@ -1,0 +1,53 @@
+/* Admin styles for Le Bon Hotel */
+
+#lbhotel-rooms-manager {
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    padding: 1rem;
+    background: #f8fafc;
+}
+
+#lbhotel-rooms-manager .lbhotel-room {
+    background: #ffffff;
+    padding: 1rem;
+    border: 1px solid #dce3ec;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+#lbhotel-rooms-manager .lbhotel-room-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+#lbhotel-rooms-manager .lbhotel-remove-room {
+    color: #b32d2e;
+}
+
+#lbhotel-rooms-manager .lbhotel-add-room {
+    margin-top: 0.5rem;
+}
+
+#lbhotel-rooms-manager input[type="text"],
+#lbhotel-rooms-manager input[type="number"] {
+    width: 100%;
+}
+
+.lbhotel-location-coordinates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+/* Placeholder for hotel icon replacements in admin columns */
+.column-lbhotel_star_rating::before {
+    content: '\2605';
+    color: #d4a017;
+    margin-right: 4px;
+}
+
+.column-lbhotel_city::before {
+    content: '\1F3D9';
+    margin-right: 4px;
+}
