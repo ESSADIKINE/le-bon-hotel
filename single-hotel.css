@@ -100,6 +100,7 @@ html, body {
     background: #fff;
     box-shadow: 0 20px 40px var(--moroccan-shadow);
     padding: 0;
+    height: 30vh;
     min-height: 30vh;
     position: relative;
     overflow: hidden;
@@ -130,14 +131,29 @@ html, body {
 .lbhotel-slider {
     position: relative;
     width: 100%;
-    height: 100%;
+    aspect-ratio: 4 / 3;
+    /* Fallback for older browsers */
+    height: 0;
+    padding-bottom: 75%; /* 3/4 = 0.75 = 75% */
     overflow: hidden;
     background: rgba(0, 0, 0, 0.05);
 }
 
+/* Modern browsers with aspect-ratio support */
+@supports (aspect-ratio: 4 / 3) {
+    .lbhotel-slider {
+        height: auto;
+        padding-bottom: 0;
+    }
+}
+
 .lbhotel-slider__track {
-    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    display: flex;
     transition: transform 0.6s ease;
 }
 
@@ -147,12 +163,11 @@ html, body {
     align-items: center;
     justify-content: center;
     background: #fff;
-    /* Enforce 3:4 aspect ratio for all slides */
-    aspect-ratio: 4 / 3;
+    height: 100%;
 }
 
 .lbhotel-slider__slide img {
-    /* Make images fill the 3:4 slide area */
+    /* Make images fill the 4:3 slide area */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -384,6 +399,70 @@ html, body {
     max-width: 320px;
 }
 
+@media (max-width: 768px) {
+    .leaflet-popup-content {
+        width: 200px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.5rem;
+        max-width: 200px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 540px) {
+    .leaflet-popup-content {
+        width: 160px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.4rem;
+        max-width: 160px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.7rem;
+        margin: 0.2rem 0;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.7rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__actions {
+        gap: 0.2rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.65rem;
+    }
+}
+
 .lbhotel-popup h3 {
     margin: 0 0 0.5rem;
     color: var(--moroccan-red);
@@ -424,11 +503,13 @@ html, body {
 @media (max-width: 1200px) {
     .lbhotel-single-layout {
         flex-direction: column;
+        gap: 1rem;
     }
 
     .lbhotel-single-left,
     .lbhotel-single-right {
         flex: 1 1 auto;
+        width: 100%;
     }
 
     .lbhotel-virtual-tour iframe {
@@ -440,6 +521,8 @@ html, body {
         grid-template-columns: 100%;
         text-align: center;
         gap: 1.25rem;
+        padding: 0;
+        height: auto;
     }
 
     .lbhotel-info-card__details {
@@ -452,35 +535,82 @@ html, body {
 }
 
 @media (max-width: 768px) {
+    .lbhotel-single-layout {
+        gap: 0.5rem;
+    }
 
     .lbhotel-virtual-tour {
         min-height: 30vh;
     }
 
     .lbhotel-info-card {
-        padding: 1.25rem;
+        margin: 0.5rem 0;
+        height: auto;
+        padding: 0;
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
     }
 
     .lbhotel-button {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
     }
 
     .lbhotel-map-section {
-        padding: 1.25rem;
+        padding: 0;
     }
 
     .lbhotel-map {
-        min-height: 45vh;
+        min-height: 40vh;
+    }
+
+    .lbhotel-slider {
+        aspect-ratio: 4 / 3;
+        padding-bottom: 75%;
+        min-height: 250px;
+    }
+    
+    @supports (aspect-ratio: 4 / 3) {
+        .lbhotel-slider {
+            padding-bottom: 0;
+        }
     }
 }
 
 @media (max-width: 540px) {
+    .lbhotel-single-layout {
+        gap: 0.25rem;
+    }
+
+    .lbhotel-info-card {
+        padding: 0;
+        margin: 0.25rem 0;
+        height: auto;
+    }
+
     .lbhotel-info-card__title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
     }
 
     .lbhotel-button {
-        padding: 0.65rem 0.85rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .lbhotel-slider {
+        min-height: 200px;
+    }
+
+    .lbhotel-map {
+        min-height: 35vh;
+    }
+
+    .lbhotel-virtual-tour {
+        min-height: 25vh;
     }
 }
 .ast-article-single{

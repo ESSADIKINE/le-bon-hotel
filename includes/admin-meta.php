@@ -129,8 +129,11 @@ function lbhotel_sanitize_gallery_images( $value ) {
     if ( ! is_array( $value ) ) {
         return array();
     }
-
-    return array_values( array_filter( array_map( 'absint', $value ) ) );
+    $ids = array_values( array_filter( array_map( 'absint', $value ) ) );
+    if ( count( $ids ) > 5 ) {
+        $ids = array_slice( $ids, 0, 5 );
+    }
+    return $ids;
 }
 
 /**
@@ -387,8 +390,11 @@ function lbhotel_render_contact_meta_box( $post ) {
     echo '<p><label for="lbhotel_video_url">' . esc_html__( 'Video URL', 'lbhotel' ) . '</label><br />';
     echo '<input type="url" class="widefat" id="lbhotel_video_url" name="lbhotel_video_url" value="' . esc_attr( $video ) . '" placeholder="https://" /></p>';
 
-    echo '<p><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery image IDs (comma separated)', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( is_array( $gallery ) ? implode( ',', $gallery ) : $gallery ) . '" placeholder="123,124" /></p>';
+    echo '<p><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery images', 'lbhotel' ) . '</label><br />';
+    echo '<input type="hidden" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( is_array( $gallery ) ? implode( ',', $gallery ) : $gallery ) . '" />';
+    echo '<button type="button" class="button" id="lbhotel_gallery_picker" style="margin-top:6px;">' . esc_html__( 'Select Images', 'lbhotel' ) . '</button> ';
+    echo '<span id="lbhotel_gallery_count" style="margin-left:6px; color:#555;"></span>';
+    echo '<div id="lbhotel_gallery_preview" class="lbhotel-gallery-preview" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div></p>';
 }
 
 /**

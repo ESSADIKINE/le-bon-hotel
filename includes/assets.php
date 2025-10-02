@@ -56,6 +56,10 @@ function lbhotel_enqueue_admin_assets( $hook ) {
     global $typenow;
 
     if ( in_array( $hook, array( 'post-new.php', 'post.php' ), true ) && 'lbhotel_hotel' === $typenow ) {
+        // Media library for gallery picker
+        if ( function_exists( 'wp_enqueue_media' ) ) {
+            wp_enqueue_media();
+        }
         wp_enqueue_style( 'lbhotel-admin' );
         wp_enqueue_script( 'lbhotel-admin' );
 
@@ -64,6 +68,10 @@ function lbhotel_enqueue_admin_assets( $hook ) {
             'lbHotelRooms',
             array(
                 'nonce' => wp_create_nonce( 'lbhotel_rooms_nonce' ),
+                'i18n'  => array(
+                    'selectImages' => __( 'Select Images', 'lbhotel' ),
+                    'remove'       => __( 'Remove', 'lbhotel' ),
+                ),
             )
         );
     }

@@ -54,7 +54,18 @@
                 return;
             }
 
+            // Hide navigation if only one slide
+            if (slides.length <= 1) {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (dots.length > 0) {
+                    const dotsContainer = slider.querySelector('.lbhotel-slider__dots');
+                    if (dotsContainer) dotsContainer.style.display = 'none';
+                }
+            }
+
             const update = () => {
+                if (slides.length === 0) return;
                 track.style.transform = `translateX(-${index * 100}%)`;
                 dots.forEach((dot, dotIndex) => {
                     if (dotIndex === index) {
@@ -66,6 +77,7 @@
             };
 
             const goTo = (nextIndex) => {
+                if (slides.length === 0) return;
                 index = (nextIndex + slides.length) % slides.length;
                 update();
             };
@@ -75,7 +87,9 @@
 
             const play = () => {
                 stop();
-                timer = window.setInterval(next, 5000);
+                if (slides.length > 1) {
+                    timer = window.setInterval(next, 5000);
+                }
             };
 
             const stop = () => {
@@ -135,6 +149,13 @@
             slider.dataset.lbhotelSliderInitialised = 'true';
             update();
             play();
+            
+            // Debug: log slider info
+            console.log('Slider initialized:', {
+                slides: slides.length,
+                hasImages: slides.some(slide => slide.querySelector('img')),
+                track: !!track
+            });
         });
     };
 
