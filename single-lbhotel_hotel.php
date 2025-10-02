@@ -125,11 +125,11 @@ get_header();
                                                     </div>
                                                 <?php endforeach; ?>
                                             </div>
-                                            <button type="button" class="lbhotel-slider__nav lbhotel-slider__nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'lbhotel' ); ?>">&#10094;</button>
-                                            <button type="button" class="lbhotel-slider__nav lbhotel-slider__nav--next" aria-label="<?php esc_attr_e( 'Next image', 'lbhotel' ); ?>">&#10095;</button>
+                                            <div class="lbhotel-slider__nav lbhotel-slider__nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'lbhotel' ); ?>" role="button" tabindex="0">&#10094;</div>
+                                            <div class="lbhotel-slider__nav lbhotel-slider__nav--next" aria-label="<?php esc_attr_e( 'Next image', 'lbhotel' ); ?>" role="button" tabindex="0">&#10095;</div>
                                             <div class="lbhotel-slider__dots" role="tablist">
                                                 <?php foreach ( $gallery_urls as $index => $unused ) : ?>
-                                                    <button type="button" class="lbhotel-slider__dot" role="tab" aria-label="<?php echo esc_attr( sprintf( __( 'Go to image %d', 'lbhotel' ), $index + 1 ) ); ?>"></button>
+                                                    <div class="lbhotel-slider__dot" role="tab" aria-label="<?php echo esc_attr( sprintf( __( 'Go to image %d', 'lbhotel' ), $index + 1 ) ); ?>" tabindex="0"></div>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
@@ -150,6 +150,7 @@ get_header();
                                     <?php if ( $star_rating > 0 ) : ?>
                                         <div class="lbhotel-info-card__stars" aria-label="<?php echo esc_attr( sprintf( _n( '%d star', '%d stars', $star_rating, 'lbhotel' ), $star_rating ) ); ?>">
                                             <?php echo wp_kses_post( str_repeat( '<span aria-hidden="true">★</span>', min( 5, $star_rating ) ) ); ?>
+                                            <span class="lbhotel-info-card__stars-text"><?php echo esc_html( sprintf( '%d/5', min( 5, max( 0, (int) $star_rating ) ) ) ); ?></span>
                                         </div>
                                     <?php endif; ?>
                                     <?php if ( $price_display ) : ?>
@@ -161,7 +162,7 @@ get_header();
                                         <a class="lbhotel-button lbhotel-button--reserve" href="<?php echo esc_url( $booking_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reserve Booking', 'lbhotel' ); ?></a>
                                     <?php endif; ?>
                                     <?php if ( $map_url ) : ?>
-                                        <a class="lbhotel-button lbhotel-button--map" href="<?php echo esc_url( $map_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Show in Google Map', 'lbhotel' ); ?></a>
+                                        <a class="lbhotel-button lbhotel-button--map" href="<?php echo esc_url( $map_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Map', 'lbhotel' ); ?></a>
                                     <?php endif; ?>
                                     <a class="lbhotel-button lbhotel-button--details" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'lbhotel' ); ?></a>
                                 </div>
@@ -169,10 +170,6 @@ get_header();
                         </div>
                         <div class="lbhotel-single-right">
                             <section class="lbhotel-map-section" aria-label="<?php esc_attr_e( 'Hotel map', 'lbhotel' ); ?>">
-                                <header class="lbhotel-map-section__header">
-                                    <h2><?php esc_html_e( 'Discover Nearby Stays', 'lbhotel' ); ?></h2>
-                                    <p><?php esc_html_e( 'Toggle between map and satellite to explore Morocco\'s hospitality gems.', 'lbhotel' ); ?></p>
-                                </header>
                                 <div id="lbhotel-map" class="lbhotel-map" role="region" aria-label="<?php esc_attr_e( 'Interactive hotel map', 'lbhotel' ); ?>"></div>
                             </section>
                         </div>
@@ -187,4 +184,4 @@ get_header();
 </div>
 
 <?php
-get_footer();
+wp_footer();

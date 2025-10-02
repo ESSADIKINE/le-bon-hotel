@@ -70,6 +70,14 @@ function lbhotel_register_meta_fields() {
             'type'              => 'string',
             'sanitize_callback' => 'esc_url_raw',
         ),
+        'lbhotel_google_map_url'     => array(
+            'type'              => 'string',
+            'sanitize_callback' => 'esc_url_raw',
+        ),
+        'lbhotel_video_url'          => array(
+            'type'              => 'string',
+            'sanitize_callback' => 'esc_url_raw',
+        ),
         'lbhotel_contact_phone'      => array(
             'type'              => 'string',
             'sanitize_callback' => 'lbhotel_sanitize_phone',
@@ -360,6 +368,8 @@ function lbhotel_render_contact_meta_box( $post ) {
     $phone   = get_post_meta( $post->ID, 'lbhotel_contact_phone', true );
     $tour    = get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true );
     $booking = get_post_meta( $post->ID, 'lbhotel_booking_url', true );
+    $map_url = get_post_meta( $post->ID, 'lbhotel_google_map_url', true );
+    $video   = get_post_meta( $post->ID, 'lbhotel_video_url', true );
     $gallery = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
 
     echo '<p><label for="lbhotel_contact_phone">' . esc_html__( 'Contact phone', 'lbhotel' ) . '</label><br />';
@@ -370,6 +380,12 @@ function lbhotel_render_contact_meta_box( $post ) {
 
     echo '<p><label for="lbhotel_virtual_tour_url">' . esc_html__( 'Virtual tour URL', 'lbhotel' ) . '</label><br />';
     echo '<input type="url" class="widefat" id="lbhotel_virtual_tour_url" name="lbhotel_virtual_tour_url" value="' . esc_attr( $tour ) . '" placeholder="https://" /></p>';
+
+    echo '<p><label for="lbhotel_google_map_url">' . esc_html__( 'Google Map URL', 'lbhotel' ) . '</label><br />';
+    echo '<input type="url" class="widefat" id="lbhotel_google_map_url" name="lbhotel_google_map_url" value="' . esc_attr( $map_url ) . '" placeholder="https://www.google.com/maps..." /></p>';
+
+    echo '<p><label for="lbhotel_video_url">' . esc_html__( 'Video URL', 'lbhotel' ) . '</label><br />';
+    echo '<input type="url" class="widefat" id="lbhotel_video_url" name="lbhotel_video_url" value="' . esc_attr( $video ) . '" placeholder="https://" /></p>';
 
     echo '<p><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery image IDs (comma separated)', 'lbhotel' ) . '</label><br />';
     echo '<input type="text" class="widefat" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( is_array( $gallery ) ? implode( ',', $gallery ) : $gallery ) . '" placeholder="123,124" /></p>';
@@ -407,6 +423,8 @@ function lbhotel_save_meta( $post_id, $post ) {
         'lbhotel_star_rating'        => 'lbhotel_sanitize_int',
         'lbhotel_contact_phone'      => 'lbhotel_sanitize_phone',
         'lbhotel_virtual_tour_url'   => 'esc_url_raw',
+        'lbhotel_google_map_url'     => 'esc_url_raw',
+        'lbhotel_video_url'          => 'esc_url_raw',
         'lbhotel_booking_url'        => 'esc_url_raw',
         'lbhotel_latitude'           => 'lbhotel_sanitize_decimal',
         'lbhotel_longitude'          => 'lbhotel_sanitize_decimal',
