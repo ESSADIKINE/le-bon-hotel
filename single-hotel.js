@@ -36,69 +36,26 @@
         };
     };
 
-    const buildDummyHotels = (currentHotel) => {
-        const samples = [
-            {
-                id: 'riad-atlas',
-                name: 'Riad Atlas Splendide',
-                city: 'Marrakech',
-                price: '€160 / night',
-                stars: 5,
-                lat: 31.6306,
-                lng: -7.9906,
-                bookingUrl: 'https://example.com/riad-atlas',
-                mapUrl: 'https://www.google.com/maps/search/?api=1&query=31.6306,-7.9906',
-                permalink: '#',
-                images: [
-                    'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=600&q=60',
-                    'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=60',
-                ],
-            },
-            {
-                id: 'sahara-retreat',
-                name: 'Sahara Retreat & Spa',
-                city: 'Merzouga',
-                price: '€220 / night',
-                stars: 4,
-                lat: 31.0994,
-                lng: -4.0127,
-                bookingUrl: 'https://example.com/sahara-retreat',
-                mapUrl: 'https://www.google.com/maps/search/?api=1&query=31.0994,-4.0127',
-                permalink: '#',
-                images: [
-                    'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=60',
-                    'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=600&q=60',
-                ],
-            },
-            {
-                id: 'chefchaouen-lights',
-                name: 'Chefchaouen Lights Riad',
-                city: 'Chefchaouen',
-                price: '€140 / night',
-                stars: 4,
-                lat: 35.1714,
-                lng: -5.2697,
-                bookingUrl: 'https://example.com/chefchaouen-lights',
-                mapUrl: 'https://www.google.com/maps/search/?api=1&query=35.1714,-5.2697',
-                permalink: '#',
-                images: [
-                    'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=60',
-                    'https://images.unsplash.com/photo-1496317899792-9d7dbcd928a1?auto=format&fit=crop&w=600&q=60',
-                ],
-            },
-        ];
+    const collectHotels = (data) => {
+        const hotels = [];
 
-        const hotels = samples.map(normaliseHotel).filter(Boolean);
+        if (data) {
+            const list = Array.isArray(data.hotels) ? data.hotels : [];
+            list
+                .map(normaliseHotel)
+                .filter(Boolean)
+                .forEach((hotel) => hotels.push(hotel));
 
-        const current = normaliseHotel(currentHotel);
-        if (current) {
-            const alreadyPresent = hotels.some((hotel) => hotel.id === current.id || (hotel.lat === current.lat && hotel.lng === current.lng));
-            if (!alreadyPresent) {
-                hotels.push(current);
-            } else {
-                const index = hotels.findIndex((hotel) => hotel.id === current.id);
-                if (index >= 0) {
-                    hotels[index] = { ...hotels[index], ...current };
+            const current = normaliseHotel(data.currentHotel);
+            if (current) {
+                const existingIndex = hotels.findIndex(
+                    (hotel) => hotel.id === current.id || (hotel.lat === current.lat && hotel.lng === current.lng)
+                );
+
+                if (existingIndex >= 0) {
+                    hotels[existingIndex] = { ...hotels[existingIndex], ...current };
+                } else {
+                    hotels.push(current);
                 }
             }
         }
@@ -258,7 +215,7 @@
 
         const data = window.lbHotelSingleData || {};
         const fallback = data.fallbackCenter || { lat: 31.7917, lng: -7.0926 };
-        const hotels = buildDummyHotels(data.currentHotel);
+        const hotels = collectHotels(data);
 
         const startHotel = normaliseHotel(data.currentHotel);
         const initialLat = Number.isFinite(startHotel?.lat) ? startHotel.lat : fallback.lat;

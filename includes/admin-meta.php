@@ -108,6 +108,21 @@ function lbhotel_register_meta_fields() {
 }
 
 /**
+ * Get the maximum number of gallery images allowed.
+ *
+ * @return int
+ */
+function lbhotel_get_gallery_max_images() {
+    $max_images = (int) apply_filters( 'lbhotel_gallery_max_images', 5 );
+
+    if ( $max_images <= 0 ) {
+        $max_images = 5;
+    }
+
+    return $max_images;
+}
+
+/**
  * Sanitize gallery images meta.
  *
  * @param mixed $value Value.
@@ -122,7 +137,19 @@ function lbhotel_sanitize_gallery_images( $value ) {
         return array();
     }
 
-    return array_values( array_filter( array_map( 'absint', $value ) ) );
+    $value = array_map( 'absint', $value );
+    $value = array_unique( $value );
+    $value = array_filter( $value );
+
+    $value = array_values( $value );
+
+    $max_images = lbhotel_get_gallery_max_images();
+
+    if ( $max_images > 0 ) {
+        $value = array_slice( $value, 0, $max_images );
+    }
+
+    return $value;
 }
 
 /**
@@ -357,10 +384,13 @@ function lbhotel_render_room_row( $index, $room ) {
  * @param WP_Post $post Post.
  */
 function lbhotel_render_contact_meta_box( $post ) {
-    $phone   = get_post_meta( $post->ID, 'lbhotel_contact_phone', true );
-    $tour    = get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true );
-    $booking = get_post_meta( $post->ID, 'lbhotel_booking_url', true );
-    $gallery = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
+    $phone      = get_post_meta( $post->ID, 'lbhotel_contact_phone', true );
+    $tour       = get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true );
+    $booking    = get_post_meta( $post->ID, 'lbhotel_booking_url', true );
+    $gallery    = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
+    $gallery    = lbhotel_sanitize_gallery_images( $gallery );
+    $max_images = lbhotel_get_gallery_max_images();
+    $remaining  = max( 0, $max_images - count( $gallery ) );
 
     echo '<p><label for="lbhotel_contact_phone">' . esc_html__( 'Contact phone', 'lbhotel' ) . '</label><br />';
     echo '<input type="text" class="widefat" id="lbhotel_contact_phone" name="lbhotel_contact_phone" value="' . esc_attr( $phone ) . '" /></p>';
@@ -371,8 +401,30 @@ function lbhotel_render_contact_meta_box( $post ) {
     echo '<p><label for="lbhotel_virtual_tour_url">' . esc_html__( 'Virtual tour URL', 'lbhotel' ) . '</label><br />';
     echo '<input type="url" class="widefat" id="lbhotel_virtual_tour_url" name="lbhotel_virtual_tour_url" value="' . esc_attr( $tour ) . '" placeholder="https://" /></p>';
 
-    echo '<p><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery image IDs (comma separated)', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( is_array( $gallery ) ? implode( ',', $gallery ) : $gallery ) . '" placeholder="123,124" /></p>';
+    echo '<div id="lbhotel-gallery-field" class="lbhotel-gallery-field" data-max="' . esc_attr( $max_images ) . '">';
+    echo '<p class="lbhotel-gallery-label"><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery images', 'lbhotel' ) . '</label></p>';
+    echo '<div class="lbhotel-gallery-toolbar">';
+    echo '<button type="button" class="button lbhotel-gallery-add">' . esc_html__( 'Add images', 'lbhotel' ) . '</button>';
+    echo '<span class="lbhotel-gallery-help" data-limit-text="' . esc_attr__( 'You can add up to %1$d images. %2$d remaining.', 'lbhotel' ) . '">' . sprintf( esc_html__( 'You can add up to %1$d images. %2$d remaining.', 'lbhotel' ), $max_images, $remaining ) . '</span>';
+    echo '</div>';
+    echo '<ul class="lbhotel-gallery-list">';
+
+    foreach ( $gallery as $image_id ) {
+        $thumbnail = wp_get_attachment_image( $image_id, 'thumbnail', false, array( 'data-id' => $image_id ) );
+
+        if ( ! $thumbnail ) {
+            continue;
+        }
+
+        echo '<li class="lbhotel-gallery-item" data-id="' . esc_attr( $image_id ) . '">';
+        echo '<div class="lbhotel-gallery-thumb">' . $thumbnail . '</div>';
+        echo '<button type="button" class="button-link lbhotel-gallery-remove">' . esc_html__( 'Remove', 'lbhotel' ) . '</button>';
+        echo '</li>';
+    }
+
+    echo '</ul>';
+    echo '<input type="hidden" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( implode( ',', $gallery ) ) . '" />';
+    echo '</div>';
 }
 
 /**
