@@ -80,9 +80,21 @@
     height: auto;
 }
 
+.lbhotel-gallery-empty {
+    color: #646970;
+    margin: 0.5rem 0 0;
+}
+
 .lbhotel-gallery-remove {
     margin-top: 0.5rem;
     color: #b32d2e;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.lbhotel-gallery-remove input[type="checkbox"] {
+    margin: 0;
 }
 
 .lbhotel-location-coordinates {

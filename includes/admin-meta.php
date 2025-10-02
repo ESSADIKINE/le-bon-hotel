@@ -197,6 +197,18 @@ function lbhotel_setup_admin_meta_boxes() {
     add_action( 'save_post_lbhotel_hotel', 'lbhotel_save_meta', 10, 2 );
     add_action( 'quick_edit_custom_box', 'lbhotel_quick_edit_fields', 10, 2 );
     add_action( 'save_post_lbhotel_hotel', 'lbhotel_save_quick_edit_meta', 20, 2 );
+    add_action( 'post_edit_form_tag', 'lbhotel_enable_gallery_uploads_form_enctype' );
+}
+
+/**
+ * Ensure the hotel edit form supports file uploads.
+ */
+function lbhotel_enable_gallery_uploads_form_enctype() {
+    global $typenow;
+
+    if ( 'lbhotel_hotel' === $typenow ) {
+        echo ' enctype="multipart/form-data"';
+    }
 }
 
 /**
@@ -402,28 +414,43 @@ function lbhotel_render_contact_meta_box( $post ) {
     echo '<input type="url" class="widefat" id="lbhotel_virtual_tour_url" name="lbhotel_virtual_tour_url" value="' . esc_attr( $tour ) . '" placeholder="https://" /></p>';
 
     echo '<div id="lbhotel-gallery-field" class="lbhotel-gallery-field" data-max="' . esc_attr( $max_images ) . '">';
-    echo '<p class="lbhotel-gallery-label"><label for="lbhotel_gallery_images">' . esc_html__( 'Gallery images', 'lbhotel' ) . '</label></p>';
-    echo '<div class="lbhotel-gallery-toolbar">';
-    echo '<button type="button" class="button lbhotel-gallery-add">' . esc_html__( 'Add images', 'lbhotel' ) . '</button>';
-    echo '<span class="lbhotel-gallery-help" data-limit-text="' . esc_attr__( 'You can add up to %1$d images. %2$d remaining.', 'lbhotel' ) . '">' . sprintf( esc_html__( 'You can add up to %1$d images. %2$d remaining.', 'lbhotel' ), $max_images, $remaining ) . '</span>';
-    echo '</div>';
+    echo '<p class="lbhotel-gallery-label"><label for="lbhotel_gallery_upload">' . esc_html__( 'Gallery images', 'lbhotel' ) . '</label></p>';
     echo '<ul class="lbhotel-gallery-list">';
 
     foreach ( $gallery as $image_id ) {
-        $thumbnail = wp_get_attachment_image( $image_id, 'thumbnail', false, array( 'data-id' => $image_id ) );
+        $thumbnail = wp_get_attachment_image( $image_id, 'thumbnail', false );
 
         if ( ! $thumbnail ) {
             continue;
         }
 
-        echo '<li class="lbhotel-gallery-item" data-id="' . esc_attr( $image_id ) . '">';
+        echo '<li class="lbhotel-gallery-item">';
         echo '<div class="lbhotel-gallery-thumb">' . $thumbnail . '</div>';
-        echo '<button type="button" class="button-link lbhotel-gallery-remove">' . esc_html__( 'Remove', 'lbhotel' ) . '</button>';
+        echo '<label class="lbhotel-gallery-remove">';
+        echo '<input type="checkbox" name="lbhotel_gallery_remove[]" value="' . esc_attr( $image_id ) . '" /> ' . esc_html__( 'Remove', 'lbhotel' );
+        echo '</label>';
+        echo '<input type="hidden" name="lbhotel_existing_gallery[]" value="' . esc_attr( $image_id ) . '" />';
         echo '</li>';
     }
 
     echo '</ul>';
-    echo '<input type="hidden" id="lbhotel_gallery_images" name="lbhotel_gallery_images" value="' . esc_attr( implode( ',', $gallery ) ) . '" />';
+
+    if ( empty( $gallery ) ) {
+        echo '<p class="lbhotel-gallery-empty">' . esc_html__( 'No images uploaded yet.', 'lbhotel' ) . '</p>';
+    }
+
+    $disabled_attribute = ( $max_images > 0 && $remaining <= 0 ) ? ' disabled="disabled"' : '';
+
+    echo '<p><input type="file" id="lbhotel_gallery_upload" name="lbhotel_gallery_upload[]" accept="image/*" multiple' . $disabled_attribute . ' /></p>';
+
+    if ( $max_images > 0 ) {
+        if ( $remaining > 0 ) {
+            echo '<p class="description">' . sprintf( esc_html__( 'You can upload up to %1$d images. %2$d remaining.', 'lbhotel' ), $max_images, $remaining ) . '</p>';
+        } else {
+            echo '<p class="description">' . esc_html__( 'You have reached the maximum number of gallery images.', 'lbhotel' ) . '</p>';
+        }
+    }
+
     echo '</div>';
 }
 
@@ -485,9 +512,83 @@ function lbhotel_save_meta( $post_id, $post ) {
     update_post_meta( $post_id, 'lbhotel_has_free_breakfast', isset( $_POST['lbhotel_has_free_breakfast'] ) );
     update_post_meta( $post_id, 'lbhotel_has_parking', isset( $_POST['lbhotel_has_parking'] ) );
 
-    if ( isset( $_POST['lbhotel_gallery_images'] ) ) {
-        $gallery = lbhotel_sanitize_gallery_images( wp_unslash( $_POST['lbhotel_gallery_images'] ) );
+    $existing_gallery = array();
+    if ( isset( $_POST['lbhotel_existing_gallery'] ) ) {
+        $existing_gallery = array_map( 'absint', (array) wp_unslash( $_POST['lbhotel_existing_gallery'] ) );
+    }
+
+    $removed_gallery = array();
+    if ( isset( $_POST['lbhotel_gallery_remove'] ) ) {
+        $removed_gallery = array_map( 'absint', (array) wp_unslash( $_POST['lbhotel_gallery_remove'] ) );
+    }
+
+    $gallery = array();
+
+    foreach ( $existing_gallery as $image_id ) {
+        if ( ! $image_id || in_array( $image_id, $removed_gallery, true ) ) {
+            continue;
+        }
+
+        $gallery[] = $image_id;
+    }
+
+    $max_images = lbhotel_get_gallery_max_images();
+
+    if ( isset( $_FILES['lbhotel_gallery_upload'] ) && isset( $_FILES['lbhotel_gallery_upload']['name'] ) && is_array( $_FILES['lbhotel_gallery_upload']['name'] ) ) {
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+
+        $uploads = $_FILES['lbhotel_gallery_upload'];
+
+        foreach ( $uploads['name'] as $index => $unused ) {
+            if ( empty( $uploads['name'][ $index ] ) ) {
+                continue;
+            }
+
+            if ( ! empty( $uploads['error'][ $index ] ) && UPLOAD_ERR_OK !== $uploads['error'][ $index ] ) {
+                continue;
+            }
+
+            if ( $max_images > 0 && count( $gallery ) >= $max_images ) {
+                break;
+            }
+
+            $file_key = 'lbhotel_gallery_upload_' . $index;
+            $_FILES[ $file_key ] = array(
+                'name'     => sanitize_file_name( wp_unslash( $uploads['name'][ $index ] ) ),
+                'type'     => $uploads['type'][ $index ],
+                'tmp_name' => $uploads['tmp_name'][ $index ],
+                'error'    => $uploads['error'][ $index ],
+                'size'     => $uploads['size'][ $index ],
+            );
+
+            $attachment_id = media_handle_upload( $file_key, $post_id );
+
+            unset( $_FILES[ $file_key ] );
+
+            if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
+                continue;
+            }
+
+            if ( in_array( $attachment_id, $gallery, true ) ) {
+                continue;
+            }
+
+            $gallery[] = $attachment_id;
+
+            if ( $max_images > 0 && count( $gallery ) >= $max_images ) {
+                break;
+            }
+        }
+    }
+
+    $gallery = lbhotel_sanitize_gallery_images( $gallery );
+
+    if ( ! empty( $gallery ) ) {
         update_post_meta( $post_id, 'lbhotel_gallery_images', $gallery );
+    } else {
+        delete_post_meta( $post_id, 'lbhotel_gallery_images' );
     }
 
     if ( isset( $_POST['lbhotel_rooms_json'] ) ) {
