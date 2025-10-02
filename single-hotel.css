@@ -7,13 +7,25 @@
     --slider-nav-bg-hover: rgba(193, 39, 45, 1);
 }
 
+body.single-lbhotel_hotel,
+body.single-lbhotel_hotel #page,
+body.single-lbhotel_hotel .site-content,
+.lbhotel-single-wrapper,
+.lbhotel-single-wrapper #main,
+.lbhotel-single-article,
+.lbhotel-single-page {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
 .lbhotel-single-page {
     background: var(--moroccan-cream);
     background-image: radial-gradient(circle at 20% 20%, rgba(193, 39, 45, 0.08) 0, rgba(193, 39, 45, 0.08) 12px, transparent 13px),
         radial-gradient(circle at 80% 0, rgba(0, 98, 51, 0.08) 0, rgba(0, 98, 51, 0.08) 10px, transparent 11px);
-    padding: 2rem;
-    border-radius: 1.75rem;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .lbhotel-single-layout {
@@ -344,11 +356,11 @@
 }
 
 .lbhotel-single-content {
-    margin-top: 2rem;
+    margin: 0;
     background: rgba(255, 255, 255, 0.9);
-    padding: 1.75rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 @media (max-width: 1200px) {
@@ -382,9 +394,6 @@
 }
 
 @media (max-width: 768px) {
-    .lbhotel-single-page {
-        padding: 1.5rem;
-    }
 
     .lbhotel-virtual-tour {
         min-height: 30vh;
@@ -408,10 +417,6 @@
 }
 
 @media (max-width: 540px) {
-    .lbhotel-single-page {
-        padding: 1rem;
-    }
-
     .lbhotel-info-card__title {
         font-size: 1.5rem;
     }
