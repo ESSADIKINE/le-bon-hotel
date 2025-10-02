@@ -394,6 +394,7 @@ body.single-lbhotel_hotel .site-content,
 }
 
 @media (max-width: 768px) {
+
     .lbhotel-virtual-tour {
         min-height: 30vh;
     }
