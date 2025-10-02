@@ -166,7 +166,6 @@
             <div class="lbhotel-popup__actions">${buttons}</div>
         </div>`;
     };
-
     const setupSliders = (root = document) => {
         const sliders = root.querySelectorAll(sliderSelector);
         sliders.forEach((slider) => {
