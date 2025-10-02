@@ -34,6 +34,57 @@
     width: 100%;
 }
 
+.lbhotel-gallery-field {
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    padding: 1rem;
+    background: #ffffff;
+    margin-top: 1rem;
+}
+
+.lbhotel-gallery-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.lbhotel-gallery-help {
+    color: #646970;
+}
+
+.lbhotel-gallery-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.lbhotel-gallery-item {
+    width: 120px;
+}
+
+.lbhotel-gallery-thumb {
+    border: 1px solid #dce3ec;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.lbhotel-gallery-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.lbhotel-gallery-remove {
+    margin-top: 0.5rem;
+    color: #b32d2e;
+}
+
 .lbhotel-location-coordinates {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

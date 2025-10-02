@@ -59,11 +59,28 @@ function lbhotel_enqueue_admin_assets( $hook ) {
         wp_enqueue_style( 'lbhotel-admin' );
         wp_enqueue_script( 'lbhotel-admin' );
 
+        wp_enqueue_media();
+
         wp_localize_script(
             'lbhotel-admin',
             'lbHotelRooms',
             array(
                 'nonce' => wp_create_nonce( 'lbhotel_rooms_nonce' ),
+            )
+        );
+
+        wp_localize_script(
+            'lbhotel-admin',
+            'lbHotelAdmin',
+            array(
+                'gallery' => array(
+                    'frameTitle'  => __( 'Select gallery images', 'lbhotel' ),
+                    'frameButton' => __( 'Use images', 'lbhotel' ),
+                    'removeImage' => __( 'Remove', 'lbhotel' ),
+                    'limitText'   => __( 'You can add up to %1$d images. %2$d remaining.', 'lbhotel' ),
+                    'maxReached'  => __( 'You have reached the maximum number of gallery images.', 'lbhotel' ),
+                    'maxImages'   => lbhotel_get_gallery_max_images(),
+                ),
             )
         );
     }
