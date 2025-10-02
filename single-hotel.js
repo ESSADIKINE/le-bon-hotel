@@ -98,29 +98,37 @@
     };
 
     const buildPopupContent = (hotel) => {
-        const slider = buildSliderMarkup(hotel);
+        const isDesktop = typeof window === 'undefined' ? true : window.innerWidth > 768;
         const meta = [hotel.city, hotel.price].filter(Boolean).join(' · ');
         const stars = hotel.stars > 0 ? '★'.repeat(Math.min(5, hotel.stars)) : '';
 
-        const buttons = [
-            hotel.bookingUrl
-                ? `<a class="lbhotel-button lbhotel-button--reserve" href="${escapeHtml(hotel.bookingUrl)}" target="_blank" rel="noopener noreferrer">Reserve Booking</a>`
-                : '',
-            hotel.mapUrl
-                ? `<a class="lbhotel-button lbhotel-button--map" href="${escapeHtml(hotel.mapUrl)}" target="_blank" rel="noopener noreferrer">Show in Google Map</a>`
-                : '',
-            `<a class="lbhotel-button lbhotel-button--details" href="${escapeHtml(hotel.permalink)}">View Details</a>`,
-        ]
-            .filter(Boolean)
-            .join('');
+        const media = isDesktop
+            ? buildSliderMarkup(hotel)
+            : hotel.images && hotel.images.length > 0
+                ? `<div class="lbhotel-popup__image"><img src="${escapeHtml(hotel.images[0])}" alt="${escapeHtml(hotel.name)}" /></div>`
+                : '';
+
+        const actions = isDesktop
+            ? [
+                  hotel.bookingUrl
+                      ? `<a class="lbhotel-button lbhotel-button--reserve" href="${escapeHtml(hotel.bookingUrl)}" target="_blank" rel="noopener noreferrer">Reserve Booking</a>`
+                      : '',
+                  hotel.mapUrl
+                      ? `<a class="lbhotel-button lbhotel-button--map" href="${escapeHtml(hotel.mapUrl)}" target="_blank" rel="noopener noreferrer">Show in Google Map</a>`
+                      : '',
+                  `<a class="lbhotel-button lbhotel-button--details" href="${escapeHtml(hotel.permalink)}">View Details</a>`,
+              ]
+                  .filter(Boolean)
+                  .join('')
+            : '';
 
         return `
         <div class="lbhotel-popup">
             <h3>${escapeHtml(hotel.name)}</h3>
-            ${slider}
+            ${media}
             ${meta ? `<p class="lbhotel-popup__meta">${escapeHtml(meta)}</p>` : ''}
             ${stars ? `<div class="lbhotel-popup__stars">${escapeHtml(stars)}</div>` : ''}
-            <div class="lbhotel-popup__actions">${buttons}</div>
+            ${actions ? `<div class="lbhotel-popup__actions">${actions}</div>` : ''}
         </div>`;
     };
     const setupSliders = (root = document) => {
