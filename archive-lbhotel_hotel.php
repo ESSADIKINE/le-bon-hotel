@@ -12,6 +12,109 @@ if ( ! defined( 'ABSPATH' ) ) {
 wp_enqueue_style( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.css', array(), LBHOTEL_VERSION );
 wp_enqueue_script( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array(), LBHOTEL_VERSION, true );
 
+$hotels_for_script = array();
+
+$hotels_query = new WP_Query(
+    array(
+        'post_type'      => 'lbhotel_hotel',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    )
+);
+
+if ( $hotels_query->have_posts() ) {
+    while ( $hotels_query->have_posts() ) {
+        $hotels_query->the_post();
+
+        $post_id = get_the_ID();
+
+        $gallery_ids  = (array) get_post_meta( $post_id, 'lbhotel_gallery_images', true );
+        $gallery_urls = array();
+
+        foreach ( $gallery_ids as $attachment_id ) {
+            $image_url = wp_get_attachment_image_url( $attachment_id, 'large' );
+
+            if ( $image_url ) {
+                $gallery_urls[] = $image_url;
+            }
+        }
+
+        if ( empty( $gallery_urls ) ) {
+            $featured_image = get_the_post_thumbnail_url( $post_id, 'large' );
+
+            if ( $featured_image ) {
+                $gallery_urls[] = $featured_image;
+            }
+        }
+
+        $latitude  = get_post_meta( $post_id, 'lbhotel_latitude', true );
+        $longitude = get_post_meta( $post_id, 'lbhotel_longitude', true );
+
+        $coordinates = null;
+
+        if ( '' !== $latitude && '' !== $longitude ) {
+            $coordinates = array(
+                'lat' => (float) $latitude,
+                'lng' => (float) $longitude,
+            );
+        }
+
+        $price_meta = get_post_meta( $post_id, 'lbhotel_avg_price_per_night', true );
+        $price      = '' !== $price_meta ? (float) $price_meta : null;
+
+        $distance_meta = get_post_meta( $post_id, 'lbhotel_distance_km', true );
+        $distance      = '' !== $distance_meta ? (float) $distance_meta : null;
+
+        $description = get_the_excerpt();
+
+        if ( ! $description ) {
+            $description = wp_trim_words( wp_strip_all_tags( get_the_content() ), 30 );
+        }
+
+        $hotels_for_script[] = array(
+            'id'             => $post_id,
+            'name'           => get_the_title(),
+            'city'           => get_post_meta( $post_id, 'lbhotel_city', true ),
+            'region'         => get_post_meta( $post_id, 'lbhotel_region', true ),
+            'country'        => get_post_meta( $post_id, 'lbhotel_country', true ),
+            'rating'         => (int) get_post_meta( $post_id, 'lbhotel_star_rating', true ),
+            'price'          => $price,
+            'distance'       => $distance,
+            'coordinates'    => $coordinates,
+            'description'    => wp_strip_all_tags( $description ),
+            'images'         => $gallery_urls,
+            'featured_image' => get_the_post_thumbnail_url( $post_id, 'large' ),
+            'booking_url'    => get_post_meta( $post_id, 'lbhotel_booking_url', true ),
+            'details_url'    => get_permalink(),
+            'available_from' => get_post_time( DATE_ATOM, true ),
+        );
+    }
+
+    wp_reset_postdata();
+}
+
+wp_localize_script(
+    'lbhotel-all-hotels',
+    'lbhotelAllHotels',
+    array(
+        'hotels'   => $hotels_for_script,
+        'currency' => lbhotel_get_option( 'default_currency' ),
+        'perPage'  => 4,
+        'strings'  => array(
+            'empty'      => __( 'No hotels match your search. Try adjusting filters.', 'lbhotel' ),
+            'emptyPage'  => __( 'No more hotels on this page.', 'lbhotel' ),
+            'reserve'    => __( 'Reserve Booking', 'lbhotel' ),
+            'map'        => __( 'Show on Map', 'lbhotel' ),
+            'details'    => __( 'View Details', 'lbhotel' ),
+            'priceLabel' => __( '/ night', 'lbhotel' ),
+            'noImage'    => __( 'Image coming soon', 'lbhotel' ),
+            'imageAlt'   => __( 'Hotel gallery image', 'lbhotel' ),
+        ),
+    )
+);
+
 get_header();
 ?>
 
