@@ -20,7 +20,7 @@ body {
 
 [data-all-hotels-page] {
     position: relative;
-    padding-top: 6rem;
+    padding-top: 3rem;
     padding-bottom: 4rem;
 }
 
@@ -32,28 +32,24 @@ body {
 }
 
 .all-hotels__filters {
-    position: absolute;
+    position: relative;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 2rem;
-    z-index: 20;
+    z-index: 2;
     display: flex;
     align-items: stretch;
 }
 
 .all-hotels__filters-form {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
+    position: relative;
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
     padding: 0 1rem;
     background: var(--moroccan-red);
     box-shadow: 0 6px 18px rgba(193, 39, 45, 0.25);
+    border-radius: 18px;
 }
 
 .all-hotels__field {
@@ -86,16 +82,17 @@ body {
 }
 
 .all-hotels__sorting {
-    position: sticky;
-    top: 2rem;
-    z-index: 19;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin-top: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 1.5rem;
     background: var(--moroccan-red);
     color: var(--text-light);
-    border-radius: 0 0 24px 24px;
+    border-radius: 18px;
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
 }
 
@@ -336,12 +333,10 @@ body {
     .all-hotels__filters-form {
         grid-template-columns: 1fr;
         height: auto;
-        padding-top: 0.35rem;
-        padding-bottom: 0.35rem;
+        padding: 0.75rem 1rem;
     }
 
     .all-hotels__filters {
-        position: static;
         height: auto;
         padding-bottom: 0.5rem;
     }
@@ -350,7 +345,7 @@ body {
         flex-direction: column;
         align-items: stretch;
         gap: 0.75rem;
-        border-radius: 0 0 18px 18px;
+        border-radius: 18px;
     }
 
     .hotel-card {
@@ -374,28 +369,17 @@ body {
 }
 
 @media (max-width: 640px) {
-    [data-all-hotels-page] {
-        padding-top: 8rem;
-    }
-
     .all-hotels__filters-form {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 30;
         padding: 0.75rem 1rem;
-        border-radius: 0 0 18px 18px;
+        border-radius: 18px;
     }
 
     .all-hotels__filters {
-        position: static;
         height: auto;
     }
 
     .all-hotels__sorting {
-        position: sticky;
-        top: 5.5rem;
+        margin-top: 1rem;
     }
 
     .hotel-card__slider {
