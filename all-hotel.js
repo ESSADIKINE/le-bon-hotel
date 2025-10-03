@@ -1,3 +1,8 @@
+// Ensure legacy scripts expecting a global HOTELS array do not fail.
+if (typeof window !== 'undefined') {
+    window.HOTELS = window.HOTELS || [];
+}
+
 (function () {
     const sliderSelector = '[data-lbhotel-slider]';
 
