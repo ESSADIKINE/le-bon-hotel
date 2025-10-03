@@ -29,8 +29,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     gap: 2rem;
 }
 
-.all-hotels {
-    position: relative;
+.lbhotel-all-hotels {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -116,11 +115,12 @@ body.archive.post-type-archive-lbhotel_hotel {
     gap: 0.75rem;
 }
 
-.all-hotels__sort-label {
+.lbhotel-archive__title {
+    margin: 0;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.75rem;
-    font-weight: 600;
+    color: var(--moroccan-red);
 }
 
 .all-hotels__sort select {
@@ -134,7 +134,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
-.all-hotels__list {
+.lbhotel-archive__list {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
@@ -449,6 +449,7 @@ body.archive.post-type-archive-lbhotel_hotel {
         align-items: flex-start;
         gap: 0.85rem;
     }
+}
 
     .all-hotels__sort {
         width: 100%;
@@ -487,6 +488,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     .lbhotel-archive__title {
         letter-spacing: 0.05em;
     }
+}
 
     .all-hotels__sorting {
         padding: 1rem 1.15rem;
