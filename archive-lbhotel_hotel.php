@@ -11,17 +11,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $theme_directory_uri  = get_stylesheet_directory_uri();
 $theme_directory_path = function_exists( 'get_stylesheet_directory' ) ? trailingslashit( get_stylesheet_directory() ) : '';
+$theme_style_path     = $theme_directory_path ? $theme_directory_path . 'all-hotel.css' : '';
+$theme_script_path    = $theme_directory_path ? $theme_directory_path . 'all-hotel.js' : '';
 
-if ( $theme_directory_path && file_exists( $theme_directory_path . 'all-hotel.css' ) ) {
-    wp_enqueue_style( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.css', array(), '1.0.0' );
+$plugin_style_path  = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'all-hotel.css';
+$plugin_script_path = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'all-hotel.js';
+
+if ( $theme_style_path && file_exists( $theme_style_path ) ) {
+    $style_version = (string) ( filemtime( $theme_style_path ) ?: time() );
+    wp_enqueue_style( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.css', array(), $style_version );
 } else {
-    wp_enqueue_style( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.css', array(), LBHOTEL_VERSION );
+    $style_version = file_exists( $plugin_style_path ) ? (string) filemtime( $plugin_style_path ) : LBHOTEL_VERSION;
+    wp_enqueue_style( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.css', array(), $style_version );
 }
 
-if ( $theme_directory_path && file_exists( $theme_directory_path . 'all-hotel.js' ) ) {
-    wp_enqueue_script( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.js', array(), '1.0.0', true );
+if ( $theme_script_path && file_exists( $theme_script_path ) ) {
+    $script_version = (string) ( filemtime( $theme_script_path ) ?: time() );
+    wp_enqueue_script( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.js', array(), $script_version, true );
 } else {
-    wp_enqueue_script( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array(), LBHOTEL_VERSION, true );
+    $script_version = file_exists( $plugin_script_path ) ? (string) filemtime( $plugin_script_path ) : LBHOTEL_VERSION;
+    wp_enqueue_script( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array(), $script_version, true );
 }
 
 $currency_code = function_exists( 'lbhotel_get_option' ) ? lbhotel_get_option( 'default_currency' ) : '';
