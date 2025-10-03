@@ -97,7 +97,14 @@ html, body {
     display: grid;
     grid-template-columns: 30% 1fr 20%;
     align-items: center;
-    background: #fff;
+    background: 
+    linear-gradient(270deg, transparent 0%, white 50%),
+    linear-gradient(180deg, transparent 0%, white 80%),
+    url("http://172.23.96.1/wordpress/wp-content/uploads/2025/10/background.png") top right no-repeat;
+    background-size: auto 100%;
+    background-color: white;
+    margin: 0;
+    min-height: 100vh;
     box-shadow: 0 20px 40px var(--moroccan-shadow);
     padding: 0;
     height: 30vh;
@@ -304,7 +311,12 @@ html, body {
     filter: brightness(0.9);
 }
 
-.lbhotel-button--map {
+.lbhotel-button--map,
+.lbhotel-button--reserve,
+.lbhotel-button--details {
+    color: #fff !important;
+}
+.lbhotel-button--map{
     background: var(--moroccan-red);
 }
 
@@ -425,6 +437,7 @@ html, body {
     .lbhotel-popup__actions .lbhotel-button {
         padding: 0.3rem 0.5rem;
         font-size: 0.7rem;
+        display: none;
     }
 }
 
@@ -460,6 +473,7 @@ html, body {
     .lbhotel-popup__actions .lbhotel-button {
         padding: 0.25rem 0.4rem;
         font-size: 0.65rem;
+        display: none;
     }
 }
 
@@ -602,7 +616,7 @@ html, body {
     }
 
     .lbhotel-slider {
-        min-height: 200px;
+        min-height: 50px;
     }
 
     .lbhotel-map {
