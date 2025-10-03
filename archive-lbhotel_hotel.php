@@ -62,11 +62,61 @@ get_header();
                     <p class="lbhotel-archive__intro"><?php esc_html_e( 'Discover authentic Moroccan stays and plan your next escape.', 'lbhotel' ); ?></p>
                 </header>
 
-                <?php if ( $hotels_query->have_posts() ) : ?>
-                    <div class="lbhotel-archive__list">
-                        <?php
-                        while ( $hotels_query->have_posts() ) :
-                            $hotels_query->the_post();
+                <?php $hotels_count = $hotels_query->found_posts; ?>
+
+                <div class="all-hotels" data-hotels-container>
+                    <header class="all-hotels__filters" role="banner">
+                        <form class="all-hotels__filters-form" aria-label="<?php esc_attr_e( 'Filter hotels', 'lbhotel' ); ?>">
+                            <label class="all-hotels__field" for="hotel-search">
+                                <span class="screen-reader-text"><?php esc_html_e( 'Search by hotel name or city', 'lbhotel' ); ?></span>
+                                <input type="search" id="hotel-search" name="hotel_search" placeholder="<?php esc_attr_e( 'Search hotels or cities', 'lbhotel' ); ?>" autocomplete="off" />
+                            </label>
+                            <label class="all-hotels__field" for="hotel-distance">
+                                <span class="screen-reader-text"><?php esc_html_e( 'Filter by distance', 'lbhotel' ); ?></span>
+                                <select id="hotel-distance" name="hotel_distance">
+                                    <option value="all"><?php esc_html_e( 'Any distance', 'lbhotel' ); ?></option>
+                                    <option value="5"><?php esc_html_e( 'Near me · 5 km', 'lbhotel' ); ?></option>
+                                    <option value="10"><?php esc_html_e( 'Near me · 10 km', 'lbhotel' ); ?></option>
+                                    <option value="20"><?php esc_html_e( 'Near me · 20 km', 'lbhotel' ); ?></option>
+                                </select>
+                            </label>
+                            <label class="all-hotels__field" for="hotel-rating">
+                                <span class="screen-reader-text"><?php esc_html_e( 'Filter by star rating', 'lbhotel' ); ?></span>
+                                <select id="hotel-rating" name="hotel_rating">
+                                    <option value="all"><?php esc_html_e( 'Any rating', 'lbhotel' ); ?></option>
+                                    <option value="5">5 ★</option>
+                                    <option value="4">4 ★ &amp; up</option>
+                                    <option value="3">3 ★ &amp; up</option>
+                                    <option value="2">2 ★ &amp; up</option>
+                                    <option value="1">1 ★ &amp; up</option>
+                                </select>
+                            </label>
+                        </form>
+                    </header>
+
+                    <section class="all-hotels__sorting" role="region" aria-live="polite">
+                        <div class="all-hotels__results">
+                            <span id="hotel-count" data-hotel-count="<?php echo esc_attr( $hotels_count ); ?>"><?php echo esc_html( number_format_i18n( $hotels_count ) ); ?></span>
+                            <span class="all-hotels__results-label"><?php esc_html_e( 'hotels found', 'lbhotel' ); ?></span>
+                        </div>
+                        <label class="all-hotels__sort" for="hotel-sort">
+                            <span class="all-hotels__sort-label"><?php esc_html_e( 'Sort by', 'lbhotel' ); ?></span>
+                            <select id="hotel-sort" name="hotel_sort">
+                                <option value="date-asc"><?php esc_html_e( 'Date ASC', 'lbhotel' ); ?></option>
+                                <option value="date-desc" selected><?php esc_html_e( 'Date DESC', 'lbhotel' ); ?></option>
+                                <option value="distance-asc"><?php esc_html_e( 'Distance ASC', 'lbhotel' ); ?></option>
+                                <option value="distance-desc"><?php esc_html_e( 'Distance DESC', 'lbhotel' ); ?></option>
+                                <option value="rating-asc"><?php esc_html_e( 'Rating ASC', 'lbhotel' ); ?></option>
+                                <option value="rating-desc"><?php esc_html_e( 'Rating DESC', 'lbhotel' ); ?></option>
+                            </select>
+                        </label>
+                    </section>
+
+                    <?php if ( $hotels_query->have_posts() ) : ?>
+                        <section class="all-hotels__list lbhotel-archive__list" id="hotel-list" aria-live="polite" aria-label="<?php esc_attr_e( 'Hotel results', 'lbhotel' ); ?>">
+                            <?php
+                            while ( $hotels_query->have_posts() ) :
+                                $hotels_query->the_post();
 
                             $post_id = get_the_ID();
 
@@ -177,10 +227,11 @@ get_header();
                                 </div>
                             </article>
                         <?php endwhile; ?>
-                    </div>
-                <?php else : ?>
-                    <p class="lbhotel-archive__empty"><?php esc_html_e( 'No hotels found at this time. Please check back soon.', 'lbhotel' ); ?></p>
-                <?php endif; ?>
+                        </section>
+                    <?php else : ?>
+                        <p class="lbhotel-archive__empty"><?php esc_html_e( 'No hotels found at this time. Please check back soon.', 'lbhotel' ); ?></p>
+                    <?php endif; ?>
+                </div>
 
                 <?php wp_reset_postdata(); ?>
 
