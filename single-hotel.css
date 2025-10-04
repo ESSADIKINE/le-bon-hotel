@@ -671,6 +671,10 @@ html, body {
     width: 100% !important;
     margin: 0% !important;
 }
+body.lbhotel-no-scroll {
+    overflow: hidden;
+}
+
 .lbhotel-popup-overlay {
     position: fixed;
     top: 0;
@@ -712,6 +716,11 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.lbhotel-popup-close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
 }
 
 .lbhotel-popup-body {

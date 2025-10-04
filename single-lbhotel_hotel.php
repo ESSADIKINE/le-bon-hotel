@@ -119,9 +119,9 @@ get_header();
                             <section class="lbhotel-info-card" aria-label="<?php esc_attr_e( 'Hotel highlight', 'lbhotel' ); ?>"
                                 data-hotel='<?php echo esc_attr( wp_json_encode( $info_card_payload ) ); ?>'>
                                 <div class="lbhotel-info-card__media">
-                                    <div class="lbhotel-info-card__icons">
-                                        <button type="button" class="lbhotel-icon lbhotel-icon--tour" aria-label="<?php esc_attr_e( 'Virtual Tour', 'lbhotel' ); ?>" data-tour-url="<?php echo esc_url( $virtual_tour_url ); ?>">🎥</button>
-                                        <button type="button" class="lbhotel-icon lbhotel-icon--map" aria-label="<?php esc_attr_e( 'Map View', 'lbhotel' ); ?>">🗺️</button>
+                                    <div class="lbhotel-info-card__icons" role="group" aria-label="<?php esc_attr_e( 'Quick actions', 'lbhotel' ); ?>">
+                                        <div class="lbhotel-icon lbhotel-icon--tour" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Virtual Tour', 'lbhotel' ); ?>" data-tour-url="<?php echo esc_url( $virtual_tour_url ); ?>">🎥</div>
+                                        <div class="lbhotel-icon lbhotel-icon--map" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Map View', 'lbhotel' ); ?>">🗺️</div>
                                     </div>
                                     <?php if ( $gallery_urls ) : ?>
                                         <div class="lbhotel-slider" data-lbhotel-slider>

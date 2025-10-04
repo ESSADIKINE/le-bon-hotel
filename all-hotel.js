@@ -130,6 +130,24 @@ if (typeof window !== 'undefined') {
         sliders.forEach(setupSlider);
     }
 
+    const bindButtonLike = (element, handler) => {
+        if (!element || typeof handler !== 'function') {
+            return;
+        }
+
+        const activate = (event) => {
+            handler(event);
+        };
+
+        element.addEventListener('click', activate);
+        element.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                event.preventDefault();
+                activate(event);
+            }
+        });
+    };
+
     function onReady(callback) {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', callback, { once: true });
@@ -427,10 +445,11 @@ if (typeof window !== 'undefined') {
         const content = document.createElement('div');
         content.className = 'lbhotel-popup-content';
 
-        const closeButton = document.createElement('button');
-        closeButton.type = 'button';
+        const closeButton = document.createElement('div');
         closeButton.className = 'lbhotel-popup-close';
         closeButton.setAttribute('aria-label', 'Close popup');
+        closeButton.setAttribute('role', 'button');
+        closeButton.tabIndex = 0;
         closeButton.textContent = '✕';
 
         const body = document.createElement('div');
@@ -439,13 +458,18 @@ if (typeof window !== 'undefined') {
         content.appendChild(closeButton);
         content.appendChild(body);
         overlay.appendChild(content);
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        content.setAttribute('role', 'document');
         document.body.appendChild(overlay);
+        document.body.classList.add('lbhotel-no-scroll');
 
         const destroy = () => {
             document.removeEventListener('keydown', onKeyDown);
             if (overlay.parentNode) {
                 overlay.parentNode.removeChild(overlay);
             }
+            document.body.classList.remove('lbhotel-no-scroll');
         };
 
         const onKeyDown = (event) => {
@@ -454,7 +478,7 @@ if (typeof window !== 'undefined') {
             }
         };
 
-        closeButton.addEventListener('click', destroy);
+        bindButtonLike(closeButton, destroy);
         overlay.addEventListener('click', (event) => {
             if (event.target === overlay) {
                 destroy();
@@ -479,7 +503,7 @@ if (typeof window !== 'undefined') {
         iframe.src = url;
         iframe.title = hotelName ? `${hotelName} – Virtual Tour` : 'Virtual Tour';
         iframe.loading = 'lazy';
-        iframe.allowFullscreen = true;
+        iframe.setAttribute('allowfullscreen', 'true');
         overlay.body.appendChild(iframe);
     };
 
@@ -525,7 +549,7 @@ if (typeof window !== 'undefined') {
 
             const tourButton = card.querySelector('.lbhotel-icon--tour');
             if (tourButton) {
-                tourButton.addEventListener('click', () => {
+                bindButtonLike(tourButton, () => {
                     const url = tourButton.dataset.tourUrl || (hotelData ? hotelData.virtualTourUrl : '');
                     if (url) {
                         openVirtualTourOverlay(url, hotelData ? hotelData.name : document.title);
@@ -535,7 +559,7 @@ if (typeof window !== 'undefined') {
 
             const mapButton = card.querySelector('.lbhotel-icon--map');
             if (mapButton) {
-                mapButton.addEventListener('click', () => {
+                bindButtonLike(mapButton, () => {
                     const { hotels, current, fallbackCenter } = collectHotelsData(hotelData);
                     openMapOverlay(hotels, current, fallbackCenter);
                 });
