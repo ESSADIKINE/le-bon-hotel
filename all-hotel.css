@@ -894,3 +894,118 @@ body.lbhotel-no-scroll {
     width: 100%;
     height: 100%;
 }
+
+.leaflet-popup-content-wrapper {
+    border-radius: 1.25rem;
+    border: 2px solid var(--moroccan-red);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    width: 320px;
+}
+
+.lbhotel-popup {
+    padding: 1rem;
+    max-width: 320px;
+}
+
+.lbhotel-popup h3 {
+    margin: 0 0 0.5rem;
+    color: var(--moroccan-red);
+}
+
+.lbhotel-popup__meta {
+    margin: 0.25rem 0;
+    font-weight: 600;
+    color: var(--moroccan-green);
+}
+
+.lbhotel-popup__stars {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: var(--moroccan-red);
+}
+
+.lbhotel-popup__stars-text {
+    font-size: 0.8rem;
+    color: var(--moroccan-green);
+}
+
+.lbhotel-popup__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.lbhotel-popup__actions .lbhotel-button {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .leaflet-popup-content {
+        width: 220px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.75rem;
+        max-width: 220px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .lbhotel-popup__meta,
+    .lbhotel-popup__stars {
+        font-size: 0.85rem;
+    }
+
+    .lbhotel-popup__actions {
+        gap: 0.4rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+}
+
+@media (max-width: 540px) {
+    .leaflet-popup-content {
+        width: 180px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.5rem;
+        max-width: 180px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .lbhotel-popup__meta,
+    .lbhotel-popup__stars {
+        font-size: 0.75rem;
+    }
+
+    .lbhotel-popup__actions {
+        gap: 0.3rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+    }
+}
