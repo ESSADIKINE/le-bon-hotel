@@ -83,6 +83,7 @@ $current_payload = array(
     'mapUrl'     => $map_url ? esc_url_raw( $map_url ) : '',
     'permalink'  => $current_id ? get_permalink( $current_id ) : '',
     'images'     => $gallery_urls,
+    'virtualTourUrl' => $virtual_tour_url ? esc_url_raw( $virtual_tour_url ) : '',
 );
 
 wp_localize_script(
@@ -114,8 +115,14 @@ get_header();
                                 </section>
                             <?php endif; ?>
 
-                            <section class="lbhotel-info-card" aria-label="<?php esc_attr_e( 'Hotel highlight', 'lbhotel' ); ?>">
+                            <?php $info_card_payload = $current_payload; ?>
+                            <section class="lbhotel-info-card" aria-label="<?php esc_attr_e( 'Hotel highlight', 'lbhotel' ); ?>"
+                                data-hotel='<?php echo esc_attr( wp_json_encode( $info_card_payload ) ); ?>'>
                                 <div class="lbhotel-info-card__media">
+                                    <div class="lbhotel-info-card__icons">
+                                        <button type="button" class="lbhotel-icon lbhotel-icon--tour" aria-label="<?php esc_attr_e( 'Virtual Tour', 'lbhotel' ); ?>" data-tour-url="<?php echo esc_url( $virtual_tour_url ); ?>">🎥</button>
+                                        <button type="button" class="lbhotel-icon lbhotel-icon--map" aria-label="<?php esc_attr_e( 'Map View', 'lbhotel' ); ?>">🗺️</button>
+                                    </div>
                                     <?php if ( $gallery_urls ) : ?>
                                         <div class="lbhotel-slider" data-lbhotel-slider>
                                             <div class="lbhotel-slider__track">
