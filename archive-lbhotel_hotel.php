@@ -263,41 +263,50 @@ get_header();
                 );
                 ?>
 
-                <?php if ( $pagination_links ) : ?>
-                    <section class="all-hotels__pagination" aria-label="<?php esc_attr_e( 'Hotels pagination', 'lbhotel' ); ?>">
-                        <form class="all-hotels__pagination-form" method="get">
-                            <label for="hotels-per-page" class="all-hotels__pagination-label">
-                                <span><?php esc_html_e( 'Hotels per page', 'lbhotel' ); ?></span>
-                                <select id="hotels-per-page" name="per_page">
-                                    <?php foreach ( $per_page_options as $option ) : ?>
-                                        <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $per_page, $option ); ?>><?php echo esc_html( $option ); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </label>
-                            <?php
-                            if ( ! empty( $_GET ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                                foreach ( $_GET as $key => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                                    if ( 'per_page' === $key || 'paged' === $key ) {
-                                        continue;
-                                    }
+                $pagination_markup = $pagination_links;
+                if ( ! $pagination_markup ) {
+                    /* translators: Pagination fallback when there is only one page of results. */
+                    $pagination_markup = sprintf(
+                        '<ul class="page-numbers"><li><span class="page-numbers current">%s</span></li></ul>',
+                        esc_html__( '1', 'lbhotel' )
+                    );
+                }
 
-                                    $sanitized_key = sanitize_key( $key );
+                ?>
 
-                                    if ( is_string( $value ) ) {
-                                        echo '<input type="hidden" name="' . esc_attr( $sanitized_key ) . '" value="' . esc_attr( wp_unslash( $value ) ) . '" />';
-                                    }
+                <section class="all-hotels__pagination" aria-label="<?php esc_attr_e( 'Hotels pagination', 'lbhotel' ); ?>">
+                    <form class="all-hotels__pagination-form" method="get">
+                        <label for="hotels-per-page" class="all-hotels__pagination-label">
+                            <span><?php esc_html_e( 'Hotels per page', 'lbhotel' ); ?></span>
+                            <select id="hotels-per-page" name="per_page">
+                                <?php foreach ( $per_page_options as $option ) : ?>
+                                    <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $per_page, $option ); ?>><?php echo esc_html( $option ); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </label>
+                        <?php
+                        if ( ! empty( $_GET ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                            foreach ( $_GET as $key => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                                if ( 'per_page' === $key || 'paged' === $key ) {
+                                    continue;
+                                }
+
+                                $sanitized_key = sanitize_key( $key );
+
+                                if ( is_string( $value ) ) {
+                                    echo '<input type="hidden" name="' . esc_attr( $sanitized_key ) . '" value="' . esc_attr( wp_unslash( $value ) ) . '" />';
                                 }
                             }
-                            ?>
-                            <noscript>
-                                <button type="submit" class="all-hotels__pagination-apply"><?php esc_html_e( 'Apply', 'lbhotel' ); ?></button>
-                            </noscript>
-                        </form>
-                        <nav class="all-hotels__pagination-links" aria-label="<?php esc_attr_e( 'Pagination links', 'lbhotel' ); ?>">
-                            <?php echo wp_kses_post( $pagination_links ); ?>
-                        </nav>
-                    </section>
-                <?php endif; ?>
+                        }
+                        ?>
+                        <noscript>
+                            <button type="submit" class="all-hotels__pagination-apply"><?php esc_html_e( 'Apply', 'lbhotel' ); ?></button>
+                        </noscript>
+                    </form>
+                    <nav class="all-hotels__pagination-links" aria-label="<?php esc_attr_e( 'Pagination links', 'lbhotel' ); ?>">
+                        <?php echo wp_kses_post( $pagination_markup ); ?>
+                    </nav>
+                </section>
 
                 <?php if ( function_exists( 'astra_primary_content_after' ) ) { astra_primary_content_after(); } ?>
             </main>
