@@ -261,17 +261,15 @@ get_header();
                         'add_args'  => $pagination_add_args ? $pagination_add_args : false,
                     )
                 );
-                ?>
 
                 $pagination_markup = $pagination_links;
-                if ( ! $pagination_markup ) {
+                if ( empty( $pagination_markup ) ) {
                     /* translators: Pagination fallback when there is only one page of results. */
                     $pagination_markup = sprintf(
                         '<ul class="page-numbers"><li><span class="page-numbers current">%s</span></li></ul>',
                         esc_html__( '1', 'lbhotel' )
                     );
                 }
-
                 ?>
 
                 <section class="all-hotels__pagination" aria-label="<?php esc_attr_e( 'Hotels pagination', 'lbhotel' ); ?>">
