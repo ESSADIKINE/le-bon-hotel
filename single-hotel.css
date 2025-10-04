@@ -1,102 +1,135 @@
 :root {
-    --moroccan-red: #C1272D;
+    --moroccan-red: #d50000;
     --moroccan-green: #006233;
-    --moroccan-sand: #f2efe6;
-    --moroccan-ink: #1f1f1f;
-    --text-light: #ffffff;
-}
-
-* {
-    margin: 0 !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    box-sizing: border-box;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
+    --moroccan-cream: #f8f3eb;
+    --moroccan-shadow: rgba(0, 0, 0, 0.12);
+    --slider-nav-bg: rgba(193, 39, 45, 0.85);
+    --slider-nav-bg-hover: rgba(193, 39, 45, 1);
 }
 
 body.single-lbhotel_hotel,
 body.single-lbhotel_hotel #page,
-body.single-lbhotel_hotel .site,
 body.single-lbhotel_hotel .site-content,
 .lbhotel-single-wrapper,
 .lbhotel-single-wrapper #main,
 .lbhotel-single-article,
 .lbhotel-single-page {
-    width: 100vw;
-    height: 100vh;
-    max-width: 100vw;
-    max-height: 100vh;
-    overflow: hidden;
-    background: var(--moroccan-sand);
-    color: var(--moroccan-ink);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Ensure full viewport height for the single hotel page */
+html, body {
+    height: 100%;
+}
+
+.lbhotel-single-wrapper,
+.lbhotel-single-wrapper #main,
+.lbhotel-single-article,
+.lbhotel-single-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.lbhotel-single-layout {
+    flex: 1 1 auto;
+}
+
+.lbhotel-single-right,
+.lbhotel-map-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.lbhotel-map {
+    flex: 1 1 auto;
 }
 
 .lbhotel-single-page {
+    background: var(--moroccan-cream);
+    background-image: radial-gradient(circle at 20% 20%, rgba(193, 39, 45, 0.08) 0, rgba(193, 39, 45, 0.08) 12px, transparent 13px),
+        radial-gradient(circle at 80% 0, rgba(0, 98, 51, 0.08) 0, rgba(0, 98, 51, 0.08) 10px, transparent 11px);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.lbhotel-single-layout {
     display: flex;
-    flex-direction: row;
+    gap: 0.5rem;
 }
 
 .lbhotel-single-left,
 .lbhotel-single-right {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    gap: 0.5rem;
 }
 
 .lbhotel-single-left {
     flex: 0 0 60%;
-    background: linear-gradient(135deg, rgba(193, 39, 45, 0.1), rgba(0, 98, 51, 0.08));
 }
 
 .lbhotel-single-right {
-    flex: 0 0 40%;
-    background: rgba(0, 0, 0, 0.05);
+    flex: 1 1 40%;
 }
 
 .lbhotel-virtual-tour {
-    flex: 0 0 70%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 0;
+    box-shadow: 0 15px 35px var(--moroccan-shadow);
+    min-height: 70vh;
 }
 
 .lbhotel-virtual-tour iframe {
     width: 100%;
-    max-width: 100%;
     height: 100%;
     border: none;
-    background: #000;
-}
-
-.lbhotel-virtual-tour__placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--moroccan-red);
-    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.15);
 }
 
 .lbhotel-info-card {
-    flex: 0 0 30%;
-    display: flex;
-    align-items: stretch;
-    background: rgba(255, 255, 255, 0.95);
-    color: var(--moroccan-ink);
+    display: grid;
+    grid-template-columns: 30% 1fr 20%;
+    align-items: center;
+    background: 
+    linear-gradient(270deg, transparent 0%, white 50%),
+    linear-gradient(180deg, transparent 0%, white 80%),
+    url("http://172.23.96.1/wordpress/wp-content/uploads/2025/10/background.png") top right no-repeat;
+    background-size: auto 100%;
+    background-color: white;
+    margin: 0;
+    min-height: 100vh;
+    box-shadow: 0 20px 40px var(--moroccan-shadow);
+    padding: 0;
+    height: 30vh;
+    min-height: 30vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.lbhotel-info-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(135deg, rgba(193, 39, 45, 0.08), rgba(0, 98, 51, 0.08));
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.lbhotel-info-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .lbhotel-info-card__media {
-    flex: 0 0 30%;
-    position: relative;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,16 +138,30 @@ body.single-lbhotel_hotel .site-content,
 .lbhotel-slider {
     position: relative;
     width: 100%;
-    height: 100%;
+    aspect-ratio: 4 / 3;
+    /* Fallback for older browsers */
+    height: 0;
+    padding-bottom: 75%; /* 3/4 = 0.75 = 75% */
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Modern browsers with aspect-ratio support */
+@supports (aspect-ratio: 4 / 3) {
+    .lbhotel-slider {
+        height: auto;
+        padding-bottom: 0;
+    }
 }
 
 .lbhotel-slider__track {
-    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    transform: translateX(0);
-    transition: transform 0.5s ease;
+    display: flex;
+    transition: transform 0.6s ease;
 }
 
 .lbhotel-slider__slide {
@@ -122,10 +169,12 @@ body.single-lbhotel_hotel .site-content,
     display: flex;
     align-items: center;
     justify-content: center;
-
+    background: #fff;
+    height: 100%;
 }
 
 .lbhotel-slider__slide img {
+    /* Make images fill the 4:3 slide area */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -135,107 +184,122 @@ body.single-lbhotel_hotel .site-content,
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
     border: none;
-    background: rgba(193, 39, 45, 0.85);
-    color: var(--text-light);
+    background: var(--slider-nav-bg);
+    color: #fff;
     font-size: 1.4rem;
+    display: grid;
+    place-items: center;
     cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+.lbhotel-slider__nav:hover,
+.lbhotel-slider__nav:focus {
+    background: var(--slider-nav-bg-hover);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .lbhotel-slider__nav--prev {
-    left: 0.5rem;
+    left: 0.75rem;
 }
 
 .lbhotel-slider__nav--next {
-    right: 0.5rem;
+    right: 0.75rem;
 }
 
 .lbhotel-slider__dots {
     position: absolute;
+    bottom: 0.75rem;
     left: 50%;
-    bottom: 0.8rem;
     transform: translateX(-50%);
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
 }
 
 .lbhotel-slider__dot {
-    width: 0.6rem;
-    height: 0.6rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
     border: none;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .lbhotel-slider__dot.is-active {
     background: var(--moroccan-green);
+    transform: scale(1.1);
 }
 
 .lbhotel-slider--empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    display: grid;
+    place-items: center;
     color: rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
 .lbhotel-info-card__details {
-    flex: 0 0 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.8rem;
-    padding: 2rem 1.5rem !important;
+    padding: 0 1.5rem;
 }
 
 .lbhotel-info-card__title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    font-size: 1.9rem;
     color: var(--moroccan-red);
+    margin: 0 0 0.5rem;
 }
 
 .lbhotel-info-card__location {
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+    margin: 0 0 0.5rem;
+    color: rgba(0, 0, 0, 0.65);
+    font-weight: 500;
+    letter-spacing: 0.03em;
 }
 
 .lbhotel-info-card__stars {
-    display: flex;
-    gap: 0.25rem;
-    color: var(--moroccan-green);
+    color: #f9a602;
     font-size: 1.2rem;
+    letter-spacing: 0.1em;
 }
 
-.lbhotel-info-card__price {
-    font-size: 1rem;
+.lbhotel-info-card__stars-text {
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    margin-left: 0.4rem;
     font-weight: 600;
 }
 
+.lbhotel-info-card__price {
+    font-weight: 600;
+    color: var(--moroccan-green);
+    margin-top: 0.5rem;
+}
+
 .lbhotel-info-card__actions {
-    flex: 0 0 20%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
     gap: 0.75rem;
-    padding: 1.5rem 1rem !important;
+    justify-items: stretch;
+    padding: 0.5rem !important;
 }
 
 .lbhotel-button {
     display: inline-flex;
-    align-items: center;
     justify-content: center;
-    padding: 0.65rem 1rem !important;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    border-radius: 999px;
     text-decoration: none;
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    border: none;
-    color: var(--text-light);
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.18);
 }
 
 .lbhotel-button--reserve {
@@ -244,176 +308,337 @@ body.single-lbhotel_hotel .site-content,
 
 .lbhotel-button--reserve:hover,
 .lbhotel-button--reserve:focus {
-    background: #004a1c;
+    filter: brightness(0.9);
 }
 
-.lbhotel-button--map {
+.lbhotel-button--map,
+.lbhotel-button--reserve,
+.lbhotel-button--details {
+    color: #fff !important;
+}
+.lbhotel-button--map{
     background: var(--moroccan-red);
 }
 
 .lbhotel-button--map:hover,
 .lbhotel-button--map:focus {
-    background: #8f1c22;
+    filter: brightness(0.9);
 }
 
 .lbhotel-button--details {
-    background: linear-gradient(90deg, var(--moroccan-red), var(--moroccan-green));
+    background: linear-gradient(135deg, var(--moroccan-red), var(--moroccan-green));
+    box-shadow: 0 12px 20px rgba(193, 39, 45, 0.35);
 }
 
 .lbhotel-button--details:hover,
 .lbhotel-button--details:focus {
-    filter: brightness(1.05);
+    box-shadow: 0 18px 24px rgba(0, 98, 51, 0.35);
 }
 
 .lbhotel-map-section {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 25px 50px var(--moroccan-shadow);
+    flex: 1;
 }
 
-.lbhotel-map-toggle {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem !important;
-    background: rgba(193, 39, 45, 0.85);
+.lbhotel-map-section__header h2 {
+    margin: 0;
+    color: var(--moroccan-red);
+    font-size: 1.75rem;
 }
 
-.lbhotel-map-toggle__button {
-    border: none;
-    background: rgba(0, 0, 0, 0.25);
-    color: var(--text-light);
-    padding: 0.5rem 1rem !important;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    cursor: pointer;
+.lbhotel-map-section__header p {
+    margin: 0.5rem 0 1.5rem;
+    color: rgba(0, 0, 0, 0.65);
 }
-
-.lbhotel-map-toggle__button.is-active {
-    background: var(--moroccan-green);
+#primary{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
 }
 
 .lbhotel-map {
-    flex: 1 1 auto;
     width: 100%;
-}
-
-.lbhotel-popup { 
-    max-width: 260px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.lbhotel-popup__image {
-    width: 100%;
+    min-height: 100%;
     overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+    margin: 0% !important;
+    padding: 0% !important;
+    border-radius: 0% !important;
 }
 
-.lbhotel-popup__image img {
-    width: 100%;
-    height: auto;
-    display: block;
+.leaflet-control-layers-toggle {
+    display: none !important; /* hide toggle; list will remain expanded */
+}
+.leaflet-control-layers.leaflet-control-layers-expanded {
+    padding: 0.5rem 0.5rem 0.6rem 0.5rem;
+}
+
+.leaflet-control-layers-list {
+    display: block !important; /* always show the list */
+}
+
+.leaflet-control-layers-overlays,
+.leaflet-control-layers-base {
+    display: block !important;
+}
+
+.leaflet-control-layers label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.leaflet-control-layers-toggle:hover {
+    filter: brightness(1.1);
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 1.25rem;
+    border: 2px solid var(--moroccan-red);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    width: 320px;
+}
+
+.lbhotel-popup {
+    padding: 1rem;
+    max-width: 320px;
+}
+
+@media (max-width: 768px) {
+    .leaflet-popup-content {
+        width: 200px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.5rem;
+        max-width: 200px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+        display: none;
+    }
+}
+
+@media (max-width: 540px) {
+    .leaflet-popup-content {
+        width: 160px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.4rem;
+        max-width: 160px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.7rem;
+        margin: 0.2rem 0;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.7rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__actions {
+        gap: 0.2rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.65rem;
+        display: none;
+    }
 }
 
 .lbhotel-popup h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-
+    margin: 0 0 0.5rem;
     color: var(--moroccan-red);
 }
 
 .lbhotel-popup__meta {
-    font-size: 0.9rem;
+    margin: 0.25rem 0;
+    font-weight: 600;
+    color: var(--moroccan-green);
 }
 
 .lbhotel-popup__stars {
-    color: var(--moroccan-green);
+    color: #f9a602;
+    margin-bottom: 0.5rem;
     letter-spacing: 0.1em;
 }
 
 .lbhotel-popup__actions {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.lbhotel-popup .lbhotel-button {
-    width: 100%;
-    font-size: 0.75rem;
-    padding: 0.45rem 0.75rem !important;
+.lbhotel-popup__actions .lbhotel-button {
+    flex: 1 1 48%;
+    padding: 0.6rem;
+    font-size: 0.7rem;
 }
 
-@media (max-width: 768px) {
-    .lbhotel-popup {
-        max-width: 220px;
-        gap: 0.5rem;
-    }
-
-    .lbhotel-popup__meta {
-        font-size: 0.85rem;
-    }
-
-    .lbhotel-popup__actions,
-    .lbhotel-popup-actions {
-        display: none;
-    }
+.lbhotel-single-content {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-@media (max-width: 1024px) {
-    .lbhotel-single-page {
+@media (max-width: 1200px) {
+    .lbhotel-single-layout {
         flex-direction: column;
+        gap: 1rem;
     }
 
     .lbhotel-single-left,
     .lbhotel-single-right {
-        flex: 0 0 auto;
-        width: 100vw;
-        height: 50vh;
-    }
-
-    .lbhotel-virtual-tour {
-        flex: 0 0 60%;
-    }
-
-    .lbhotel-info-card {
-        flex: 0 0 40%;
-    }
-
-    .lbhotel-map-section {
-        height: 50vh;
-    }
-}
-
-@media (max-width: 768px) {
-    .lbhotel-single-left,
-    .lbhotel-single-right {
-        height: 100vh;
-    }
-
-    .lbhotel-info-card {
-        flex-direction: column;
-    }
-
-    .lbhotel-info-card__media,
-    .lbhotel-info-card__details,
-    .lbhotel-info-card__actions {
-        flex: 0 0 auto;
+        flex: 1 1 auto;
         width: 100%;
     }
 
+    .lbhotel-virtual-tour iframe {
+        width: 100%;
+        height: 45vh;
+    }
+
+    .lbhotel-info-card {
+        grid-template-columns: 100%;
+        text-align: center;
+        gap: 1.25rem;
+        padding: 0;
+        height: auto;
+    }
+
+    .lbhotel-info-card__details {
+        padding: 0;
+    }
+
     .lbhotel-info-card__actions {
-        flex-direction: row;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .lbhotel-single-layout {
         gap: 0.5rem;
-        padding: 1rem !important;
+    }
+
+    .lbhotel-virtual-tour {
+        min-height: 30vh;
+    }
+
+    .lbhotel-info-card {
+        margin: 0.5rem 0;
+        height: auto;
+        padding: 0;
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
     }
 
     .lbhotel-button {
-        flex: 1;
-        font-size: 0.75rem;
-        padding: 0.6rem 0.5rem !important;
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
     }
+
+    .lbhotel-map-section {
+        padding: 0;
+    }
+
+    .lbhotel-map {
+        min-height: 40vh;
+    }
+
+    .lbhotel-slider {
+        aspect-ratio: 4 / 3;
+        padding-bottom: 75%;
+        min-height: 250px;
+    }
+    
+    @supports (aspect-ratio: 4 / 3) {
+        .lbhotel-slider {
+            padding-bottom: 0;
+        }
+    }
+}
+
+@media (max-width: 540px) {
+    .lbhotel-single-layout {
+        gap: 0.25rem;
+    }
+
+    .lbhotel-info-card {
+        padding: 0;
+        margin: 0.25rem 0;
+        height: auto;
+    }
+
+    .lbhotel-info-card__title {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lbhotel-button {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .lbhotel-slider {
+        min-height: 50px;
+    }
+
+    .lbhotel-map {
+        min-height: 35vh;
+    }
+
+    .lbhotel-virtual-tour {
+        min-height: 25vh;
+    }
+}
+.ast-article-single{
+    padding: 0% !important;
+}
+.ast-container{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
+}
+.ast-single-post{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
 }
