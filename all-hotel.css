@@ -36,6 +36,7 @@ body.archive.post-type-archive-lbhotel_hotel {
 }
 
 .all-hotels__filters {
+    margin-top: 1rem;
     position: relative;
     width: 100%;
     z-index: 2;
@@ -85,7 +86,12 @@ body.archive.post-type-archive-lbhotel_hotel {
     padding-right: 2.5rem;
 }
 
+#hotel-search{
+    border-radius: 999px;
+}
+
 .all-hotels__sorting {
+    margin-top: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -103,6 +109,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.03em;
+    width: 100%;
 }
 
 .all-hotels__results span:first-child {
@@ -110,7 +117,6 @@ body.archive.post-type-archive-lbhotel_hotel {
 }
 
 .all-hotels__sort {
-    display: inline-flex;
     align-items: center;
     gap: 0.75rem;
 }
@@ -169,6 +175,7 @@ body.archive.post-type-archive-lbhotel_hotel {
 }
 
 .all-hotels__list {
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -420,7 +427,6 @@ body.archive.post-type-archive-lbhotel_hotel {
     background-size: auto 100%;
     background-color: white;
     margin: 0;
-    min-height: 100vh;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
@@ -505,7 +511,6 @@ body.archive.post-type-archive-lbhotel_hotel {
     display: grid;
     gap: 0.9rem;
     padding: 1.5rem;
-    background: linear-gradient(180deg, rgba(193, 39, 45, 0.08) 0%, rgba(0, 98, 51, 0.08) 100%);
     align-content: center;
 }
 
@@ -583,8 +588,6 @@ body.archive.post-type-archive-lbhotel_hotel {
 }
 
 .all-hotels__pagination-label {
-    display: inline-flex;
-    flex-direction: column;
     gap: 0.5rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -729,7 +732,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     }
 
     .all-hotels__sorting {
-        flex-direction: column;
+        margin-top: 1rem;
         align-items: flex-start;
         gap: 0.85rem;
     }
@@ -766,7 +769,6 @@ body.archive.post-type-archive-lbhotel_hotel {
     .lbhotel-archive-card__actions .lbhotel-button {
         width: 100%;
     }
-}
 
 @media (max-width: 480px) {
     .lbhotel-archive__title {
@@ -775,11 +777,11 @@ body.archive.post-type-archive-lbhotel_hotel {
 }
 
     .all-hotels__sorting {
+        margin-top: 1rem;
         padding: 1rem 1.15rem;
     }
 
     .all-hotels__sort {
-        flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
     }
@@ -793,4 +795,3 @@ body.archive.post-type-archive-lbhotel_hotel {
         height: 2.1rem;
         font-size: 1.05rem;
     }
-}
