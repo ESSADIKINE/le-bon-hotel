@@ -35,11 +35,19 @@ if ( $theme_script_path && file_exists( $theme_script_path ) ) {
 
 $currency_code = function_exists( 'lbhotel_get_option' ) ? lbhotel_get_option( 'default_currency' ) : '';
 
+$per_page_options = array( 5, 10, 20, 50 );
+$default_per_page = 10;
+$requested_per_page = isset( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$per_page          = in_array( $requested_per_page, $per_page_options, true ) ? $requested_per_page : $default_per_page;
+
+$paged = max( 1, get_query_var( 'paged' ) ? (int) get_query_var( 'paged' ) : ( get_query_var( 'page' ) ? (int) get_query_var( 'page' ) : 1 ) );
+
 $hotels_query = new WP_Query(
     array(
         'post_type'      => 'lbhotel_hotel',
         'post_status'    => 'publish',
-        'posts_per_page' => -1,
+        'posts_per_page' => $per_page,
+        'paged'          => $paged,
         'orderby'        => 'date',
         'order'          => 'DESC',
     )
@@ -113,120 +121,121 @@ get_header();
                     </section>
 
                     <?php if ( $hotels_query->have_posts() ) : ?>
-                        <section class="all-hotels__list lbhotel-archive__list" id="hotel-list" aria-live="polite" aria-label="<?php esc_attr_e( 'Hotel results', 'lbhotel' ); ?>">
+                        <section class="all-hotels__list" id="hotel-list" aria-live="polite" aria-label="<?php esc_attr_e( 'Hotel results', 'lbhotel' ); ?>">
                             <?php
                             while ( $hotels_query->have_posts() ) :
                                 $hotels_query->the_post();
 
-                            $post_id = get_the_ID();
+                                $post_id = get_the_ID();
 
-                            $city        = get_post_meta( $post_id, 'lbhotel_city', true );
-                            $region      = get_post_meta( $post_id, 'lbhotel_region', true );
-                            $country     = get_post_meta( $post_id, 'lbhotel_country', true );
-                            $star_rating = (int) get_post_meta( $post_id, 'lbhotel_star_rating', true );
-                            $avg_price   = get_post_meta( $post_id, 'lbhotel_avg_price_per_night', true );
-                            $booking_url = get_post_meta( $post_id, 'lbhotel_booking_url', true );
-                            $latitude    = get_post_meta( $post_id, 'lbhotel_latitude', true );
-                            $longitude   = get_post_meta( $post_id, 'lbhotel_longitude', true );
+                                $city        = get_post_meta( $post_id, 'lbhotel_city', true );
+                                $region      = get_post_meta( $post_id, 'lbhotel_region', true );
+                                $country     = get_post_meta( $post_id, 'lbhotel_country', true );
+                                $star_rating = (int) get_post_meta( $post_id, 'lbhotel_star_rating', true );
+                                $avg_price   = get_post_meta( $post_id, 'lbhotel_avg_price_per_night', true );
+                                $booking_url = get_post_meta( $post_id, 'lbhotel_booking_url', true );
+                                $latitude    = get_post_meta( $post_id, 'lbhotel_latitude', true );
+                                $longitude   = get_post_meta( $post_id, 'lbhotel_longitude', true );
 
-                            $gallery_raw = get_post_meta( $post_id, 'lbhotel_gallery_images', true );
-                            $gallery_ids = is_array( $gallery_raw ) ? $gallery_raw : array_filter( array_map( 'absint', (array) $gallery_raw ) );
+                                $gallery_raw = get_post_meta( $post_id, 'lbhotel_gallery_images', true );
+                                $gallery_ids = is_array( $gallery_raw ) ? $gallery_raw : array_filter( array_map( 'absint', (array) $gallery_raw ) );
 
-                            $gallery_urls = array();
-                            foreach ( $gallery_ids as $attachment_id ) {
-                                $image_url = wp_get_attachment_image_url( $attachment_id, 'large' );
-                                if ( $image_url ) {
-                                    $gallery_urls[] = $image_url;
+                                $gallery_urls = array();
+                                foreach ( $gallery_ids as $attachment_id ) {
+                                    $image_url = wp_get_attachment_image_url( $attachment_id, 'large' );
+                                    if ( $image_url ) {
+                                        $gallery_urls[] = $image_url;
+                                    }
                                 }
-                            }
 
-                            if ( empty( $gallery_urls ) ) {
-                                $featured_image = get_the_post_thumbnail_url( $post_id, 'large' );
-                                if ( $featured_image ) {
-                                    $gallery_urls[] = $featured_image;
+                                if ( empty( $gallery_urls ) ) {
+                                    $featured_image = get_the_post_thumbnail_url( $post_id, 'large' );
+                                    if ( $featured_image ) {
+                                        $gallery_urls[] = $featured_image;
+                                    }
                                 }
-                            }
 
-                            $gallery_urls = array_slice( $gallery_urls, 0, 5 );
+                                $gallery_urls = array_slice( $gallery_urls, 0, 6 );
 
-                            $price_display = '';
-                            if ( '' !== $avg_price && null !== $avg_price ) {
-                                $price_display = is_numeric( $avg_price ) ? number_format_i18n( (float) $avg_price, 2 ) : sanitize_text_field( $avg_price );
-                            }
+                                $price_display = '';
+                                if ( '' !== $avg_price && null !== $avg_price ) {
+                                    $price_display = is_numeric( $avg_price ) ? number_format_i18n( (float) $avg_price, 2 ) : sanitize_text_field( $avg_price );
+                                }
 
-                            $price_text = $price_display;
-                            if ( $price_display && $currency_code ) {
-                                $price_text = sprintf( '%s %s', $currency_code, $price_display );
-                            }
+                                $price_text = $price_display;
+                                if ( $price_display && $currency_code ) {
+                                    $price_text = sprintf( '%s %s', $currency_code, $price_display );
+                                }
 
-                            $map_url = '';
-                            if ( is_numeric( $latitude ) && is_numeric( $longitude ) ) {
-                                $map_url = sprintf( 'https://www.google.com/maps/search/?api=1&query=%s', rawurlencode( $latitude . ',' . $longitude ) );
-                            }
+                                $map_url = '';
+                                if ( is_numeric( $latitude ) && is_numeric( $longitude ) ) {
+                                    $map_url = sprintf( 'https://www.google.com/maps/search/?api=1&query=%s', rawurlencode( $latitude . ',' . $longitude ) );
+                                }
 
-                            $location_parts = array_filter( array( $city, $region, $country ) );
-                            ?>
+                                $location_parts = array_filter( array( $city, $region, $country ) );
+                                ?>
 
-                            <article id="post-<?php the_ID(); ?>" <?php post_class( 'lbhotel-archive-card' ); ?>>
-                                <div class="lbhotel-archive-card__media">
-                                    <?php if ( $gallery_urls ) : ?>
-                                        <div class="lbhotel-slider" data-lbhotel-slider>
-                                            <div class="lbhotel-slider__track">
-                                                <?php foreach ( $gallery_urls as $image_url ) : ?>
-                                                    <div class="lbhotel-slider__slide">
-                                                        <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" />
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                            <?php if ( count( $gallery_urls ) > 1 ) : ?>
-                                                <button type="button" class="lbhotel-slider__nav lbhotel-slider__nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'lbhotel' ); ?>">&#10094;</button>
-                                                <button type="button" class="lbhotel-slider__nav lbhotel-slider__nav--next" aria-label="<?php esc_attr_e( 'Next image', 'lbhotel' ); ?>">&#10095;</button>
-                                                <div class="lbhotel-slider__dots" role="tablist">
-                                                    <?php foreach ( $gallery_urls as $index => $unused ) : ?>
-                                                        <button type="button" class="lbhotel-slider__dot" aria-label="<?php echo esc_attr( sprintf( __( 'Go to image %d', 'lbhotel' ), $index + 1 ) ); ?>"></button>
+                                <section class="lbhotel-info-card" aria-labelledby="hotel-<?php the_ID(); ?>-title">
+                                    <div class="lbhotel-info-card__media">
+                                        <?php if ( $gallery_urls ) : ?>
+                                            <div class="lbhotel-slider" data-lbhotel-slider>
+                                                <div class="lbhotel-slider__track">
+                                                    <?php foreach ( $gallery_urls as $image_url ) : ?>
+                                                        <div class="lbhotel-slider__slide">
+                                                            <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" />
+                                                        </div>
                                                     <?php endforeach; ?>
                                                 </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php else : ?>
-                                        <div class="lbhotel-slider lbhotel-slider--empty">
-                                            <span><?php esc_html_e( 'No images available', 'lbhotel' ); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                                <?php if ( count( $gallery_urls ) > 1 ) : ?>
+                                                    <div class="lbhotel-slider__nav lbhotel-slider__nav--prev" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Previous image', 'lbhotel' ); ?>">&#10094;</div>
+                                                    <div class="lbhotel-slider__nav lbhotel-slider__nav--next" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Next image', 'lbhotel' ); ?>">&#10095;</div>
+                                                    <div class="lbhotel-slider__dots" role="tablist">
+                                                        <?php foreach ( $gallery_urls as $index => $unused ) : ?>
+                                                            <div class="lbhotel-slider__dot" role="tab" tabindex="0" aria-label="<?php echo esc_attr( sprintf( __( 'Go to image %d', 'lbhotel' ), $index + 1 ) ); ?>"></div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else : ?>
+                                            <div class="lbhotel-slider lbhotel-slider--empty">
+                                                <div class="lbhotel-slider__placeholder"><?php esc_html_e( 'Image gallery coming soon.', 'lbhotel' ); ?></div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
 
-                                <div class="lbhotel-archive-card__content">
-                                    <h2 class="lbhotel-archive-card__title">
-                                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                    </h2>
-                                    <?php if ( $location_parts ) : ?>
-                                        <p class="lbhotel-archive-card__location"><?php echo esc_html( implode( ', ', $location_parts ) ); ?></p>
-                                    <?php endif; ?>
+                                    <div class="lbhotel-info-card__details">
+                                        <h2 id="hotel-<?php the_ID(); ?>-title" class="lbhotel-info-card__title">
+                                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                        </h2>
+                                        <?php if ( $location_parts ) : ?>
+                                            <p class="lbhotel-info-card__location"><?php echo esc_html( implode( ', ', $location_parts ) ); ?></p>
+                                        <?php endif; ?>
 
-                                    <?php if ( $star_rating > 0 ) : ?>
-                                        <div class="lbhotel-archive-card__stars" aria-label="<?php echo esc_attr( sprintf( _n( '%d star', '%d stars', $star_rating, 'lbhotel' ), $star_rating ) ); ?>">
-                                            <?php echo wp_kses_post( str_repeat( '<span aria-hidden="true">★</span>', min( 5, $star_rating ) ) ); ?>
-                                        </div>
-                                    <?php endif; ?>
+                                        <?php if ( $star_rating > 0 ) : ?>
+                                            <div class="lbhotel-info-card__stars" aria-label="<?php echo esc_attr( sprintf( _n( '%d star', '%d stars', $star_rating, 'lbhotel' ), $star_rating ) ); ?>">
+                                                <?php echo wp_kses_post( str_repeat( '<span aria-hidden="true">★</span>', min( 5, $star_rating ) ) ); ?>
+                                                <span class="lbhotel-info-card__stars-text"><?php echo esc_html( sprintf( '%d/5', min( 5, max( 0, (int) $star_rating ) ) ) ); ?></span>
+                                            </div>
+                                        <?php endif; ?>
 
-                                    <?php if ( $price_text ) : ?>
-                                        <p class="lbhotel-archive-card__price"><?php echo esc_html( sprintf( __( 'Average price per night: %s', 'lbhotel' ), $price_text ) ); ?></p>
-                                    <?php endif; ?>
-                                </div>
+                                        <?php if ( $price_text ) : ?>
+                                            <p class="lbhotel-info-card__price"><?php echo esc_html( sprintf( __( 'Average price per night: %s', 'lbhotel' ), $price_text ) ); ?></p>
+                                        <?php endif; ?>
+                                    </div>
 
-                                <div class="lbhotel-archive-card__actions">
-                                    <?php if ( $booking_url ) : ?>
-                                        <a class="lbhotel-button lbhotel-button--reserve" href="<?php echo esc_url( $booking_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reserve Booking', 'lbhotel' ); ?></a>
-                                    <?php endif; ?>
+                                    <div class="lbhotel-info-card__actions">
+                                        <?php if ( $booking_url ) : ?>
+                                            <a class="lbhotel-button lbhotel-button--reserve" href="<?php echo esc_url( $booking_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reserve Booking', 'lbhotel' ); ?></a>
+                                        <?php endif; ?>
 
-                                    <?php if ( $map_url ) : ?>
-                                        <a class="lbhotel-button lbhotel-button--map" href="<?php echo esc_url( $map_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Map', 'lbhotel' ); ?></a>
-                                    <?php endif; ?>
+                                        <?php if ( $map_url ) : ?>
+                                            <a class="lbhotel-button lbhotel-button--map" href="<?php echo esc_url( $map_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Map', 'lbhotel' ); ?></a>
+                                        <?php endif; ?>
 
-                                    <a class="lbhotel-button lbhotel-button--details" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'lbhotel' ); ?></a>
-                                </div>
-                            </article>
-                        <?php endwhile; ?>
+                                        <a class="lbhotel-button lbhotel-button--details" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'lbhotel' ); ?></a>
+                                    </div>
+                                </section>
+                            <?php endwhile; ?>
                         </section>
                     <?php else : ?>
                         <p class="lbhotel-archive__empty"><?php esc_html_e( 'No hotels found at this time. Please check back soon.', 'lbhotel' ); ?></p>
@@ -234,6 +243,61 @@ get_header();
                 </div>
 
                 <?php wp_reset_postdata(); ?>
+
+                <?php
+                $pagination_add_args = array();
+                if ( isset( $_GET['per_page'] ) && $per_page ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $pagination_add_args['per_page'] = $per_page;
+                }
+
+                $pagination_links = paginate_links(
+                    array(
+                        'total'     => max( 1, (int) $hotels_query->max_num_pages ),
+                        'current'   => $paged,
+                        'mid_size'  => 2,
+                        'prev_text' => __( 'Previous', 'lbhotel' ),
+                        'next_text' => __( 'Next', 'lbhotel' ),
+                        'type'      => 'list',
+                        'add_args'  => $pagination_add_args ? $pagination_add_args : false,
+                    )
+                );
+                ?>
+
+                <?php if ( $pagination_links ) : ?>
+                    <section class="all-hotels__pagination" aria-label="<?php esc_attr_e( 'Hotels pagination', 'lbhotel' ); ?>">
+                        <form class="all-hotels__pagination-form" method="get">
+                            <label for="hotels-per-page" class="all-hotels__pagination-label">
+                                <span><?php esc_html_e( 'Hotels per page', 'lbhotel' ); ?></span>
+                                <select id="hotels-per-page" name="per_page">
+                                    <?php foreach ( $per_page_options as $option ) : ?>
+                                        <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $per_page, $option ); ?>><?php echo esc_html( $option ); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label>
+                            <?php
+                            if ( ! empty( $_GET ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                                foreach ( $_GET as $key => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                                    if ( 'per_page' === $key || 'paged' === $key ) {
+                                        continue;
+                                    }
+
+                                    $sanitized_key = sanitize_key( $key );
+
+                                    if ( is_string( $value ) ) {
+                                        echo '<input type="hidden" name="' . esc_attr( $sanitized_key ) . '" value="' . esc_attr( wp_unslash( $value ) ) . '" />';
+                                    }
+                                }
+                            }
+                            ?>
+                            <noscript>
+                                <button type="submit" class="all-hotels__pagination-apply"><?php esc_html_e( 'Apply', 'lbhotel' ); ?></button>
+                            </noscript>
+                        </form>
+                        <nav class="all-hotels__pagination-links" aria-label="<?php esc_attr_e( 'Pagination links', 'lbhotel' ); ?>">
+                            <?php echo wp_kses_post( $pagination_links ); ?>
+                        </nav>
+                    </section>
+                <?php endif; ?>
 
                 <?php if ( function_exists( 'astra_primary_content_after' ) ) { astra_primary_content_after(); } ?>
             </main>
