@@ -102,7 +102,40 @@ if (typeof window !== 'undefined') {
         }
     }
 
+    function initPerPageSelector() {
+        const select = document.getElementById('hotels-per-page');
+        if (!select) {
+            return;
+        }
+
+        const options = Array.from(select.options).map((option) => option.value);
+        const params = new URLSearchParams(window.location.search);
+        const current = params.get('per_page');
+
+        if (current && options.includes(current)) {
+            select.value = current;
+        }
+
+        select.addEventListener('change', () => {
+            const value = select.value;
+            const updatedParams = new URLSearchParams(window.location.search);
+
+            if (options.includes(value)) {
+                updatedParams.set('per_page', value);
+            } else {
+                updatedParams.delete('per_page');
+            }
+
+            updatedParams.delete('paged');
+
+            const queryString = updatedParams.toString();
+            const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+            window.location.assign(newUrl);
+        });
+    }
+
     onReady(() => {
         initSliders(document);
+        initPerPageSelector();
     });
 })();

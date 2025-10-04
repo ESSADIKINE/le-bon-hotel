@@ -168,6 +168,13 @@ body.archive.post-type-archive-lbhotel_hotel {
     padding: 0 0.5rem;
 }
 
+.all-hotels__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0 0.5rem;
+}
+
 .lbhotel-archive-card {
     display: grid;
     grid-template-columns: minmax(260px, 30%) minmax(0, 1fr) minmax(200px, 20%);
@@ -397,6 +404,275 @@ body.archive.post-type-archive-lbhotel_hotel {
 .lbhotel-button--details:hover,
 .lbhotel-button--details:focus-visible {
     box-shadow: 0 0 18px rgba(0, 98, 51, 0.35);
+}
+
+/* Archive cards reuse single-hotel Moroccan styling */
+.lbhotel-info-card {
+    display: grid;
+    grid-template-columns: minmax(260px, 32%) minmax(0, 1fr) minmax(220px, 18%);
+    gap: 0;
+    position: relative;
+    isolation: isolate;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
+}
+
+.lbhotel-info-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(135deg, rgba(193, 39, 45, 0.08), rgba(0, 98, 51, 0.08));
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.lbhotel-info-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.lbhotel-info-card__media {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.lbhotel-info-card__details {
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.lbhotel-info-card__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 2.3vw, 2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.lbhotel-info-card__title a {
+    color: var(--moroccan-red);
+    text-decoration: none;
+}
+
+.lbhotel-info-card__title a:hover,
+.lbhotel-info-card__title a:focus-visible {
+    color: var(--moroccan-green);
+}
+
+.lbhotel-info-card__location {
+    margin: 0;
+    color: rgba(30, 30, 30, 0.7);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+.lbhotel-info-card__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+    color: #f6b93b;
+}
+
+.lbhotel-info-card__stars-text {
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: rgba(30, 30, 30, 0.72);
+    font-weight: 600;
+}
+
+.lbhotel-info-card__price {
+    margin: 0;
+    font-weight: 600;
+    color: var(--moroccan-green);
+}
+
+.lbhotel-info-card__actions {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.5rem;
+    background: linear-gradient(180deg, rgba(193, 39, 45, 0.08) 0%, rgba(0, 98, 51, 0.08) 100%);
+    align-content: center;
+}
+
+.lbhotel-info-card__actions .lbhotel-button {
+    width: 100%;
+}
+
+.lbhotel-slider__placeholder {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 2rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.lbhotel-slider--empty {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(193, 39, 45, 0.82), rgba(0, 98, 51, 0.78));
+    color: var(--text-light);
+}
+
+.lbhotel-slider--empty .lbhotel-slider__placeholder {
+    background: none;
+}
+
+@media (max-width: 1024px) {
+    .lbhotel-info-card {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .lbhotel-info-card {
+        border-radius: 18px;
+    }
+
+    .lbhotel-info-card__details {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+.all-hotels__pagination {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    background: linear-gradient(135deg, rgba(193, 39, 45, 0.95), rgba(0, 98, 51, 0.9));
+    color: var(--text-light);
+    border-radius: 20px;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.18);
+}
+
+.all-hotels__pagination-form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.all-hotels__pagination-label {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.all-hotels__pagination-label select {
+    border: none;
+    border-radius: 999px;
+    padding: 0.55rem 2.5rem 0.55rem 1rem;
+    font-weight: 600;
+    color: var(--moroccan-red);
+    background: var(--text-light);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(193, 39, 45, 0.9) 50%),
+        linear-gradient(135deg, rgba(193, 39, 45, 0.9) 50%, transparent 50%);
+    background-position: calc(100% - 22px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+    background-size: 7px 7px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.all-hotels__pagination-label select:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 3px;
+}
+
+.all-hotels__pagination-apply {
+    border: none;
+    border-radius: 999px;
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-light);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.all-hotels__pagination-apply:hover,
+.all-hotels__pagination-apply:focus-visible {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.all-hotels__pagination-links {
+    display: flex;
+    align-items: center;
+}
+
+.all-hotels__pagination-links .page-numbers {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.all-hotels__pagination-links .page-numbers li a,
+.all-hotels__pagination-links .page-numbers li span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    padding: 0 0.75rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.all-hotels__pagination-links .page-numbers li a:hover,
+.all-hotels__pagination-links .page-numbers li a:focus-visible {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+}
+
+.all-hotels__pagination-links .page-numbers .current {
+    background: rgba(255, 255, 255, 0.35);
+    color: var(--moroccan-red);
+}
+
+@media (max-width: 768px) {
+    .all-hotels__pagination {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .all-hotels__pagination-form {
+        justify-content: center;
+    }
+
+    .all-hotels__pagination-links {
+        justify-content: center;
+    }
 }
 
 .lbhotel-archive__empty {
