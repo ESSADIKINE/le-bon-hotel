@@ -17,6 +17,8 @@ $theme_script_path    = $theme_directory_path ? $theme_directory_path . 'all-hot
 $plugin_style_path  = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'all-hotel.css';
 $plugin_script_path = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'all-hotel.js';
 
+wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+
 if ( $theme_style_path && file_exists( $theme_style_path ) ) {
     $style_version = (string) ( filemtime( $theme_style_path ) ?: time() );
     wp_enqueue_style( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.css', array(), $style_version );
@@ -25,12 +27,14 @@ if ( $theme_style_path && file_exists( $theme_style_path ) ) {
     wp_enqueue_style( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.css', array(), $style_version );
 }
 
+wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
+
 if ( $theme_script_path && file_exists( $theme_script_path ) ) {
     $script_version = (string) ( filemtime( $theme_script_path ) ?: time() );
-    wp_enqueue_script( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.js', array(), $script_version, true );
+    wp_enqueue_script( 'lbhotel-all-hotels', $theme_directory_uri . '/all-hotel.js', array( 'leaflet' ), $script_version, true );
 } else {
     $script_version = file_exists( $plugin_script_path ) ? (string) filemtime( $plugin_script_path ) : LBHOTEL_VERSION;
-    wp_enqueue_script( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array(), $script_version, true );
+    wp_enqueue_script( 'lbhotel-all-hotels', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array( 'leaflet' ), $script_version, true );
 }
 
 $currency_code = function_exists( 'lbhotel_get_option' ) ? lbhotel_get_option( 'default_currency' ) : '';
@@ -54,6 +58,8 @@ $hotels_query = new WP_Query(
 );
 
 global $post;
+
+$hotels_payload = array();
 
 get_header();
 ?>
@@ -137,6 +143,11 @@ get_header();
                                 $latitude    = get_post_meta( $post_id, 'lbhotel_latitude', true );
                                 $longitude   = get_post_meta( $post_id, 'lbhotel_longitude', true );
 
+                                $virtual_tour_url = get_post_meta( $post_id, 'virtual_tour_url', true );
+                                if ( ! $virtual_tour_url ) {
+                                    $virtual_tour_url = get_post_meta( $post_id, 'lbhotel_virtual_tour_url', true );
+                                }
+
                                 $gallery_raw = get_post_meta( $post_id, 'lbhotel_gallery_images', true );
                                 $gallery_ids = is_array( $gallery_raw ) ? $gallery_raw : array_filter( array_map( 'absint', (array) $gallery_raw ) );
 
@@ -173,10 +184,34 @@ get_header();
                                 }
 
                                 $location_parts = array_filter( array( $city, $region, $country ) );
+
+                                $hotel_payload = array(
+                                    'id'             => $post_id,
+                                    'title'          => get_the_title(),
+                                    'lat'            => is_numeric( $latitude ) ? (float) $latitude : null,
+                                    'lng'            => is_numeric( $longitude ) ? (float) $longitude : null,
+                                    'city'           => $city,
+                                    'region'         => $region,
+                                    'country'        => $country,
+                                    'price'          => $price_text,
+                                    'stars'          => $star_rating,
+                                    'bookingUrl'     => $booking_url ? esc_url_raw( $booking_url ) : '',
+                                    'mapUrl'         => $map_url ? esc_url_raw( $map_url ) : '',
+                                    'permalink'      => get_permalink(),
+                                    'images'         => $gallery_urls,
+                                    'virtualTourUrl' => $virtual_tour_url ? esc_url_raw( $virtual_tour_url ) : '',
+                                );
+
+                                $hotels_payload[] = $hotel_payload;
                                 ?>
 
-                                <section class="lbhotel-info-card" aria-labelledby="hotel-<?php the_ID(); ?>-title">
-                                    <div class="lbhotel-info-card__media">
+                                <section class="lbhotel-info-card" aria-labelledby="hotel-<?php the_ID(); ?>-title"
+                                    data-hotel='<?php echo esc_attr( wp_json_encode( $hotel_payload ) ); ?>'>
+                                <div class="lbhotel-info-card__media">
+                                    <div class="lbhotel-info-card__icons" role="group" aria-label="<?php esc_attr_e( 'Quick actions', 'lbhotel' ); ?>">
+                                        <div class="lbhotel-icon lbhotel-icon--tour" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Virtual Tour', 'lbhotel' ); ?>" data-tour-url="<?php echo esc_url( $virtual_tour_url ); ?>">🎥</div>
+                                        <div class="lbhotel-icon lbhotel-icon--map" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Map View', 'lbhotel' ); ?>">🗺️</div>
+                                    </div>
                                         <?php if ( $gallery_urls ) : ?>
                                             <div class="lbhotel-slider" data-lbhotel-slider>
                                                 <div class="lbhotel-slider__track">
@@ -242,7 +277,23 @@ get_header();
                     <?php endif; ?>
                 </div>
 
-                <?php wp_reset_postdata(); ?>
+                <?php
+                wp_reset_postdata();
+
+                if ( ! empty( $hotels_payload ) ) {
+                    wp_localize_script(
+                        'lbhotel-all-hotels',
+                        'lbHotelArchiveData',
+                        array(
+                            'hotels'          => array_values( $hotels_payload ),
+                            'fallbackCenter'  => array(
+                                'lat' => 31.7917,
+                                'lng' => -7.0926,
+                            ),
+                        )
+                    );
+                }
+                ?>
 
                 <?php
                 $pagination_add_args = array();
