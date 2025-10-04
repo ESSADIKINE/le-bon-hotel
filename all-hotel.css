@@ -413,7 +413,14 @@ body.archive.post-type-archive-lbhotel_hotel {
     gap: 0;
     position: relative;
     isolation: isolate;
-    background: #ffffff;
+    background:
+        linear-gradient(270deg, transparent 0%, white 50%),
+        linear-gradient(180deg, transparent 0%, white 80%),
+        url("http://172.23.96.1/wordpress/wp-content/uploads/2025/10/background.png") top right no-repeat;
+    background-size: auto 100%;
+    background-color: white;
+    margin: 0;
+    min-height: 100vh;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
@@ -532,6 +539,7 @@ body.archive.post-type-archive-lbhotel_hotel {
 @media (max-width: 1024px) {
     .lbhotel-info-card {
         grid-template-columns: minmax(0, 1fr);
+        min-height: auto;
     }
 
     .lbhotel-info-card__actions {
