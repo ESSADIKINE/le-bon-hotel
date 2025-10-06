@@ -170,6 +170,7 @@ function lbhotel_render_settings_page() {
 
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__( 'Le Bon Hotel Settings', 'lbhotel' ) . '</h1>';
+
     echo '<form action="options.php" method="post">';
     settings_fields( 'lbhotel_settings_group' );
     do_settings_sections( 'lbhotel-settings' );

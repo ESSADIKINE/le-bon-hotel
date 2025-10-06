@@ -29,6 +29,7 @@ require_once LBHOTEL_PLUGIN_DIR . 'includes/post-types.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/taxonomies.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-meta.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/settings.php';
+require_once LBHOTEL_PLUGIN_DIR . 'includes/class-lbhotel-import-export.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/rest-api.php';
 // Shortcodes are disabled per requirements
 // require_once LBHOTEL_PLUGIN_DIR . 'includes/shortcodes.php';
@@ -118,6 +119,9 @@ function lbhotel_check_for_restaurant_cpt() {
     }
 }
 add_action( 'admin_init', 'lbhotel_check_for_restaurant_cpt', 5 );
+
+// Bootstrap import/export tools.
+LBHotel_Import_Export::instance();
 
 if ( ! function_exists( 'lbhotel_enqueue_theme_stylesheet' ) ) {
     /**
