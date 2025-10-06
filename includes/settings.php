@@ -168,8 +168,40 @@ function lbhotel_render_settings_page() {
         return;
     }
 
+    $active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general';
+    $tabs       = array(
+        'general'       => __( 'General', 'lbhotel' ),
+        'import-export' => __( 'Import / Export', 'lbhotel' ),
+    );
+
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__( 'Le Bon Hotel Settings', 'lbhotel' ) . '</h1>';
+    echo '<h2 class="nav-tab-wrapper">';
+
+    foreach ( $tabs as $tab_key => $label ) {
+        $url   = add_query_arg(
+            array(
+                'post_type' => 'lbhotel_hotel',
+                'page'      => 'lbhotel-settings',
+                'tab'       => $tab_key,
+            ),
+            admin_url( 'edit.php' )
+        );
+        $class = 'nav-tab' . ( $active_tab === $tab_key ? ' nav-tab-active' : '' );
+
+        echo '<a href="' . esc_url( $url ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $label ) . '</a>';
+    }
+
+    echo '</h2>';
+
+    if ( 'import-export' === $active_tab ) {
+        if ( class_exists( 'LBHotel_Import_Export' ) ) {
+            LBHotel_Import_Export::instance()->render_tab_content();
+        }
+        echo '</div>';
+        return;
+    }
+
     echo '<form action="options.php" method="post">';
     settings_fields( 'lbhotel_settings_group' );
     do_settings_sections( 'lbhotel-settings' );
