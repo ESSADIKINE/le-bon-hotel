@@ -370,7 +370,7 @@ body.archive.post-type-archive-lbhotel_hotel {
     border-radius: 999px;
     border: none;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.7rem;
     letter-spacing: 0.04em;
     cursor: pointer;
     text-decoration: none;
@@ -855,6 +855,10 @@ body.lbhotel-no-scroll {
     flex-direction: column;
 }
 
+.leaflet-right{
+    right: 50px !important;
+}
+
 .lbhotel-popup-close {
     position: absolute;
     top: 1rem;
@@ -947,7 +951,7 @@ body.lbhotel-no-scroll {
     flex: 1 1 auto;
     text-align: center;
     padding: 0.45rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 @media (max-width: 768px) {
@@ -975,7 +979,7 @@ body.lbhotel-no-scroll {
     }
 
     .lbhotel-popup__actions .lbhotel-button {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         padding: 0.35rem 0.6rem;
     }
 }

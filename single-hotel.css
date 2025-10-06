@@ -38,6 +38,10 @@ html, body {
     flex: 1 1 auto;
 }
 
+.leaflet-right{
+    right: 50px !important;
+}
+
 .lbhotel-single-right,
 .lbhotel-map-section {
     display: flex;
