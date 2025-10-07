@@ -128,6 +128,18 @@ function lbhotel_get_global_field_definitions() {
             'sanitize_callback' => 'lbhotel_sanitize_phone',
             'section'           => 'details',
         ),
+        'vm_rating'                => array(
+            'label'             => __( 'Rating (0-5)', 'lbhotel' ),
+            'type'              => 'number',
+            'input'             => 'number',
+            'sanitize_callback' => 'lbhotel_sanitize_rating',
+            'section'           => 'details',
+            'attributes'        => array(
+                'min'  => '0',
+                'max'  => '5',
+                'step' => '0.1',
+            ),
+        ),
         'lbhotel_gallery_images'   => array(
             'label'             => __( 'Gallery Images', 'lbhotel' ),
             'type'              => 'array',
@@ -342,4 +354,158 @@ function lbhotel_get_fields_for_category( $category_slug ) {
     }
 
     return $fields;
+}
+
+/**
+ * Provide display configuration for each category in the front-end templates.
+ *
+ * @return array<string,array<string,mixed>>
+ */
+function lbhotel_get_category_display_config() {
+    return array(
+        'hotels' => array(
+            'highlights' => array(
+                'vm_hotel_type' => array(
+                    'label' => __( 'Hotel type', 'lbhotel' ),
+                ),
+            ),
+            'details'    => array(
+                'vm_room_types' => array(
+                    'label'     => __( 'Room types', 'lbhotel' ),
+                    'multiline' => true,
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_booking_url',
+                    'label' => __( 'Book now', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+        ),
+        'restaurants' => array(
+            'highlights' => array(
+                'vm_specialties' => array(
+                    'label'     => __( 'Specialties', 'lbhotel' ),
+                    'multiline' => true,
+                ),
+            ),
+            'details'    => array(
+                'vm_opening_hours' => array(
+                    'label'     => __( 'Opening hours', 'lbhotel' ),
+                    'multiline' => true,
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_menu_url',
+                    'label' => __( 'View menu', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+            'secondary_actions' => array(
+                array(
+                    'meta'  => 'vm_booking_url',
+                    'label' => __( 'Reserve', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--ghost',
+                ),
+            ),
+        ),
+        'cultural-events' => array(
+            'highlights' => array(
+                'vm_event_type' => array(
+                    'label' => __( 'Event type', 'lbhotel' ),
+                ),
+            ),
+            'details'    => array(
+                'vm_event_datetime' => array(
+                    'label' => __( 'Event date & time', 'lbhotel' ),
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_ticket_url',
+                    'label' => __( 'Buy tickets', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+            'secondary_actions' => array(
+                array(
+                    'meta'  => 'vm_ticket_info_url',
+                    'label' => __( 'Ticket information', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--ghost',
+                ),
+            ),
+        ),
+        'recreational-activities' => array(
+            'highlights' => array(
+                'vm_activity_type' => array(
+                    'label' => __( 'Activity type', 'lbhotel' ),
+                ),
+            ),
+            'details'    => array(
+                'vm_seasonality' => array(
+                    'label' => __( 'Seasonality', 'lbhotel' ),
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_booking_url',
+                    'label' => __( 'Book activity', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+        ),
+        'shopping' => array(
+            'highlights' => array(
+                'vm_product_categories' => array(
+                    'label'     => __( 'Product categories', 'lbhotel' ),
+                    'multiline' => true,
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_sales_url',
+                    'label' => __( 'View promotions', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+        ),
+        'sports-activities' => array(
+            'highlights' => array(
+                'vm_sport_type' => array(
+                    'label' => __( 'Sport type', 'lbhotel' ),
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_equipment_rental_url',
+                    'label' => __( 'Rent equipment', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+            'secondary_actions' => array(
+                array(
+                    'meta'  => 'vm_booking_url',
+                    'label' => __( 'Book session', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--ghost',
+                ),
+            ),
+        ),
+        'tourist-sites' => array(
+            'highlights' => array(
+                'vm_opening_hours' => array(
+                    'label'     => __( 'Opening hours', 'lbhotel' ),
+                    'multiline' => true,
+                ),
+            ),
+            'actions'    => array(
+                array(
+                    'meta'  => 'vm_ticket_info_url',
+                    'label' => __( 'Ticket information', 'lbhotel' ),
+                    'class' => 'lbhotel-button lbhotel-button--primary',
+                ),
+            ),
+        ),
+    );
 }
