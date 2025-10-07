@@ -161,7 +161,6 @@ function lbhotel_prepare_hotel_for_response( $post, WP_REST_Request $request ) {
         'virtual_tour_url'    => get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true ),
         'contact_phone'       => get_post_meta( $post->ID, 'lbhotel_contact_phone', true ),
         'booking_url'         => get_post_meta( $post->ID, 'lbhotel_booking_url', true ),
-        'rooms'               => get_post_meta( $post->ID, 'lbhotel_rooms', true ),
     );
 
     $terms = wp_get_post_terms( $post->ID, array( 'lbhotel_hotel_type', 'lbhotel_location' ), array( 'fields' => 'all_with_object_id' ) );

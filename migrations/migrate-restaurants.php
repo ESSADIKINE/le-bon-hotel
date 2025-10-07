@@ -129,21 +129,6 @@ function lbhotel_migrate_restaurant_meta( $post_id ) {
         update_post_meta( $post_id, 'lbhotel_booking_url', esc_url_raw( $booking ) );
     }
 
-    // Rooms JSON fallback from seating capacity.
-    $rooms_total = (int) get_post_meta( $post_id, 'seating_capacity', true );
-    if ( $rooms_total ) {
-        $rooms = array(
-            array(
-                'name'         => __( 'Standard Room', 'lbhotel' ),
-                'price'        => lbhotel_sanitize_decimal( get_post_meta( $post_id, 'avg_price', true ) ),
-                'capacity'     => 2,
-                'images'       => array(),
-                'availability' => __( 'Available', 'lbhotel' ),
-            ),
-        );
-        update_post_meta( $post_id, 'lbhotel_rooms', $rooms );
-    }
-
     // Attempt to split address into city when stored in meta.
     $address = get_post_meta( $post_id, 'address', true );
     if ( $address ) {

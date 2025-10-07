@@ -29,9 +29,6 @@ $meta = array(
     'booking_url'         => get_post_meta( $post->ID, 'lbhotel_booking_url', true ),
 );
 
-$rooms = get_post_meta( $post->ID, 'lbhotel_rooms', true );
-$rooms = is_array( $rooms ) ? $rooms : array();
-
 $gallery = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
 $gallery = is_array( $gallery ) ? $gallery : array();
 
@@ -100,26 +97,5 @@ $currency = lbhotel_get_option( 'default_currency' );
         <?php endif; ?>
     </div>
 
-    <?php if ( ! empty( $rooms ) ) : ?>
-        <table class="lbhotel-room-table">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e( 'Room', 'lbhotel' ); ?></th>
-                    <th><?php esc_html_e( 'Capacity', 'lbhotel' ); ?></th>
-                    <th><?php esc_html_e( 'Price per night', 'lbhotel' ); ?></th>
-                    <th><?php esc_html_e( 'Availability', 'lbhotel' ); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ( $rooms as $room ) : ?>
-                    <tr>
-                        <td><?php echo esc_html( $room['name'] ); ?></td>
-                        <td><?php echo esc_html( $room['capacity'] ); ?></td>
-                        <td><?php echo esc_html( $currency ); ?> <?php echo esc_html( $room['price'] ); ?></td>
-                        <td><?php echo esc_html( $room['availability'] ); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+    
 </section>

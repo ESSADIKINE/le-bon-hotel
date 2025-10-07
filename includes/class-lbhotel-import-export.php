@@ -435,9 +435,6 @@ class LBHotel_Import_Export {
                 case 'contact_phone':
                     $value = function_exists( 'lbhotel_sanitize_phone' ) ? lbhotel_sanitize_phone( $value ) : sanitize_text_field( $value );
                     break;
-                case 'rooms':
-                    $value = $this->prepare_rooms_value( $value );
-                    break;
                 default:
                     if ( is_array( $value ) ) {
                         $value = array_map( 'sanitize_text_field', $value );
@@ -500,36 +497,6 @@ class LBHotel_Import_Export {
         }
 
         return $sanitized;
-    }
-
-    /**
-     * Sanitize rooms payload for storage.
-     *
-     * @param mixed $value Raw value.
-     * @return array
-     */
-    protected function prepare_rooms_value( $value ) {
-        if ( is_string( $value ) ) {
-            $value = trim( $value );
-
-            if ( '' === $value ) {
-                return array();
-            }
-
-            if ( $this->looks_like_json( $value ) ) {
-                $decoded = json_decode( $value, true );
-
-                if ( null !== $decoded ) {
-                    $value = $decoded;
-                }
-            }
-        }
-
-        if ( function_exists( 'lbhotel_sanitize_rooms' ) ) {
-            return lbhotel_sanitize_rooms( $value );
-        }
-
-        return is_array( $value ) ? array_values( $value ) : array();
     }
 
     /**
@@ -783,9 +750,6 @@ class LBHotel_Import_Export {
             case 'phone_number':
             case 'telephone':
                 return 'contact_phone';
-            case 'roomsjson':
-            case 'rooms_data':
-                return 'rooms';
         }
 
         return $normalized;
@@ -982,13 +946,6 @@ class LBHotel_Import_Export {
                     case 'has_parking':
                         $meta_value = $meta_value ? 1 : 0;
                         break;
-                    case 'rooms':
-                        if ( function_exists( 'lbhotel_sanitize_rooms' ) ) {
-                            $meta_value = lbhotel_sanitize_rooms( $meta_value );
-                        } elseif ( ! is_array( $meta_value ) ) {
-                            $meta_value = array();
-                        }
-                        break;
                     case 'avg_price_per_night':
                         if ( '' !== $meta_value && null !== $meta_value && function_exists( 'lbhotel_sanitize_decimal' ) ) {
                             $meta_value = lbhotel_sanitize_decimal( $meta_value );
@@ -1116,10 +1073,6 @@ class LBHotel_Import_Export {
                 'type' => 'meta',
                 'key'  => 'lbhotel_virtual_tour_url',
             ),
-            'rooms'              => array(
-                'type' => 'meta',
-                'key'  => 'lbhotel_rooms',
-            ),
         );
     }
 
@@ -1156,15 +1109,6 @@ class LBHotel_Import_Export {
             'lat'                => '33.5731',
             'lng'                => '-7.5898',
             'virtual_tour_url'   => 'https://example.com/virtual-tour',
-            'rooms'              => array(
-                array(
-                    'name'         => __( 'Deluxe Suite', 'lbhotel' ),
-                    'price'        => 220,
-                    'capacity'     => 2,
-                    'images'       => array(),
-                    'availability' => __( 'Year-round', 'lbhotel' ),
-                ),
-            ),
         );
     }
 
