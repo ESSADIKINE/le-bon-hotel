@@ -11,37 +11,66 @@ if ( ! isset( $post ) || ! $post instanceof WP_Post ) {
     return;
 }
 
+$post_id = $post->ID;
+
 $meta = array(
-    'address'             => get_post_meta( $post->ID, 'lbhotel_address', true ),
-    'city'                => get_post_meta( $post->ID, 'lbhotel_city', true ),
-    'region'              => get_post_meta( $post->ID, 'lbhotel_region', true ),
-    'postal_code'         => get_post_meta( $post->ID, 'lbhotel_postal_code', true ),
-    'country'             => get_post_meta( $post->ID, 'lbhotel_country', true ),
-    'checkin_time'        => get_post_meta( $post->ID, 'lbhotel_checkin_time', true ),
-    'checkout_time'       => get_post_meta( $post->ID, 'lbhotel_checkout_time', true ),
-    'rooms_total'         => get_post_meta( $post->ID, 'lbhotel_rooms_total', true ),
-    'avg_price_per_night' => get_post_meta( $post->ID, 'lbhotel_avg_price_per_night', true ),
-    'has_free_breakfast'  => (bool) get_post_meta( $post->ID, 'lbhotel_has_free_breakfast', true ),
-    'has_parking'         => (bool) get_post_meta( $post->ID, 'lbhotel_has_parking', true ),
-    'star_rating'         => (int) get_post_meta( $post->ID, 'lbhotel_star_rating', true ),
-    'virtual_tour_url'    => get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true ),
-    'contact_phone'       => get_post_meta( $post->ID, 'lbhotel_contact_phone', true ),
-    'booking_url'         => get_post_meta( $post->ID, 'lbhotel_booking_url', true ),
+    'street_address'   => lbhotel_get_meta_value( $post_id, 'vm_street_address', '' ),
+    'city'             => lbhotel_get_meta_value( $post_id, 'vm_city', '' ),
+    'region'           => lbhotel_get_meta_value( $post_id, 'vm_region', '' ),
+    'postal_code'      => lbhotel_get_meta_value( $post_id, 'vm_postal_code', '' ),
+    'country'          => lbhotel_get_meta_value( $post_id, 'vm_country', '' ),
+    'virtual_tour_url' => lbhotel_get_meta_value( $post_id, 'vm_virtual_tour_url', '' ),
+    'google_map_url'   => lbhotel_get_meta_value( $post_id, 'vm_google_map_url', '' ),
+    'contact_phone'    => lbhotel_get_meta_value( $post_id, 'vm_contact_phone', '' ),
+    'booking_url'      => lbhotel_get_meta_value( $post_id, 'vm_booking_url', '' ),
+    'hotel_type'       => lbhotel_get_meta_value( $post_id, 'vm_hotel_type', '' ),
+    'rating'           => lbhotel_get_meta_value( $post_id, 'vm_rating', '' ),
 );
 
-$gallery = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
-$gallery = is_array( $gallery ) ? $gallery : array();
+$gallery = lbhotel_sanitize_gallery_images( lbhotel_get_meta_value( $post_id, 'vm_gallery', array() ) );
 
-$currency = lbhotel_get_option( 'default_currency' );
+$location_parts = array_filter( array(
+    $meta['street_address'],
+    $meta['city'],
+    $meta['region'],
+    $meta['postal_code'],
+    $meta['country'],
+) );
+
+$location = implode( ', ', $location_parts );
+
+$rating_markup = '';
+
+if ( '' !== $meta['rating'] ) {
+    $numeric_rating = max( 0, min( 5, (float) $meta['rating'] ) );
+    $rounded_rating = round( $numeric_rating * 2 ) / 2;
+    $rating_label   = sprintf( __( 'Rated %s out of 5', 'lbhotel' ), number_format_i18n( $rounded_rating, 1 ) );
+
+    $rating_markup = sprintf(
+        '<div class="lbhotel-rating" data-lbhotel-rating="%1$s"><span class="lbhotel-rating__stars" aria-hidden="true"></span><span class="screen-reader-text">%2$s</span><span class="lbhotel-rating__value">%3$s</span></div>',
+        esc_attr( $rounded_rating ),
+        esc_html( $rating_label ),
+        esc_html( number_format_i18n( $rounded_rating, 1 ) )
+    );
+}
 ?>
 <section class="lbhotel-single" id="hotel-<?php echo esc_attr( $post->ID ); ?>">
-    <header>
+    <header class="lbhotel-single__header">
         <h2><?php echo esc_html( get_the_title( $post ) ); ?></h2>
-        <p class="lbhotel-card__meta">
-            <span class="lbhotel-stars"><?php echo str_repeat( '★', $meta['star_rating'] ); ?></span>
-            <span class="lbhotel-price"><?php echo esc_html( $currency ); ?> <?php echo esc_html( $meta['avg_price_per_night'] ); ?> / <?php esc_html_e( 'night', 'lbhotel' ); ?></span>
-        </p>
-        <p class="lbhotel-address"><?php echo esc_html( trim( implode( ', ', array_filter( array( $meta['address'], $meta['city'], $meta['region'], $meta['postal_code'], $meta['country'] ) ) ) ) ); ?></p>
+        <?php if ( $rating_markup ) : ?>
+            <div class="lbhotel-single__rating">
+                <?php echo $rating_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            </div>
+        <?php endif; ?>
+        <?php if ( $meta['hotel_type'] ) : ?>
+            <p class="lbhotel-single__tag"><?php echo esc_html( $meta['hotel_type'] ); ?></p>
+        <?php endif; ?>
+        <?php if ( $location ) : ?>
+            <p class="lbhotel-address"><?php echo esc_html( $location ); ?></p>
+        <?php endif; ?>
+        <?php if ( $post->post_excerpt ) : ?>
+            <p class="lbhotel-single__excerpt"><?php echo esc_html( wp_trim_words( $post->post_excerpt, 40 ) ); ?></p>
+        <?php endif; ?>
     </header>
 
     <?php if ( has_post_thumbnail( $post ) ) : ?>
@@ -58,44 +87,46 @@ $currency = lbhotel_get_option( 'default_currency' );
         </div>
     <?php endif; ?>
 
-    <div class="lbhotel-amenities">
-        <?php if ( $meta['has_free_breakfast'] ) : ?>
-            <span class="lbhotel-amenity"><span class="lbhotel-icon-breakfast" aria-hidden="true"></span><?php esc_html_e( 'Free breakfast', 'lbhotel' ); ?></span>
+    <div class="lbhotel-single__actions">
+        <?php if ( $meta['virtual_tour_url'] ) : ?>
+            <a class="lbhotel-button lbhotel-button--primary" href="<?php echo esc_url( $meta['virtual_tour_url'] ); ?>" target="_blank" rel="noopener">
+                <?php esc_html_e( 'Virtual tour', 'lbhotel' ); ?>
+            </a>
         <?php endif; ?>
-        <?php if ( $meta['has_parking'] ) : ?>
-            <span class="lbhotel-amenity"><span class="lbhotel-icon-parking" aria-hidden="true"></span><?php esc_html_e( 'Parking available', 'lbhotel' ); ?></span>
+        <?php if ( $meta['google_map_url'] ) : ?>
+            <a class="lbhotel-button lbhotel-button--ghost" href="<?php echo esc_url( $meta['google_map_url'] ); ?>" target="_blank" rel="noopener">
+                <?php esc_html_e( 'View on map', 'lbhotel' ); ?>
+            </a>
         <?php endif; ?>
-        <?php if ( $meta['rooms_total'] ) : ?>
-            <span class="lbhotel-amenity"><span class="lbhotel-icon-bed" aria-hidden="true"></span><?php echo esc_html( sprintf( _n( '%d room', '%d rooms', (int) $meta['rooms_total'], 'lbhotel' ), (int) $meta['rooms_total'] ) ); ?></span>
+        <?php if ( $meta['booking_url'] ) : ?>
+            <a class="lbhotel-button lbhotel-button--ghost" href="<?php echo esc_url( $meta['booking_url'] ); ?>" target="_blank" rel="noopener">
+                <?php esc_html_e( 'Book now', 'lbhotel' ); ?>
+            </a>
         <?php endif; ?>
     </div>
 
     <div class="lbhotel-overview">
-        <?php echo wpautop( wp_kses_post( $post->post_content ) ); ?>
+        <?php echo apply_filters( 'the_content', $post->post_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
     </div>
 
     <div class="lbhotel-info-grid">
-        <div>
-            <h3><?php esc_html_e( 'Check-in / Check-out', 'lbhotel' ); ?></h3>
-            <p><?php esc_html_e( 'Check-in', 'lbhotel' ); ?>: <?php echo esc_html( $meta['checkin_time'] ?: lbhotel_get_option( 'default_checkin_time' ) ); ?><br />
-            <?php esc_html_e( 'Check-out', 'lbhotel' ); ?>: <?php echo esc_html( $meta['checkout_time'] ?: lbhotel_get_option( 'default_checkout_time' ) ); ?></p>
-        </div>
-        <div>
-            <h3><?php esc_html_e( 'Contact', 'lbhotel' ); ?></h3>
-            <?php if ( $meta['contact_phone'] ) : ?>
-                <p><?php esc_html_e( 'Phone', 'lbhotel' ); ?>: <a href="tel:<?php echo esc_attr( preg_replace( '/\s+/', '', $meta['contact_phone'] ) ); ?>"><?php echo esc_html( $meta['contact_phone'] ); ?></a></p>
-            <?php endif; ?>
-            <?php if ( $meta['virtual_tour_url'] ) : ?>
-                <p><a href="<?php echo esc_url( $meta['virtual_tour_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Virtual tour', 'lbhotel' ); ?></a></p>
-            <?php endif; ?>
-        </div>
-        <?php if ( $meta['booking_url'] ) : ?>
+        <?php if ( $meta['contact_phone'] ) : ?>
             <div>
-                <h3><?php esc_html_e( 'Booking', 'lbhotel' ); ?></h3>
-                <a class="lbhotel-button lbhotel-button--primary" href="<?php echo esc_url( $meta['booking_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Book this hotel', 'lbhotel' ); ?></a>
+                <h3><?php esc_html_e( 'Contact', 'lbhotel' ); ?></h3>
+                <p><?php esc_html_e( 'Phone', 'lbhotel' ); ?>: <a href="tel:<?php echo esc_attr( preg_replace( '/\s+/', '', $meta['contact_phone'] ) ); ?>"><?php echo esc_html( $meta['contact_phone'] ); ?></a></p>
+            </div>
+        <?php endif; ?>
+        <?php if ( $meta['google_map_url'] ) : ?>
+            <div>
+                <h3><?php esc_html_e( 'Location', 'lbhotel' ); ?></h3>
+                <p><a href="<?php echo esc_url( $meta['google_map_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open Google Maps', 'lbhotel' ); ?></a></p>
+            </div>
+        <?php endif; ?>
+        <?php if ( $meta['virtual_tour_url'] ) : ?>
+            <div>
+                <h3><?php esc_html_e( 'Experience', 'lbhotel' ); ?></h3>
+                <p><a href="<?php echo esc_url( $meta['virtual_tour_url'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Launch virtual tour', 'lbhotel' ); ?></a></p>
             </div>
         <?php endif; ?>
     </div>
-
-    
 </section>
