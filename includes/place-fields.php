@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function lbhotel_get_place_category_labels() {
     return array(
-        'hotels'                 => __( 'Hotels', 'lbhotel' ),
-        'restaurants'            => __( 'Restaurants', 'lbhotel' ),
-        'tourist-sites'          => __( 'Tourist Sites', 'lbhotel' ),
-        'recreational-activities'=> __( 'Recreational Activities', 'lbhotel' ),
-        'shopping'               => __( 'Shopping', 'lbhotel' ),
-        'sports-activities'      => __( 'Sports Activities', 'lbhotel' ),
-        'cultural-events'        => __( 'Cultural Events', 'lbhotel' ),
+        'hotels'                  => __( 'Hotels', 'lbhotel' ),
+        'restaurants'             => __( 'Restaurants', 'lbhotel' ),
+        'tourist-sites'           => __( 'Tourist Sites', 'lbhotel' ),
+        'recreational-activities' => __( 'Recreational Activities', 'lbhotel' ),
+        'shopping'                => __( 'Shopping', 'lbhotel' ),
+        'sports-activities'       => __( 'Sports Activities', 'lbhotel' ),
+        'cultural-events'         => __( 'Cultural Events', 'lbhotel' ),
     );
 }
 
@@ -50,7 +50,7 @@ function lbhotel_get_place_category_descriptions() {
  */
 function lbhotel_get_global_field_definitions() {
     return array(
-        'lbhotel_virtual_tour_url' => array(
+        'vm_virtual_tour_url' => array(
             'label'             => __( 'Virtual Tour URL', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'url',
@@ -58,50 +58,50 @@ function lbhotel_get_global_field_definitions() {
             'section'           => 'details',
             'placeholder'       => 'https://',
         ),
-        'lbhotel_google_maps_url'  => array(
-            'label'             => __( 'Google Maps URL', 'lbhotel' ),
+        'vm_google_map_url'  => array(
+            'label'             => __( 'Google Map URL', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'url',
             'sanitize_callback' => 'esc_url_raw',
             'section'           => 'location',
             'placeholder'       => 'https://maps.google.com/',
         ),
-        'lbhotel_address'          => array(
-            'label'             => __( 'Street Address or Landmark', 'lbhotel' ),
+        'vm_street_address'  => array(
+            'label'             => __( 'Street Address', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'sanitize_text_field',
             'section'           => 'location',
         ),
-        'lbhotel_city'             => array(
+        'vm_city'            => array(
             'label'             => __( 'City', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'sanitize_text_field',
             'section'           => 'location',
         ),
-        'lbhotel_region'           => array(
+        'vm_region'          => array(
             'label'             => __( 'Region/State', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'sanitize_text_field',
             'section'           => 'location',
         ),
-        'lbhotel_postal_code'      => array(
+        'vm_postal_code'     => array(
             'label'             => __( 'Postal Code', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'sanitize_text_field',
             'section'           => 'location',
         ),
-        'lbhotel_country'          => array(
+        'vm_country'         => array(
             'label'             => __( 'Country', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'sanitize_text_field',
             'section'           => 'location',
         ),
-        'lbhotel_latitude'         => array(
+        'vm_latitude'        => array(
             'label'             => __( 'Latitude', 'lbhotel' ),
             'type'              => 'number',
             'input'             => 'number',
@@ -111,7 +111,7 @@ function lbhotel_get_global_field_definitions() {
                 'step' => '0.000001',
             ),
         ),
-        'lbhotel_longitude'        => array(
+        'vm_longitude'       => array(
             'label'             => __( 'Longitude', 'lbhotel' ),
             'type'              => 'number',
             'input'             => 'number',
@@ -121,14 +121,26 @@ function lbhotel_get_global_field_definitions() {
                 'step' => '0.000001',
             ),
         ),
-        'lbhotel_contact_phone'    => array(
+        'vm_contact_phone'   => array(
             'label'             => __( 'Contact Phone', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'text',
             'sanitize_callback' => 'lbhotel_sanitize_phone',
             'section'           => 'details',
         ),
-        'lbhotel_gallery_images'   => array(
+        'vm_rating'          => array(
+            'label'             => __( 'Rating (0-5)', 'lbhotel' ),
+            'type'              => 'number',
+            'input'             => 'number',
+            'sanitize_callback' => 'lbhotel_sanitize_rating',
+            'section'           => 'details',
+            'attributes'        => array(
+                'min'  => '0',
+                'max'  => '5',
+                'step' => '0.1',
+            ),
+        ),
+        'vm_gallery'         => array(
             'label'             => __( 'Gallery Images', 'lbhotel' ),
             'type'              => 'array',
             'input'             => 'gallery',
@@ -147,7 +159,7 @@ function lbhotel_get_global_field_definitions() {
  */
 function lbhotel_get_category_field_definitions() {
     return array(
-        'lbhotel_booking_url'        => array(
+        'vm_booking_url' => array(
             'label'             => __( 'Booking URL', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'url',
@@ -155,29 +167,21 @@ function lbhotel_get_category_field_definitions() {
             'applies_to'        => array( 'hotels', 'recreational-activities' ),
             'placeholder'       => 'https://',
         ),
-        'lbhotel_room_types'         => array(
-            'label'             => __( 'Room Types', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'textarea',
-            'sanitize_callback' => 'lbhotel_sanitize_multiline_text',
-            'applies_to'        => array( 'hotels' ),
-            'description'       => __( 'List different room types separated by commas or new lines.', 'lbhotel' ),
-        ),
-        'lbhotel_hotel_type'         => array(
+        'vm_hotel_type' => array(
             'label'             => __( 'Hotel Type', 'lbhotel' ),
             'type'              => 'string',
-            'input'             => 'text',
+            'input'             => 'select',
+            'options'           => array(
+                'Apartment' => __( 'Apartment', 'lbhotel' ),
+                'Boutique'  => __( 'Boutique', 'lbhotel' ),
+                'Business'  => __( 'Business', 'lbhotel' ),
+                'Hostel'    => __( 'Hostel', 'lbhotel' ),
+                'Resort'    => __( 'Resort', 'lbhotel' ),
+            ),
             'sanitize_callback' => 'sanitize_text_field',
             'applies_to'        => array( 'hotels' ),
         ),
-        'lbhotel_price_range'        => array(
-            'label'             => __( 'Price Range', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'hotels' ),
-        ),
-        'lbhotel_menu_url'           => array(
+        'vm_menu_url' => array(
             'label'             => __( 'Menu URL', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'url',
@@ -185,120 +189,28 @@ function lbhotel_get_category_field_definitions() {
             'applies_to'        => array( 'restaurants' ),
             'placeholder'       => 'https://',
         ),
-        'lbhotel_specialties'        => array(
+        'vm_specialties' => array(
             'label'             => __( 'Specialties', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'textarea',
             'sanitize_callback' => 'lbhotel_sanitize_multiline_text',
             'applies_to'        => array( 'restaurants' ),
-            'description'       => __( 'Highlight signature dishes or cuisines.', 'lbhotel' ),
         ),
-        'lbhotel_opening_hours'      => array(
+        'vm_opening_hours' => array(
             'label'             => __( 'Opening Hours', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'textarea',
             'sanitize_callback' => 'lbhotel_sanitize_multiline_text',
             'applies_to'        => array( 'restaurants', 'tourist-sites' ),
-            'description'       => __( 'Provide daily opening hours.', 'lbhotel' ),
         ),
-        'lbhotel_reservation_url'    => array(
-            'label'             => __( 'Reservation URL or Phone', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'restaurants' ),
-        ),
-        'lbhotel_ticket_price_url'   => array(
-            'label'             => __( 'Ticket Price URL', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'url',
-            'sanitize_callback' => 'esc_url_raw',
-            'applies_to'        => array( 'tourist-sites', 'cultural-events' ),
-            'placeholder'       => 'https://',
-        ),
-        'lbhotel_event_schedule_url' => array(
-            'label'             => __( 'Event Schedule URL', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'url',
-            'sanitize_callback' => 'esc_url_raw',
-            'applies_to'        => array( 'tourist-sites', 'cultural-events' ),
-            'placeholder'       => 'https://',
-        ),
-        'lbhotel_activity_type'      => array(
-            'label'             => __( 'Activity Type', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'recreational-activities' ),
-        ),
-        'lbhotel_seasonality'        => array(
-            'label'             => __( 'Seasonality', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'recreational-activities' ),
-        ),
-        'lbhotel_product_categories' => array(
-            'label'             => __( 'Product Categories', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'textarea',
-            'sanitize_callback' => 'lbhotel_sanitize_multiline_text',
-            'applies_to'        => array( 'shopping' ),
-            'description'       => __( 'List the main product categories offered.', 'lbhotel' ),
-        ),
-        'lbhotel_store_type'         => array(
-            'label'             => __( 'Store Type', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'shopping' ),
-        ),
-        'lbhotel_sales_url'          => array(
-            'label'             => __( 'Sales or Promotions URL', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'url',
-            'sanitize_callback' => 'esc_url_raw',
-            'applies_to'        => array( 'shopping' ),
-            'placeholder'       => 'https://',
-        ),
-        'lbhotel_sport_type'         => array(
-            'label'             => __( 'Sport Type', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'sports-activities' ),
-        ),
-        'lbhotel_equipment_rental_url' => array(
-            'label'             => __( 'Equipment Rental URL', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'url',
-            'sanitize_callback' => 'esc_url_raw',
-            'applies_to'        => array( 'sports-activities' ),
-            'placeholder'       => 'https://',
-        ),
-        'lbhotel_training_schedule_url' => array(
-            'label'             => __( 'Training Schedule URL', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'url',
-            'sanitize_callback' => 'esc_url_raw',
-            'applies_to'        => array( 'sports-activities' ),
-            'placeholder'       => 'https://',
-        ),
-        'lbhotel_event_date_time'    => array(
+        'vm_event_datetime' => array(
             'label'             => __( 'Event Date & Time', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'datetime-local',
             'sanitize_callback' => 'lbhotel_sanitize_datetime_local',
             'applies_to'        => array( 'cultural-events' ),
         ),
-        'lbhotel_event_type'         => array(
-            'label'             => __( 'Event Type', 'lbhotel' ),
-            'type'              => 'string',
-            'input'             => 'text',
-            'sanitize_callback' => 'sanitize_text_field',
-            'applies_to'        => array( 'cultural-events' ),
-        ),
-        'lbhotel_ticket_url'         => array(
+        'vm_ticket_url' => array(
             'label'             => __( 'Ticket URL', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'url',
@@ -306,13 +218,57 @@ function lbhotel_get_category_field_definitions() {
             'applies_to'        => array( 'cultural-events' ),
             'placeholder'       => 'https://',
         ),
-        'lbhotel_training_schedule'  => array(
-            'label'             => __( 'Training Schedule', 'lbhotel' ),
+        'vm_event_type' => array(
+            'label'             => __( 'Event Type', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'text',
+            'sanitize_callback' => 'sanitize_text_field',
+            'applies_to'        => array( 'cultural-events' ),
+        ),
+        'vm_activity_type' => array(
+            'label'             => __( 'Activity Type', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'text',
+            'sanitize_callback' => 'sanitize_text_field',
+            'applies_to'        => array( 'recreational-activities' ),
+        ),
+        'vm_product_categories' => array(
+            'label'             => __( 'Product Categories', 'lbhotel' ),
             'type'              => 'string',
             'input'             => 'textarea',
             'sanitize_callback' => 'lbhotel_sanitize_multiline_text',
+            'applies_to'        => array( 'shopping' ),
+        ),
+        'vm_sales_url' => array(
+            'label'             => __( 'Sales URL', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'url',
+            'sanitize_callback' => 'esc_url_raw',
+            'applies_to'        => array( 'shopping' ),
+            'placeholder'       => 'https://',
+        ),
+        'vm_sport_type' => array(
+            'label'             => __( 'Sport Type', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'text',
+            'sanitize_callback' => 'sanitize_text_field',
             'applies_to'        => array( 'sports-activities' ),
-            'description'       => __( 'Provide training times or class details.', 'lbhotel' ),
+        ),
+        'vm_equipment_rental_url' => array(
+            'label'             => __( 'Equipment Rental URL', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'url',
+            'sanitize_callback' => 'esc_url_raw',
+            'applies_to'        => array( 'sports-activities' ),
+            'placeholder'       => 'https://',
+        ),
+        'vm_ticket_info_url' => array(
+            'label'             => __( 'Ticket Info URL', 'lbhotel' ),
+            'type'              => 'string',
+            'input'             => 'url',
+            'sanitize_callback' => 'esc_url_raw',
+            'applies_to'        => array( 'tourist-sites' ),
+            'placeholder'       => 'https://',
         ),
     );
 }

@@ -13,7 +13,7 @@ Le Bon Hotel transforms WordPress into a hotel directory complete with REST API 
 
 * Manage hotels with the dedicated **Hotel** custom post type (`lbhotel_hotel`).
 * Capture detailed hotel data: star rating, address, check-in/out, room inventory, amenities, contact details, galleries, and booking URLs.
-* Display hotels on the front-end with responsive cards, an interactive map data feed, and Gutenberg-ready shortcodes.
+* Display hotels on the front-end with responsive cards, an interactive map data feed, and purpose-built templates.
 * Integrate via the REST API namespace `lbhotel/v1` for decoupled experiences and headless builds.
 * Migrate existing "Le Bon Resto" restaurants with one click and keep all gallery images, ratings, and addresses.
 
@@ -24,10 +24,10 @@ Le Bon Hotel transforms WordPress into a hotel directory complete with REST API 
 3. Visit **Hotels → Settings** to configure defaults (check-in/out time, currency, booking widget).
 4. If you previously used the restaurant version, click **Run migration** on the settings page to convert data.
 
-== Shortcodes ==
+== Front-end templates ==
 
-* `[lbhotel_list limit=10 city="Casablanca" stars="4"]`
-* `[lbhotel_single id=123]`
+The plugin ships a full template loader that renders category archives and single entries with unified layouts across Hotels,
+Restaurants, Cultural Events, Recreational Activities, Shopping, Sports Activities, and Tourist Sites.
 
 == REST API ==
 

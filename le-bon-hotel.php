@@ -33,8 +33,6 @@ require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-meta.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/settings.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/class-lbhotel-import-export.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/rest-api.php';
-// Shortcodes are disabled per requirements
-// require_once LBHOTEL_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/assets.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-notices.php';
 require_once LBHOTEL_PLUGIN_DIR . 'migrations/migrate-restaurants.php';

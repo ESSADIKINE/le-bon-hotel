@@ -184,6 +184,15 @@ function lbhotel_render_meta_input_field( $meta_key, $definition, $value ) {
         case 'textarea':
             echo '<textarea class="widefat" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $meta_key ) . '" rows="4"' . $attributes . '>' . esc_textarea( $value ) . '</textarea>';
             break;
+        case 'select':
+            $options = isset( $definition['options'] ) && is_array( $definition['options'] ) ? $definition['options'] : array();
+            echo '<select class="widefat" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $meta_key ) . '"' . $attributes . '>';
+            echo '<option value="">' . esc_html__( 'Select an option', 'lbhotel' ) . '</option>';
+            foreach ( $options as $option_value => $option_label ) {
+                echo '<option value="' . esc_attr( $option_value ) . '"' . selected( $value, $option_value, false ) . '>' . esc_html( $option_label ) . '</option>';
+            }
+            echo '</select>';
+            break;
         case 'number':
         case 'url':
         case 'text':
@@ -222,6 +231,14 @@ function lbhotel_save_single_meta_field( $post_id, $meta_key, $definition ) {
         }
 
         $value = call_user_func( $sanitize, $raw );
+
+        if ( 'select' === ( $definition['input'] ?? '' ) ) {
+            $options = isset( $definition['options'] ) && is_array( $definition['options'] ) ? array_keys( $definition['options'] ) : array();
+            if ( ! in_array( $value, $options, true ) ) {
+                delete_post_meta( $post_id, $meta_key );
+                return;
+            }
+        }
 
         if ( is_string( $value ) ) {
             $trimmed_value = trim( $value );
@@ -413,7 +430,7 @@ function lbhotel_render_category_meta_box( $post ) {
  * @param WP_Post $post Post object.
  */
 function lbhotel_render_media_meta_box( $post ) {
-    $gallery    = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
+    $gallery    = get_post_meta( $post->ID, 'vm_gallery', true );
     $gallery    = lbhotel_sanitize_gallery_images( $gallery );
     $max_images = lbhotel_get_gallery_max_images();
     $remaining  = max( 0, $max_images - count( $gallery ) );
@@ -432,9 +449,9 @@ function lbhotel_render_media_meta_box( $post ) {
         echo '<li class="lbhotel-gallery-item">';
         echo '<div class="lbhotel-gallery-thumb">' . $thumbnail . '</div>';
         echo '<label class="lbhotel-gallery-remove">';
-        echo '<input type="checkbox" name="lbhotel_gallery_remove[]" value="' . esc_attr( $image_id ) . '" /> ' . esc_html__( 'Remove', 'lbhotel' );
+        echo '<input type="checkbox" name="vm_gallery_remove[]" value="' . esc_attr( $image_id ) . '" /> ' . esc_html__( 'Remove', 'lbhotel' );
         echo '</label>';
-        echo '<input type="hidden" name="lbhotel_existing_gallery[]" value="' . esc_attr( $image_id ) . '" />';
+        echo '<input type="hidden" name="vm_existing_gallery[]" value="' . esc_attr( $image_id ) . '" />';
         echo '</li>';
     }
 
@@ -446,7 +463,7 @@ function lbhotel_render_media_meta_box( $post ) {
 
     $disabled_attribute = ( $max_images > 0 && $remaining <= 0 ) ? ' disabled="disabled"' : '';
 
-    echo '<p><input type="file" id="lbhotel_gallery_upload" name="lbhotel_gallery_upload[]" accept="image/*" multiple' . $disabled_attribute . ' /></p>';
+    echo '<p><input type="file" id="lbhotel_gallery_upload" name="vm_gallery_upload[]" accept="image/*" multiple' . $disabled_attribute . ' /></p>';
 
     if ( $max_images > 0 ) {
         if ( $remaining > 0 ) {
@@ -502,13 +519,13 @@ function lbhotel_save_meta( $post_id, $post ) {
     }
 
     $existing_gallery = array();
-    if ( isset( $_POST['lbhotel_existing_gallery'] ) ) {
-        $existing_gallery = array_map( 'absint', (array) wp_unslash( $_POST['lbhotel_existing_gallery'] ) );
+    if ( isset( $_POST['vm_existing_gallery'] ) ) {
+        $existing_gallery = array_map( 'absint', (array) wp_unslash( $_POST['vm_existing_gallery'] ) );
     }
 
     $removed_gallery = array();
-    if ( isset( $_POST['lbhotel_gallery_remove'] ) ) {
-        $removed_gallery = array_map( 'absint', (array) wp_unslash( $_POST['lbhotel_gallery_remove'] ) );
+    if ( isset( $_POST['vm_gallery_remove'] ) ) {
+        $removed_gallery = array_map( 'absint', (array) wp_unslash( $_POST['vm_gallery_remove'] ) );
     }
 
     $gallery = array();
@@ -523,12 +540,12 @@ function lbhotel_save_meta( $post_id, $post ) {
 
     $max_images = lbhotel_get_gallery_max_images();
 
-    if ( isset( $_FILES['lbhotel_gallery_upload'] ) && isset( $_FILES['lbhotel_gallery_upload']['name'] ) && is_array( $_FILES['lbhotel_gallery_upload']['name'] ) ) {
+    if ( isset( $_FILES['vm_gallery_upload'] ) && isset( $_FILES['vm_gallery_upload']['name'] ) && is_array( $_FILES['vm_gallery_upload']['name'] ) ) {
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
         require_once ABSPATH . 'wp-admin/includes/media.php';
 
-        $uploads = $_FILES['lbhotel_gallery_upload'];
+        $uploads = $_FILES['vm_gallery_upload'];
 
         foreach ( $uploads['name'] as $index => $unused ) {
             if ( empty( $uploads['name'][ $index ] ) ) {
@@ -543,7 +560,7 @@ function lbhotel_save_meta( $post_id, $post ) {
                 break;
             }
 
-            $file_key = 'lbhotel_gallery_upload_' . $index;
+            $file_key = 'vm_gallery_upload_' . $index;
             $_FILES[ $file_key ] = array(
                 'name'     => sanitize_file_name( wp_unslash( $uploads['name'][ $index ] ) ),
                 'type'     => $uploads['type'][ $index ],
@@ -575,9 +592,9 @@ function lbhotel_save_meta( $post_id, $post ) {
     $gallery = lbhotel_sanitize_gallery_images( $gallery );
 
     if ( ! empty( $gallery ) ) {
-        update_post_meta( $post_id, 'lbhotel_gallery_images', $gallery );
+        update_post_meta( $post_id, 'vm_gallery', $gallery );
     } else {
-        delete_post_meta( $post_id, 'lbhotel_gallery_images' );
+        delete_post_meta( $post_id, 'vm_gallery' );
     }
 }
 
