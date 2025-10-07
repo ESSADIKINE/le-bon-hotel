@@ -114,3 +114,32 @@
     content: '\1F3D9';
     margin-right: 4px;
 }
+
+.lbhotel-import-export-page .lbhotel-page-intro {
+    max-width: 760px;
+    color: #50575e;
+}
+
+.lbhotel-import-export-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.lbhotel-card.card {
+    padding: 20px;
+}
+
+.lbhotel-card .button {
+    margin-right: 8px;
+}
+
+.lbhotel-card .description {
+    color: #646970;
+}
+
+.lbhotel-export-form,
+.lbhotel-import-form {
+    margin-bottom: 0.75rem;
+}
