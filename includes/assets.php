@@ -63,11 +63,7 @@ function lbhotel_enqueue_admin_assets( $hook ) {
 
     }
 
-    if ( 'lbhotel_hotel_page_hotel-import-export' === $hook ) {
-        wp_enqueue_style( 'lbhotel-admin' );
-    }
-
-    if ( 'lbhotel_hotel_page_hotel-import-export' === $hook ) {
+    if ( 'lbhotel_hotel_page_places-import-export' === $hook ) {
         wp_enqueue_style( 'lbhotel-admin' );
     }
 }
