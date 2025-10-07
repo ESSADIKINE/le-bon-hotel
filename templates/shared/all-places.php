@@ -29,6 +29,18 @@ $default_message  = __( 'Browse immersive experiences and essential details for 
 $archive_title    = $default_title;
 $archive_intro    = $default_message;
 $category_term    = is_tax( 'lbhotel_place_category' ) ? get_queried_object() : null;
+$global_secondary = array(
+    array(
+        'meta'  => 'vm_virtual_tour_url',
+        'label' => __( 'Virtual tour', 'lbhotel' ),
+        'class' => 'lbhotel-button lbhotel-button--ghost',
+    ),
+    array(
+        'meta'  => 'vm_google_map_url',
+        'label' => __( 'Map', 'lbhotel' ),
+        'class' => 'lbhotel-button lbhotel-button--ghost',
+    ),
+);
 
 if ( $category_term instanceof WP_Term ) {
     $archive_title = $category_term->name;
