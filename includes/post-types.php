@@ -69,8 +69,13 @@ function lbhotel_register_post_type() {
  */
 function lbhotel_filter_hotel_permalink( $permalink, $post ) {
     if ( $post && 'lbhotel_hotel' === $post->post_type ) {
-        // Canonical single URL: /place/{slug}/
-        return home_url( '/place/' . $post->post_name . '/' );
+        $category_slug = lbhotel_get_primary_category_slug( $post->ID );
+        $base_slug     = lbhotel_get_category_single_rewrite_slug( $category_slug );
+        $base_slug     = trim( $base_slug, '/' );
+
+        $path = $base_slug ? $base_slug . '/' . $post->post_name : $post->post_name;
+
+        return home_url( user_trailingslashit( $path ) );
     }
 
     return $permalink;
@@ -81,9 +86,25 @@ add_filter( 'post_type_link', 'lbhotel_filter_hotel_permalink', 10, 2 );
  * Add rewrite rules for custom single permalink /hotel-{slug}.
  */
 function lbhotel_add_hotel_rewrite_rules() {
-    // Canonical: /place/{slug}
+    $categories = lbhotel_get_category_template_map();
+
+    foreach ( $categories as $slug => $config ) {
+        $single_slug  = trim( lbhotel_get_category_single_rewrite_slug( $slug ), '/' );
+        $archive_slug = trim( lbhotel_get_category_archive_rewrite_slug( $slug ), '/' );
+
+        if ( $single_slug ) {
+            add_rewrite_rule( '^' . $single_slug . '/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
+        }
+
+        if ( $archive_slug ) {
+            add_rewrite_rule( '^' . $archive_slug . '/?$', 'index.php?lbhotel_place_category=' . $slug, 'top' );
+            add_rewrite_rule( '^' . $archive_slug . '/page/([0-9]+)/?$', 'index.php?lbhotel_place_category=' . $slug . '&paged=$matches[1]', 'top' );
+        }
+    }
+
+    // Canonical fallback: /place/{slug}
     add_rewrite_rule( '^place/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
-    // Backward-compat: /hotel-{slug} (maps to name={slug})
+    // Backward compatibility: /hotel-{slug} (maps to name={slug})
     add_rewrite_rule( '^hotel-([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
 
     $categories = lbhotel_get_place_category_labels();
