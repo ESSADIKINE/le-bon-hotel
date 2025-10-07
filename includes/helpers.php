@@ -85,6 +85,50 @@ function lbhotel_sanitize_decimal( $value ) {
 }
 
 /**
+ * Sanitize multi-line text fields while preserving line breaks.
+ *
+ * @param mixed $value Raw value.
+ * @return string
+ */
+function lbhotel_sanitize_multiline_text( $value ) {
+    if ( is_array( $value ) ) {
+        $value = implode( "\n", $value );
+    }
+
+    $value = str_replace( array( "\r\n", "\r" ), "\n", (string) $value );
+    $value = preg_replace( '/\n+/', "\n", $value );
+
+    $lines = array_map( 'sanitize_text_field', explode( "\n", $value ) );
+    $lines = array_filter( $lines, static function ( $line ) {
+        return '' !== trim( $line );
+    } );
+
+    return implode( "\n", $lines );
+}
+
+/**
+ * Sanitize datetime-local input values.
+ *
+ * @param mixed $value Raw value.
+ * @return string
+ */
+function lbhotel_sanitize_datetime_local( $value ) {
+    $value = trim( (string) $value );
+
+    if ( '' === $value ) {
+        return '';
+    }
+
+    $normalized = str_replace( ' ', 'T', $value );
+
+    if ( preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/', $normalized ) ) {
+        return $normalized;
+    }
+
+    return '';
+}
+
+/**
  * Bootstrap Gutenberg blocks (placeholder for future block registration).
  */
 function lbhotel_bootstrap_blocks() {

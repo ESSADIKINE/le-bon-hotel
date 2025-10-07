@@ -14,30 +14,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function lbhotel_register_post_type() {
     $labels = array(
-        'name'                  => _x( 'Hotels', 'Post type general name', 'lbhotel' ),
-        'singular_name'         => _x( 'Hotel', 'Post type singular name', 'lbhotel' ),
-        'menu_name'             => _x( 'Hotels', 'Admin Menu text', 'lbhotel' ),
-        'name_admin_bar'        => _x( 'Hotel', 'Add New on Toolbar', 'lbhotel' ),
+        'name'                  => _x( 'Virtual Places', 'Post type general name', 'lbhotel' ),
+        'singular_name'         => _x( 'Virtual Place', 'Post type singular name', 'lbhotel' ),
+        'menu_name'             => _x( 'Virtual Places', 'Admin Menu text', 'lbhotel' ),
+        'name_admin_bar'        => _x( 'Virtual Place', 'Add New on Toolbar', 'lbhotel' ),
         'add_new'               => __( 'Add New', 'lbhotel' ),
-        'add_new_item'          => __( 'Add New Hotel', 'lbhotel' ),
-        'new_item'              => __( 'New Hotel', 'lbhotel' ),
-        'edit_item'             => __( 'Edit Hotel', 'lbhotel' ),
-        'view_item'             => __( 'View Hotel', 'lbhotel' ),
-        'all_items'             => __( 'All Hotels', 'lbhotel' ),
-        'search_items'          => __( 'Search Hotels', 'lbhotel' ),
-        'parent_item_colon'     => __( 'Parent Hotels:', 'lbhotel' ),
-        'not_found'             => __( 'No hotels found.', 'lbhotel' ),
-        'not_found_in_trash'    => __( 'No hotels found in Trash.', 'lbhotel' ),
-        'featured_image'        => __( 'Hotel cover image', 'lbhotel' ),
-        'set_featured_image'    => __( 'Set hotel cover image', 'lbhotel' ),
-        'remove_featured_image' => __( 'Remove hotel cover image', 'lbhotel' ),
-        'use_featured_image'    => __( 'Use as hotel cover image', 'lbhotel' ),
-        'archives'              => __( 'Hotel archives', 'lbhotel' ),
-        'insert_into_item'      => __( 'Insert into hotel', 'lbhotel' ),
-        'uploaded_to_this_item' => __( 'Uploaded to this hotel', 'lbhotel' ),
-        'filter_items_list'     => __( 'Filter hotels list', 'lbhotel' ),
-        'items_list_navigation' => __( 'Hotels list navigation', 'lbhotel' ),
-        'items_list'            => __( 'Hotels list', 'lbhotel' ),
+        'add_new_item'          => __( 'Add New Virtual Place', 'lbhotel' ),
+        'new_item'              => __( 'New Virtual Place', 'lbhotel' ),
+        'edit_item'             => __( 'Edit Virtual Place', 'lbhotel' ),
+        'view_item'             => __( 'View Virtual Place', 'lbhotel' ),
+        'all_items'             => __( 'All Virtual Places', 'lbhotel' ),
+        'search_items'          => __( 'Search Virtual Places', 'lbhotel' ),
+        'parent_item_colon'     => __( 'Parent Virtual Places:', 'lbhotel' ),
+        'not_found'             => __( 'No places found.', 'lbhotel' ),
+        'not_found_in_trash'    => __( 'No places found in Trash.', 'lbhotel' ),
+        'featured_image'        => __( 'Place cover image', 'lbhotel' ),
+        'set_featured_image'    => __( 'Set place cover image', 'lbhotel' ),
+        'remove_featured_image' => __( 'Remove place cover image', 'lbhotel' ),
+        'use_featured_image'    => __( 'Use as place cover image', 'lbhotel' ),
+        'archives'              => __( 'Virtual place archives', 'lbhotel' ),
+        'insert_into_item'      => __( 'Insert into virtual place', 'lbhotel' ),
+        'uploaded_to_this_item' => __( 'Uploaded to this place', 'lbhotel' ),
+        'filter_items_list'     => __( 'Filter virtual places list', 'lbhotel' ),
+        'items_list_navigation' => __( 'Virtual places list navigation', 'lbhotel' ),
+        'items_list'            => __( 'Virtual places list', 'lbhotel' ),
     );
 
     $args = array(
@@ -46,7 +46,7 @@ function lbhotel_register_post_type() {
         'has_archive'        => true,
         'show_in_rest'       => true,
         'rewrite'            => array(
-            'slug'       => 'all',
+            'slug'       => 'places',
             'with_front' => false,
         ),
         'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'revisions' ),
@@ -69,8 +69,8 @@ function lbhotel_register_post_type() {
  */
 function lbhotel_filter_hotel_permalink( $permalink, $post ) {
     if ( $post && 'lbhotel_hotel' === $post->post_type ) {
-        // Canonical single URL: /hotel/{slug}/
-        return home_url( '/hotel/' . $post->post_name . '/' );
+        // Canonical single URL: /place/{slug}/
+        return home_url( '/place/' . $post->post_name . '/' );
     }
 
     return $permalink;
@@ -81,8 +81,8 @@ add_filter( 'post_type_link', 'lbhotel_filter_hotel_permalink', 10, 2 );
  * Add rewrite rules for custom single permalink /hotel-{slug}.
  */
 function lbhotel_add_hotel_rewrite_rules() {
-    // Canonical: /hotel/{slug}
-    add_rewrite_rule( '^hotel/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
+    // Canonical: /place/{slug}
+    add_rewrite_rule( '^place/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
     // Backward-compat: /hotel-{slug} (maps to name={slug})
     add_rewrite_rule( '^hotel-([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
 }
@@ -96,9 +96,8 @@ add_action( 'init', 'lbhotel_add_hotel_rewrite_rules', 9 );
  */
 function lbhotel_manage_hotel_columns( $columns ) {
     $insert = array(
-        'lbhotel_star_rating' => __( 'Stars', 'lbhotel' ),
-        'lbhotel_city'        => __( 'City', 'lbhotel' ),
-        'lbhotel_rooms_total' => __( 'Rooms', 'lbhotel' ),
+        'lbhotel_primary_category' => __( 'Category', 'lbhotel' ),
+        'lbhotel_city'             => __( 'City', 'lbhotel' ),
     );
 
     $position = array_search( 'date', array_keys( $columns ), true );
@@ -123,17 +122,19 @@ add_filter( 'manage_lbhotel_hotel_posts_columns', 'lbhotel_manage_hotel_columns'
  */
 function lbhotel_render_hotel_columns( $column, $post_id ) {
     switch ( $column ) {
-        case 'lbhotel_star_rating':
-            $rating = get_post_meta( $post_id, 'lbhotel_star_rating', true );
-            echo $rating ? esc_html( $rating ) . '★' : '&mdash;';
+        case 'lbhotel_primary_category':
+            $terms = wp_get_post_terms( $post_id, 'lbhotel_place_category' );
+            if ( empty( $terms ) || is_wp_error( $terms ) ) {
+                echo '&mdash;';
+                break;
+            }
+
+            $names = wp_list_pluck( $terms, 'name' );
+            echo esc_html( implode( ', ', $names ) );
             break;
         case 'lbhotel_city':
             $city = get_post_meta( $post_id, 'lbhotel_city', true );
             echo $city ? esc_html( $city ) : '&mdash;';
-            break;
-        case 'lbhotel_rooms_total':
-            $rooms = get_post_meta( $post_id, 'lbhotel_rooms_total', true );
-            echo $rooms ? esc_html( $rooms ) : '&mdash;';
             break;
     }
 }
@@ -149,33 +150,24 @@ function lbhotel_register_admin_filters() {
         return;
     }
 
-    $selected_city = isset( $_GET['lbhotel_city'] ) ? sanitize_text_field( wp_unslash( $_GET['lbhotel_city'] ) ) : '';
-    $selected_star = isset( $_GET['lbhotel_star_rating'] ) ? sanitize_text_field( wp_unslash( $_GET['lbhotel_star_rating'] ) ) : '';
-    $selected_type = isset( $_GET['lbhotel_hotel_type'] ) ? sanitize_text_field( wp_unslash( $_GET['lbhotel_hotel_type'] ) ) : '';
+    $selected_city      = isset( $_GET['lbhotel_city'] ) ? sanitize_text_field( wp_unslash( $_GET['lbhotel_city'] ) ) : '';
+    $selected_category  = isset( $_GET['lbhotel_place_category'] ) ? sanitize_text_field( wp_unslash( $_GET['lbhotel_place_category'] ) ) : '';
 
     // City filter.
     echo '<label for="lbhotel-filter-city" class="screen-reader-text">' . esc_html__( 'Filter by city', 'lbhotel' ) . '</label>';
     echo '<input type="text" id="lbhotel-filter-city" name="lbhotel_city" value="' . esc_attr( $selected_city ) . '" placeholder="' . esc_attr__( 'City', 'lbhotel' ) . '" />';
 
-    // Star rating filter.
-    echo '<label for="lbhotel-filter-star" class="screen-reader-text">' . esc_html__( 'Filter by star rating', 'lbhotel' ) . '</label>';
-    echo '<select id="lbhotel-filter-star" name="lbhotel_star_rating">';
-    echo '<option value="">' . esc_html__( 'All star ratings', 'lbhotel' ) . '</option>';
-    for ( $i = 1; $i <= 5; $i++ ) {
-        echo '<option value="' . esc_attr( $i ) . '" ' . selected( (string) $i, $selected_star, false ) . '>' . esc_html( sprintf( _n( '%d star', '%d stars', $i, 'lbhotel' ), $i ) ) . '</option>';
-    }
-    echo '</select>';
-
-    // Hotel type filter via taxonomy.
+    // Category filter via taxonomy.
     $terms = get_terms( array(
-        'taxonomy'   => 'lbhotel_hotel_type',
+        'taxonomy'   => 'lbhotel_place_category',
         'hide_empty' => false,
     ) );
-    echo '<label for="lbhotel-filter-type" class="screen-reader-text">' . esc_html__( 'Filter by hotel type', 'lbhotel' ) . '</label>';
-    echo '<select id="lbhotel-filter-type" name="lbhotel_hotel_type">';
-    echo '<option value="">' . esc_html__( 'All hotel types', 'lbhotel' ) . '</option>';
+
+    echo '<label for="lbhotel-filter-category" class="screen-reader-text">' . esc_html__( 'Filter by category', 'lbhotel' ) . '</label>';
+    echo '<select id="lbhotel-filter-category" name="lbhotel_place_category">';
+    echo '<option value="">' . esc_html__( 'All categories', 'lbhotel' ) . '</option>';
     foreach ( $terms as $term ) {
-        echo '<option value="' . esc_attr( $term->slug ) . '" ' . selected( $term->slug, $selected_type, false ) . '>' . esc_html( $term->name ) . '</option>';
+        echo '<option value="' . esc_attr( $term->slug ) . '" ' . selected( $term->slug, $selected_category, false ) . '>' . esc_html( $term->name ) . '</option>';
     }
     echo '</select>';
 }
@@ -207,23 +199,16 @@ function lbhotel_filter_admin_query( $query ) {
         );
     }
 
-    if ( ! empty( $_GET['lbhotel_star_rating'] ) ) {
-        $meta_query[] = array(
-            'key'   => 'lbhotel_star_rating',
-            'value' => lbhotel_sanitize_int( $_GET['lbhotel_star_rating'] ),
-        );
-    }
-
     if ( ! empty( $meta_query ) ) {
         $query->set( 'meta_query', $meta_query );
     }
 
-    if ( ! empty( $_GET['lbhotel_hotel_type'] ) ) {
+    if ( ! empty( $_GET['lbhotel_place_category'] ) ) {
         $query->set( 'tax_query', array(
             array(
-                'taxonomy' => 'lbhotel_hotel_type',
+                'taxonomy' => 'lbhotel_place_category',
                 'field'    => 'slug',
-                'terms'    => sanitize_text_field( wp_unslash( $_GET['lbhotel_hotel_type'] ) ),
+                'terms'    => sanitize_text_field( wp_unslash( $_GET['lbhotel_place_category'] ) ),
             ),
         ) );
     }

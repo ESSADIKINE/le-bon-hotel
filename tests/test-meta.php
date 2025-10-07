@@ -7,6 +7,8 @@ class LBHotel_Meta_Test extends WP_UnitTestCase {
 
     public function setUp(): void {
         parent::setUp();
+        lbhotel_register_post_type();
+        lbhotel_register_taxonomies();
         lbhotel_register_meta_fields();
     }
 
@@ -15,22 +17,24 @@ class LBHotel_Meta_Test extends WP_UnitTestCase {
         $user_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
         wp_set_current_user( $user_id );
 
-        $_POST['lbhotel_meta_nonce']            = wp_create_nonce( 'lbhotel_save_meta' );
-        $_POST['lbhotel_avg_price_per_night']   = '150,75';
-        $_POST['lbhotel_star_rating']           = '5';
-        $_POST['lbhotel_checkin_time']          = '15:00';
-        $_POST['lbhotel_checkout_time']         = '11:00';
-        $_POST['lbhotel_contact_phone']         = '+212 6 11 22 33 44';
-        $_POST['lbhotel_has_free_breakfast']    = '1';
-        $_POST['lbhotel_has_parking']           = '1';
-        $_POST['lbhotel_rooms_total']           = '80';
+        $_POST['lbhotel_meta_nonce']                   = wp_create_nonce( 'lbhotel_save_meta' );
+        $_POST['lbhotel_virtual_tour_url']             = 'https://example.com/tour';
+        $_POST['lbhotel_google_maps_url']              = ' https://maps.google.com/?q=31.7,-7.0 ';
+        $_POST['lbhotel_contact_phone']                = '+212 6 11 22 33 44';
+        $_POST['lbhotel_latitude']                     = '31.7917';
+        $_POST['lbhotel_longitude']                    = '-7.0926';
+        $_POST['lbhotel_opening_hours']                = "Mon-Fri: 9-18\nSat: 10-14";
+        $_POST['tax_input']['lbhotel_place_category']  = array( 'restaurants' );
 
         lbhotel_save_meta( $post_id, get_post( $post_id ) );
 
-        $this->assertSame( 150.75, get_post_meta( $post_id, 'lbhotel_avg_price_per_night', true ) );
-        $this->assertSame( 5, (int) get_post_meta( $post_id, 'lbhotel_star_rating', true ) );
+        $this->assertSame( 'https://example.com/tour', get_post_meta( $post_id, 'lbhotel_virtual_tour_url', true ) );
+        $this->assertSame( 'https://maps.google.com/?q=31.7,-7.0', get_post_meta( $post_id, 'lbhotel_google_maps_url', true ) );
         $this->assertSame( '+212 6 11 22 33 44', get_post_meta( $post_id, 'lbhotel_contact_phone', true ) );
-        $this->assertSame( 80, (int) get_post_meta( $post_id, 'lbhotel_rooms_total', true ) );
+        $this->assertSame( 31.7917, get_post_meta( $post_id, 'lbhotel_latitude', true ) );
+        $this->assertSame( -7.0926, get_post_meta( $post_id, 'lbhotel_longitude', true ) );
+        $this->assertSame( "Mon-Fri: 9-18\nSat: 10-14", get_post_meta( $post_id, 'lbhotel_opening_hours', true ) );
+
         unset( $_POST );
     }
 }

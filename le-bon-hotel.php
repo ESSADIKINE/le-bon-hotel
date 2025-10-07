@@ -25,6 +25,7 @@ define( 'LBHOTEL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LBHOTEL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once LBHOTEL_PLUGIN_DIR . 'includes/helpers.php';
+require_once LBHOTEL_PLUGIN_DIR . 'includes/place-fields.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/post-types.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/taxonomies.php';
 require_once LBHOTEL_PLUGIN_DIR . 'includes/admin-meta.php';
