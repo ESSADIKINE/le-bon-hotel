@@ -1,0 +1,194 @@
+:root {
+    --lbhotel-primary: #c1272d;
+    --lbhotel-secondary: #006233;
+    --lbhotel-cream: #f8f3eb;
+    --lbhotel-muted: #5c5c5c;
+}
+
+.lbhotel-archive {
+    margin: 0 auto 4rem;
+    max-width: 1200px;
+    padding: 2rem 1.5rem 4rem;
+}
+
+.lbhotel-archive__header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.lbhotel-archive__title {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+}
+
+.lbhotel-archive__intro {
+    max-width: 720px;
+    margin: 1rem auto 0;
+    color: var(--lbhotel-muted);
+}
+
+.lbhotel-archive__grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.lbhotel-archive__item {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.lbhotel-archive__thumbnail {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.lbhotel-archive__thumb {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 4px solid rgba(193, 39, 45, 0.35);
+}
+
+.lbhotel-archive__placeholder {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 20px, rgba(0,0,0,0.12) 20px, rgba(0,0,0,0.12) 40px);
+}
+
+.lbhotel-archive__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    flex: 1;
+}
+
+.lbhotel-archive__name {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.lbhotel-archive__name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.lbhotel-archive__rating {
+    display: flex;
+    align-items: center;
+}
+
+.lbhotel-rating--compact .lbhotel-rating__stars {
+    font-size: 1rem;
+}
+
+.lbhotel-rating--compact .lbhotel-rating__value {
+    display: none;
+}
+
+.lbhotel-archive__location {
+    margin: 0;
+    color: var(--lbhotel-muted);
+}
+
+.lbhotel-archive__excerpt {
+    margin: 0;
+    color: var(--lbhotel-muted);
+    font-size: 0.95rem;
+}
+
+.lbhotel-archive__highlights {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.lbhotel-archive__highlights li {
+    display: flex;
+    gap: 0.45rem;
+    font-size: 0.95rem;
+}
+
+.lbhotel-archive__highlight-label {
+    font-weight: 600;
+    color: var(--lbhotel-secondary);
+}
+
+.lbhotel-archive__highlight-value {
+    color: var(--lbhotel-muted);
+}
+
+.lbhotel-archive__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.lbhotel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.lbhotel-button:hover,
+.lbhotel-button:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.lbhotel-button--primary {
+    background: var(--lbhotel-primary);
+    color: #fff;
+}
+
+.lbhotel-button--ghost {
+    background: transparent;
+    color: var(--lbhotel-primary);
+    border: 1px solid currentColor;
+}
+
+.lbhotel-archive__contact {
+    margin: 0;
+    font-weight: 600;
+    color: var(--lbhotel-primary);
+}
+
+.lbhotel-archive__pagination {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.lbhotel-archive__pagination .page-numbers {
+    display: inline-block;
+    margin: 0 0.35rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.lbhotel-archive__pagination .page-numbers.current,
+.lbhotel-archive__pagination .page-numbers:hover,
+.lbhotel-archive__pagination .page-numbers:focus-visible {
+    background: var(--lbhotel-primary);
+    color: #fff;
+}

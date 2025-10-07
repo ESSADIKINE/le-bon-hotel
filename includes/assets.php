@@ -15,7 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 function lbhotel_register_assets() {
     wp_register_style( 'lbhotel-public', LBHOTEL_PLUGIN_URL . 'public/css/lbhotel.css', array(), LBHOTEL_VERSION );
     wp_register_script( 'lbhotel-public', LBHOTEL_PLUGIN_URL . 'public/js/lbhotel.js', array( 'jquery' ), LBHOTEL_VERSION, true );
-    wp_register_script( 'lbhotel-single-base', LBHOTEL_PLUGIN_URL . 'single-hotel.js', array(), LBHOTEL_VERSION, true );
+
+    wp_register_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+    wp_register_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true );
+
+    wp_register_script( 'lbhotel-single-base', LBHOTEL_PLUGIN_URL . 'single-hotel.js', array( 'leaflet' ), LBHOTEL_VERSION, true );
     wp_register_script( 'lbhotel-archive-base', LBHOTEL_PLUGIN_URL . 'all-hotel.js', array(), LBHOTEL_VERSION, true );
 
     wp_register_style( 'lbhotel-admin', LBHOTEL_PLUGIN_URL . 'admin/css/lbhotel-admin.css', array(), LBHOTEL_VERSION );
