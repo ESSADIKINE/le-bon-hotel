@@ -27,6 +27,23 @@ function lbhotel_get_place_category_labels() {
 }
 
 /**
+ * Retrieve default descriptions for each place category.
+ *
+ * @return array<string,string>
+ */
+function lbhotel_get_place_category_descriptions() {
+    return array(
+        'hotels'                 => __( 'Discover Morocco\'s hotels with booking details, room highlights, and immersive previews.', 'lbhotel' ),
+        'restaurants'            => __( 'Explore restaurants across Morocco featuring menus, specialties, and reservation information.', 'lbhotel' ),
+        'tourist-sites'          => __( 'Plan visits to renowned tourist attractions with opening hours, ticketing, and event schedules.', 'lbhotel' ),
+        'recreational-activities'=> __( 'Find recreational experiences with booking links, activity types, and seasonal availability.', 'lbhotel' ),
+        'shopping'               => __( 'Browse shopping destinations showcasing product categories, store details, and promotions.', 'lbhotel' ),
+        'sports-activities'      => __( 'Locate sports activities with training schedules, equipment rental options, and facility information.', 'lbhotel' ),
+        'cultural-events'        => __( 'Stay up to date on cultural events with ticket links, event types, and key scheduling details.', 'lbhotel' ),
+    );
+}
+
+/**
  * Retrieve the global field definitions shared by all categories.
  *
  * @return array<string,array<string,mixed>>

@@ -142,7 +142,7 @@ function lbhotel_bootstrap_blocks() {
  * @return string
  */
 function lbhotel_template_include( $template ) {
-    if ( is_post_type_archive( 'lbhotel_hotel' ) ) {
+    if ( is_post_type_archive( 'lbhotel_hotel' ) || is_tax( 'lbhotel_place_category' ) ) {
         $plugin_template = trailingslashit( LBHOTEL_PLUGIN_DIR ) . 'archive-lbhotel_hotel.php';
         if ( file_exists( $plugin_template ) ) {
             return $plugin_template;

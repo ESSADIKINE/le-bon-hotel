@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'LBHOTEL_VERSION', '1.0.0' );
-define( 'LBHOTEL_REWRITE_VERSION', '2' );
+define( 'LBHOTEL_REWRITE_VERSION', '3' );
 define( 'LBHOTEL_PLUGIN_FILE', __FILE__ );
 define( 'LBHOTEL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LBHOTEL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
