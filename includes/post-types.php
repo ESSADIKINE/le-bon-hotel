@@ -106,6 +106,13 @@ function lbhotel_add_hotel_rewrite_rules() {
     add_rewrite_rule( '^place/([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
     // Backward compatibility: /hotel-{slug} (maps to name={slug})
     add_rewrite_rule( '^hotel-([^/]+)/?$', 'index.php?post_type=lbhotel_hotel&name=$matches[1]', 'top' );
+
+    $categories = lbhotel_get_place_category_labels();
+
+    foreach ( $categories as $slug => $label ) {
+        add_rewrite_rule( '^all-' . $slug . '/?$', 'index.php?lbhotel_place_category=' . $slug, 'top' );
+        add_rewrite_rule( '^all-' . $slug . '/page/([0-9]+)/?$', 'index.php?lbhotel_place_category=' . $slug . '&paged=$matches[1]', 'top' );
+    }
 }
 add_action( 'init', 'lbhotel_add_hotel_rewrite_rules', 9 );
 
