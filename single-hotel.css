@@ -1,314 +1,893 @@
 :root {
-    --lbhotel-primary: #c1272d;
-    --lbhotel-secondary: #006233;
-    --lbhotel-cream: #f8f3eb;
-    --lbhotel-text: #2c2c2c;
-    --lbhotel-muted: #6a6a6a;
+    --moroccan-red: #d50000;
+    --moroccan-green: #006233;
+    --moroccan-cream: #f8f3eb;
+    --moroccan-shadow: rgba(0, 0, 0, 0.12);
+    --slider-nav-bg: rgba(193, 39, 45, 0.85);
+    --slider-nav-bg-hover: rgba(193, 39, 45, 1);
 }
 
-.lbhotel-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.65rem 1.5rem;
-    border-radius: 999px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.lbhotel-button:hover,
-.lbhotel-button:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-}
-
-.lbhotel-button--primary {
-    background: var(--lbhotel-primary);
-    color: #fff;
-}
-
-.lbhotel-button--ghost {
-    background: transparent;
-    border: 1px solid currentColor;
-    color: var(--lbhotel-primary);
-}
-
-.lbhotel-single-place {
-    margin: 0 auto 4rem;
-    max-width: 1200px;
-    color: var(--lbhotel-text);
-}
-
-.lbhotel-single-place__header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-}
-
-.lbhotel-single-place__category-label {
-    display: inline-block;
-    background: var(--lbhotel-secondary);
-    color: #fff;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.8rem;
-}
-
-.lbhotel-single-place__title {
-    font-size: clamp(2rem, 4vw, 2.8rem);
-    margin: 0.2rem 0;
-}
-
-.lbhotel-single-place__categories {
-    color: var(--lbhotel-muted);
-    font-style: italic;
+body.single-lbhotel_hotel,
+body.single-lbhotel_hotel #page,
+body.single-lbhotel_hotel .site-content,
+.lbhotel-single-wrapper,
+.lbhotel-single-wrapper #main,
+.lbhotel-single-article,
+.lbhotel-single-page {
     margin: 0;
-}
-
-.lbhotel-single-place__layout {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    background: var(--lbhotel-cream);
-    padding: 2rem;
-    border-radius: 24px;
-    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.12);
-}
-
-.lbhotel-single-place__hero {
-    background: #fff;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    gap: 1.5rem;
-    padding: 1.5rem;
-    align-items: center;
-}
-
-.lbhotel-single-place__media {
-    position: relative;
-    overflow: hidden;
-    border-radius: 14px;
-    background: rgba(0, 0, 0, 0.05);
-    min-height: 260px;
-}
-
-.lbhotel-single-place__slides {
-    display: flex;
-    transition: transform 0.5s ease;
+    padding: 0;
     width: 100%;
+    max-width: 100%;
+}
+
+/* Ensure full viewport height for the single hotel page */
+html, body {
     height: 100%;
 }
 
-.lbhotel-single-place__slide {
+.lbhotel-single-wrapper,
+.lbhotel-single-wrapper #main,
+.lbhotel-single-article,
+.lbhotel-single-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.lbhotel-single-layout {
+    flex: 1 1 auto;
+}
+
+.leaflet-right{
+    right: 50px !important;
+}
+
+.lbhotel-single-right,
+.lbhotel-map-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.lbhotel-map {
+    flex: 1 1 auto;
+}
+
+.lbhotel-single-page {
+    background: var(--moroccan-cream);
+    background-image: radial-gradient(circle at 20% 20%, rgba(193, 39, 45, 0.08) 0, rgba(193, 39, 45, 0.08) 12px, transparent 13px),
+        radial-gradient(circle at 80% 0, rgba(0, 98, 51, 0.08) 0, rgba(0, 98, 51, 0.08) 10px, transparent 11px);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.lbhotel-single-layout {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.lbhotel-single-left,
+.lbhotel-single-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.lbhotel-single-left {
+    flex: 0 0 60%;
+}
+
+.lbhotel-single-right {
+    flex: 1 1 40%;
+}
+
+.lbhotel-virtual-tour {
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 0;
+    box-shadow: 0 15px 35px var(--moroccan-shadow);
+    min-height: 70vh;
+}
+
+.lbhotel-virtual-tour iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.15);
+}
+
+.lbhotel-info-card {
+    display: grid;
+    grid-template-columns: 30% 1fr 20%;
+    align-items: center;
+    background:
+    linear-gradient(270deg, transparent 0%, white 55%),
+    linear-gradient(180deg, transparent 0%, white 85%);
+    background-size: auto 100%;
+    background-color: white;
+    margin: 0;
+    box-shadow: 0 20px 40px var(--moroccan-shadow);
+    padding: 0;
+    height: 30vh;
+    min-height: 30vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.lbhotel-info-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(135deg, rgba(193, 39, 45, 0.08), rgba(0, 98, 51, 0.08));
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.lbhotel-info-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.lbhotel-info-card__media {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.lbhotel-info-card__icons {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.lbhotel-icon {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lbhotel-icon:hover,
+.lbhotel-icon:focus-visible {
+    background: #C1272D;
+    color: #fff;
+}
+
+.lbhotel-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* Fallback for older browsers */
+    height: 0;
+    padding-bottom: 75%; /* 3/4 = 0.75 = 75% */
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Modern browsers with aspect-ratio support */
+@supports (aspect-ratio: 4 / 3) {
+    .lbhotel-slider {
+        height: auto;
+        padding-bottom: 0;
+    }
+}
+
+.lbhotel-slider__track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+.lbhotel-slider__slide {
     flex: 0 0 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #fff;
+    height: 100%;
 }
 
-.lbhotel-single-place__slide img {
+.lbhotel-slider__slide img {
+    /* Make images fill the 4:3 slide area */
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.lbhotel-single-place__nav {
+.lbhotel-slider__nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
-    border: none;
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
+    border: none;
+    background: var(--slider-nav-bg);
+    color: #fff;
+    font-size: 1.4rem;
     display: grid;
     place-items: center;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
-.lbhotel-single-place__nav--prev {
-    left: 1rem;
+.lbhotel-slider__nav:hover,
+.lbhotel-slider__nav:focus {
+    background: var(--slider-nav-bg-hover);
+    transform: translateY(-50%) scale(1.05);
 }
 
-.lbhotel-single-place__nav--next {
-    right: 1rem;
+.lbhotel-slider__nav--prev {
+    left: 0.75rem;
 }
 
-.lbhotel-single-place__nav:hover,
-.lbhotel-single-place__nav:focus-visible {
-    background: var(--lbhotel-primary);
+.lbhotel-slider__nav--next {
+    right: 0.75rem;
 }
 
-.lbhotel-single-place__dots {
+.lbhotel-slider__dots {
     position: absolute;
-    bottom: 1rem;
+    bottom: 0.75rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 0.5rem;
 }
 
-.lbhotel-single-place__dot {
-    width: 12px;
-    height: 12px;
+.lbhotel-slider__dot {
+    width: 0.75rem;
+    height: 0.75rem;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.lbhotel-single-place__dot.is-active,
-.lbhotel-single-place__dot:hover,
-.lbhotel-single-place__dot:focus-visible {
-    background: var(--lbhotel-primary);
+.lbhotel-slider__dot.is-active {
+    background: var(--moroccan-green);
+    transform: scale(1.1);
 }
 
-.lbhotel-single-place__placeholder {
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 20px, rgba(0,0,0,0.1) 20px, rgba(0,0,0,0.1) 40px);
+.lbhotel-slider--empty {
+    display: grid;
+    place-items: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
-.lbhotel-single-place__info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+.lbhotel-info-card__details {
+    padding: 0 1.5rem;
 }
 
-.lbhotel-single-place__rating {
-    display: flex;
-    align-items: center;
+.lbhotel-info-card__title {
+    font-size: 1.9rem;
+    color: var(--moroccan-red);
+    margin: 0 0 0.5rem;
 }
 
-.lbhotel-rating {
+.lbhotel-info-card__location {
+    margin: 0 0 0.5rem;
+    color: rgba(0, 0, 0, 0.65);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+}
+
+.lbhotel-info-card__stars {
+    color: #f9a602;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+}
+
+.lbhotel-info-card__stars-text {
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    margin-left: 0.4rem;
+    font-weight: 600;
+}
+
+.lbhotel-info-card__price {
+    font-weight: 600;
+    color: var(--moroccan-green);
+    margin-top: 0.5rem;
+}
+
+.lbhotel-info-card__actions {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: stretch;
+    padding: 0.5rem !important;
+}
+
+.lbhotel-button {
     display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.18);
+}
+
+.lbhotel-button--reserve {
+    background: var(--moroccan-green);
+}
+
+.lbhotel-button--reserve:hover,
+.lbhotel-button--reserve:focus {
+    filter: brightness(0.9);
+}
+
+.lbhotel-button--map,
+.lbhotel-button--reserve,
+.lbhotel-button--details {
+    color: #fff !important;
+}
+.lbhotel-button--map{
+    background: var(--moroccan-red);
+}
+
+.lbhotel-button--map:hover,
+.lbhotel-button--map:focus {
+    filter: brightness(0.9);
+}
+
+.lbhotel-button--details {
+    background: linear-gradient(135deg, var(--moroccan-red), var(--moroccan-green));
+    box-shadow: 0 12px 20px rgba(193, 39, 45, 0.35);
+}
+
+.lbhotel-button--details:hover,
+.lbhotel-button--details:focus {
+    box-shadow: 0 18px 24px rgba(0, 98, 51, 0.35);
+}
+
+.lbhotel-map-section {
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 25px 50px var(--moroccan-shadow);
+    flex: 1;
+}
+
+.lbhotel-map-section__header h2 {
+    margin: 0;
+    color: var(--moroccan-red);
+    font-size: 1.75rem;
+}
+
+.lbhotel-map-section__header p {
+    margin: 0.5rem 0 1.5rem;
+    color: rgba(0, 0, 0, 0.65);
+}
+#primary{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
+}
+
+.lbhotel-map {
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+    margin: 0% !important;
+    padding: 0% !important;
+    border-radius: 0% !important;
+}
+
+.leaflet-control-layers-toggle {
+    display: none !important; /* hide toggle; list will remain expanded */
+}
+.leaflet-control-layers.leaflet-control-layers-expanded {
+    padding: 0.5rem 0.5rem 0.6rem 0.5rem;
+}
+
+.leaflet-control-layers-list {
+    display: block !important; /* always show the list */
+}
+
+.leaflet-control-layers-overlays,
+.leaflet-control-layers-base {
+    display: block !important;
+}
+
+.leaflet-control-layers label {
+    display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-weight: 600;
-    color: var(--lbhotel-primary);
 }
 
-.lbhotel-rating__stars {
-    display: inline-flex;
-    gap: 0.1rem;
-    font-size: 1.1rem;
+.leaflet-control-layers-toggle:hover {
+    filter: brightness(1.1);
 }
 
-.lbhotel-rating__star.is-empty {
-    color: rgba(0, 0, 0, 0.2);
+.leaflet-popup-content-wrapper {
+    border-radius: 1.25rem;
+    border: 2px solid var(--moroccan-red);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
 }
 
-.lbhotel-rating__value {
-    font-size: 0.9rem;
-    color: var(--lbhotel-muted);
-}
-
-.lbhotel-single-place__location {
-    margin: 0;
-    color: var(--lbhotel-muted);
-    font-size: 1rem;
-}
-
-.lbhotel-single-place__highlights {
-    list-style: none;
+.leaflet-popup-content {
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 0.6rem;
+    width: 320px;
 }
 
-.lbhotel-single-place__highlights li {
+.lbhotel-popup {
+    padding: 1rem;
+    max-width: 320px;
+}
+
+@media (max-width: 768px) {
+    .leaflet-popup-content {
+        width: 200px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.5rem;
+        max-width: 200px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.8rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+        display: none;
+    }
+}
+
+@media (max-width: 540px) {
+    .leaflet-popup-content {
+        width: 160px;
+    }
+
+    .lbhotel-popup {
+        padding: 0.4rem;
+        max-width: 160px;
+    }
+
+    .lbhotel-popup h3 {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .lbhotel-popup__meta {
+        font-size: 0.7rem;
+        margin: 0.2rem 0;
+    }
+
+    .lbhotel-popup__stars {
+        font-size: 0.7rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .lbhotel-popup__actions {
+        gap: 0.2rem;
+    }
+
+    .lbhotel-popup__actions .lbhotel-button {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.65rem;
+        display: none;
+    }
+}
+
+.lbhotel-popup h3 {
+    margin: 0 0 0.5rem;
+    color: var(--moroccan-red);
+}
+
+.lbhotel-popup__meta {
+    margin: 0.25rem 0;
+    font-weight: 600;
+    color: var(--moroccan-green);
+}
+
+.lbhotel-popup__stars {
+    color: #f9a602;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+
+.lbhotel-popup__actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.lbhotel-single-place__highlight-label {
-    font-weight: 600;
-    color: var(--lbhotel-secondary);
+.lbhotel-popup__actions .lbhotel-button {
+    flex: 1 1 48%;
+    padding: 0.6rem;
+    font-size: 0.7rem;
 }
 
-.lbhotel-single-place__actions {
+.lbhotel-single-content {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+@media (max-width: 1200px) {
+    .lbhotel-single-layout {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .lbhotel-single-left,
+    .lbhotel-single-right {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .lbhotel-virtual-tour iframe {
+        width: 100%;
+        height: 45vh;
+    }
+
+    .lbhotel-info-card {
+        grid-template-columns: 100%;
+        text-align: center;
+        gap: 1.25rem;
+        padding: 0;
+        height: auto;
+    }
+
+    .lbhotel-info-card__details {
+        padding: 0;
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .lbhotel-single-layout {
+        gap: 0.5rem;
+    }
+
+    .lbhotel-virtual-tour {
+        min-height: 30vh;
+    }
+
+    .lbhotel-info-card {
+        margin: 0.5rem 0;
+        height: auto;
+        padding: 0;
+    }
+
+    .lbhotel-info-card__actions {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .lbhotel-button {
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
+    }
+
+    .lbhotel-map-section {
+        padding: 0;
+    }
+
+    .lbhotel-map {
+        min-height: 40vh;
+    }
+
+    .lbhotel-slider {
+        aspect-ratio: 4 / 3;
+        padding-bottom: 75%;
+        min-height: 250px;
+    }
+    
+    @supports (aspect-ratio: 4 / 3) {
+        .lbhotel-slider {
+            padding-bottom: 0;
+        }
+    }
+}
+
+@media (max-width: 540px) {
+    .lbhotel-single-layout {
+        gap: 0.25rem;
+    }
+
+    .lbhotel-info-card {
+        padding: 0;
+        margin: 0.25rem 0;
+        height: auto;
+    }
+
+    .lbhotel-info-card__title {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lbhotel-button {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .lbhotel-slider {
+        min-height: 50px;
+    }
+
+    .lbhotel-map {
+        min-height: 35vh;
+    }
+
+    .lbhotel-virtual-tour {
+        min-height: 25vh;
+    }
+}
+.ast-article-single{
+    padding: 0% !important;
+}
+.ast-container{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
+}
+.ast-single-post{
+    padding: 0% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0% !important;
+}
+.lbhotel-info-card__category {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--moroccan-green);
+}
+
+.lbhotel-info-card__meta {
+    margin: 0.75rem 0 0;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+}
+
+.lbhotel-button--details {
+    background: var(--moroccan-red);
+}
+
+.lbhotel-single-content__inner {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 2.5rem 3rem 3.5rem;
+}
+
+.lbhotel-single-description {
+    color: rgba(0, 0, 0, 0.78);
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.lbhotel-single-description > *:first-child {
+    margin-top: 0;
+}
+
+.lbhotel-single-details {
+    display: grid;
+    gap: 2rem;
+}
+
+.lbhotel-detail-section {
+    background: rgba(248, 243, 235, 0.9);
+    border-radius: 18px;
+    padding: 1.75rem 2rem;
+    box-shadow: 0 14px 35px var(--moroccan-shadow);
+}
+
+.lbhotel-detail-section__title {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--moroccan-red);
+}
+
+.lbhotel-detail-section__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
     gap: 0.75rem;
 }
 
-.lbhotel-single-place__main-content {
-    background: #fff;
-    padding: 1.75rem;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+.lbhotel-detail-section__item {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.75);
+    line-height: 1.6;
 }
 
-.lbhotel-single-place__description > *:first-child {
-    margin-top: 0;
+.lbhotel-detail-section__label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+    color: var(--moroccan-green);
+    margin-right: 0.35rem;
 }
 
-.lbhotel-single-place__sidebar {
-    display: grid;
-    gap: 1.2rem;
+.lbhotel-detail-section__value {
+    color: rgba(0, 0, 0, 0.78);
 }
 
-.lbhotel-single-place__panel {
-    background: #fff;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-
-.lbhotel-single-place__panel h2 {
-    margin-top: 0;
-    font-size: 1.1rem;
-}
-
-.lbhotel-single-place__list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem;
-    display: grid;
-    gap: 0.35rem;
-    color: var(--lbhotel-muted);
-}
-
-.lbhotel-single-place__details {
+.lbhotel-detail-section__definitions {
     margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
 }
 
-.lbhotel-single-place__details dt {
-    font-weight: 600;
-    margin-top: 0.75rem;
+.lbhotel-detail-section__definition {
+    display: grid;
+    gap: 0.4rem;
 }
 
-.lbhotel-single-place__details dt:first-of-type {
-    margin-top: 0;
+.lbhotel-detail-section__action {
+    margin-top: 1.25rem;
 }
 
-.lbhotel-single-place__details dd {
-    margin: 0.25rem 0 0;
-    color: var(--lbhotel-muted);
+.lbhotel-detail-section__action .lbhotel-button {
+    width: auto;
+    justify-content: center;
 }
 
-.lbhotel-single-place__contact {
-    font-weight: 600;
-    color: var(--lbhotel-primary);
+.lbhotel-detail-section__value a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 0, 0, 0.35);
 }
 
-@media (max-width: 900px) {
-    .lbhotel-single-place__hero {
-        grid-template-columns: 1fr;
+@media (min-width: 992px) {
+    .lbhotel-single-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .lbhotel-single-content__inner {
+        padding: 2rem 1.75rem 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .lbhotel-single-content__inner {
+        padding: 1.75rem 1.25rem 2rem;
     }
 
-    .lbhotel-single-place__layout {
+    .lbhotel-detail-section {
         padding: 1.5rem;
     }
+}
+
+@media (max-width: 540px) {
+    .lbhotel-single-content__inner {
+        padding: 1.25rem 1rem 1.75rem;
+        gap: 1.75rem;
+    }
+
+    .lbhotel-detail-section {
+        padding: 1.25rem;
+        border-radius: 14px;
+    }
+
+    .lbhotel-detail-section__title {
+        font-size: 1.1rem;
+    }
+}
+
+body.lbhotel-no-scroll {
+    overflow: hidden;
+}
+
+.lbhotel-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.lbhotel-popup-content {
+    width: 90%;
+    height: 90%;
+    background: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.lbhotel-popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #C1272D;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lbhotel-popup-close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.lbhotel-popup-body {
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+}
+
+.lbhotel-popup-body iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.lbhotel-popup-map {
+    width: 100%;
+    height: 100%;
 }
