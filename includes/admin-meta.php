@@ -13,89 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register post meta for hotels.
  */
 function lbhotel_register_meta_fields() {
-    $meta_fields = array(
-        'lbhotel_address'            => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-        ),
-        'lbhotel_city'               => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-        ),
-        'lbhotel_region'             => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-        ),
-        'lbhotel_postal_code'        => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-        ),
-        'lbhotel_country'            => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-        ),
-        'lbhotel_checkin_time'       => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'lbhotel_sanitize_time',
-        ),
-        'lbhotel_checkout_time'      => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'lbhotel_sanitize_time',
-        ),
-        'lbhotel_rooms_total'        => array(
-            'type'              => 'integer',
-            'sanitize_callback' => 'lbhotel_sanitize_int',
-        ),
-        'lbhotel_avg_price_per_night'=> array(
-            'type'              => 'number',
-            'sanitize_callback' => 'lbhotel_sanitize_decimal',
-        ),
-        'lbhotel_has_free_breakfast' => array(
-            'type'              => 'boolean',
-            'sanitize_callback' => 'lbhotel_sanitize_bool',
-        ),
-        'lbhotel_has_parking'        => array(
-            'type'              => 'boolean',
-            'sanitize_callback' => 'lbhotel_sanitize_bool',
-        ),
-        'lbhotel_star_rating'        => array(
-            'type'              => 'integer',
-            'sanitize_callback' => 'lbhotel_sanitize_int',
-        ),
-        'lbhotel_gallery_images'     => array(
-            'type'              => 'array',
-            'sanitize_callback' => 'lbhotel_sanitize_gallery_images',
-        ),
-        'lbhotel_virtual_tour_url'   => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'esc_url_raw',
-        ),
-        'lbhotel_contact_phone'      => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'lbhotel_sanitize_phone',
-        ),
-        'lbhotel_booking_url'        => array(
-            'type'              => 'string',
-            'sanitize_callback' => 'esc_url_raw',
-        ),
-        'lbhotel_latitude'           => array(
-            'type'              => 'number',
-            'sanitize_callback' => 'lbhotel_sanitize_decimal',
-        ),
-        'lbhotel_longitude'          => array(
-            'type'              => 'number',
-            'sanitize_callback' => 'lbhotel_sanitize_decimal',
-        ),
-    );
+    $definitions = lbhotel_get_all_field_definitions();
 
-    foreach ( $meta_fields as $meta_key => $args ) {
+    foreach ( $definitions as $meta_key => $definition ) {
+        $type      = isset( $definition['type'] ) ? $definition['type'] : 'string';
+        $sanitize  = isset( $definition['sanitize_callback'] ) ? $definition['sanitize_callback'] : 'sanitize_text_field';
+
         register_post_meta(
             'lbhotel_hotel',
             $meta_key,
             array(
-                'type'              => $args['type'],
+                'type'              => $type,
                 'single'            => true,
-                'sanitize_callback' => $args['sanitize_callback'],
+                'sanitize_callback' => $sanitize,
                 'auth_callback'     => 'lbhotel_can_edit_meta',
                 'show_in_rest'      => true,
             )
@@ -191,8 +121,6 @@ function lbhotel_setup_admin_meta_boxes() {
 
     add_action( 'add_meta_boxes_lbhotel_hotel', 'lbhotel_register_meta_boxes' );
     add_action( 'save_post_lbhotel_hotel', 'lbhotel_save_meta', 10, 2 );
-    add_action( 'quick_edit_custom_box', 'lbhotel_quick_edit_fields', 10, 2 );
-    add_action( 'save_post_lbhotel_hotel', 'lbhotel_save_quick_edit_meta', 20, 2 );
     add_action( 'post_edit_form_tag', 'lbhotel_enable_gallery_uploads_form_enctype' );
 }
 
@@ -208,12 +136,169 @@ function lbhotel_enable_gallery_uploads_form_enctype() {
 }
 
 /**
+ * Retrieve global field definitions constrained to a section.
+ *
+ * @param string $section Section key.
+ * @return array<string,array<string,mixed>>
+ */
+function lbhotel_get_global_fields_by_section( $section ) {
+    $fields = array();
+
+    foreach ( lbhotel_get_global_field_definitions() as $meta_key => $definition ) {
+        if ( isset( $definition['section'] ) && $section === $definition['section'] ) {
+            $fields[ $meta_key ] = $definition;
+        }
+    }
+
+    return $fields;
+}
+
+/**
+ * Render an individual meta input field.
+ *
+ * @param string $meta_key   Meta key.
+ * @param array  $definition Field definition.
+ * @param mixed  $value      Current value.
+ */
+function lbhotel_render_meta_input_field( $meta_key, $definition, $value ) {
+    $label       = isset( $definition['label'] ) ? $definition['label'] : '';
+    $input       = isset( $definition['input'] ) ? $definition['input'] : 'text';
+    $placeholder = isset( $definition['placeholder'] ) ? $definition['placeholder'] : '';
+    $description = isset( $definition['description'] ) ? $definition['description'] : '';
+    $attributes  = '';
+
+    if ( ! empty( $definition['attributes'] ) && is_array( $definition['attributes'] ) ) {
+        foreach ( $definition['attributes'] as $attr_key => $attr_value ) {
+            $attributes .= ' ' . esc_attr( $attr_key ) . '="' . esc_attr( $attr_value ) . '"';
+        }
+    }
+
+    $field_id = $meta_key;
+
+    echo '<p class="lbhotel-meta-field">';
+    if ( $label ) {
+        echo '<label for="' . esc_attr( $field_id ) . '"><strong>' . esc_html( $label ) . '</strong></label><br />';
+    }
+
+    switch ( $input ) {
+        case 'textarea':
+            echo '<textarea class="widefat" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $meta_key ) . '" rows="4"' . $attributes . '>' . esc_textarea( $value ) . '</textarea>';
+            break;
+        case 'number':
+        case 'url':
+        case 'text':
+        case 'datetime-local':
+            echo '<input type="' . esc_attr( $input ) . '" class="widefat" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $meta_key ) . '" value="' . esc_attr( $value ) . '"' . ( $placeholder ? ' placeholder="' . esc_attr( $placeholder ) . '"' : '' ) . $attributes . ' />';
+            break;
+        default:
+            echo '<input type="text" class="widefat" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $meta_key ) . '" value="' . esc_attr( $value ) . '"' . ( $placeholder ? ' placeholder="' . esc_attr( $placeholder ) . '"' : '' ) . $attributes . ' />';
+            break;
+    }
+
+    if ( $description ) {
+        echo '<span class="description">' . esc_html( $description ) . '</span>';
+    }
+
+    echo '</p>';
+}
+
+/**
+ * Persist a single meta field based on submitted data.
+ *
+ * @param int   $post_id    Post ID.
+ * @param string $meta_key  Meta key.
+ * @param array  $definition Field definition.
+ */
+function lbhotel_save_single_meta_field( $post_id, $meta_key, $definition ) {
+    $sanitize = isset( $definition['sanitize_callback'] ) ? $definition['sanitize_callback'] : 'sanitize_text_field';
+
+    if ( isset( $_POST[ $meta_key ] ) ) {
+        $raw        = wp_unslash( $_POST[ $meta_key ] );
+        $raw_string = is_string( $raw ) ? trim( $raw ) : $raw;
+
+        if ( ( '' === $raw_string || null === $raw_string ) && '0' !== $raw_string ) {
+            delete_post_meta( $post_id, $meta_key );
+            return;
+        }
+
+        $value = call_user_func( $sanitize, $raw );
+
+        if ( is_string( $value ) ) {
+            $trimmed_value = trim( $value );
+            if ( '' === $trimmed_value && '0' !== $value ) {
+                delete_post_meta( $post_id, $meta_key );
+                return;
+            }
+        }
+
+        if ( is_array( $value ) && empty( $value ) ) {
+            delete_post_meta( $post_id, $meta_key );
+            return;
+        }
+
+        update_post_meta( $post_id, $meta_key, $value );
+    } else {
+        delete_post_meta( $post_id, $meta_key );
+    }
+}
+
+/**
+ * Derive the category slugs submitted in the current request.
+ *
+ * @param int $post_id Post ID.
+ * @return array<string>
+ */
+function lbhotel_get_submitted_category_slugs( $post_id ) {
+    $slugs = array();
+
+    if ( isset( $_POST['tax_input']['lbhotel_place_category'] ) ) {
+        $submitted = wp_unslash( $_POST['tax_input']['lbhotel_place_category'] );
+
+        if ( is_array( $submitted ) ) {
+            foreach ( $submitted as $value ) {
+                if ( is_numeric( $value ) ) {
+                    $term = get_term( (int) $value, 'lbhotel_place_category' );
+                    if ( $term && ! is_wp_error( $term ) ) {
+                        $slugs[] = $term->slug;
+                    }
+                } elseif ( is_string( $value ) ) {
+                    $slugs[] = sanitize_title( $value );
+                }
+            }
+        } elseif ( is_string( $submitted ) ) {
+            $parts = array_map( 'trim', explode( ',', $submitted ) );
+            foreach ( $parts as $part ) {
+                if ( '' !== $part ) {
+                    if ( is_numeric( $part ) ) {
+                        $term = get_term( (int) $part, 'lbhotel_place_category' );
+                        if ( $term && ! is_wp_error( $term ) ) {
+                            $slugs[] = $term->slug;
+                        }
+                    } else {
+                        $slugs[] = sanitize_title( $part );
+                    }
+                }
+            }
+        }
+    }
+
+    if ( empty( $slugs ) ) {
+        $terms = wp_get_post_terms( $post_id, 'lbhotel_place_category', array( 'fields' => 'slugs' ) );
+        if ( ! is_wp_error( $terms ) ) {
+            $slugs = $terms;
+        }
+    }
+
+    return array_values( array_unique( array_filter( $slugs ) ) );
+}
+
+/**
  * Register hotel meta boxes.
  */
 function lbhotel_register_meta_boxes() {
     add_meta_box(
         'lbhotel_details_meta',
-        __( 'Hotel Details', 'lbhotel' ),
+        __( 'Global Details', 'lbhotel' ),
         'lbhotel_render_details_meta_box',
         'lbhotel_hotel',
         'normal',
@@ -230,9 +315,18 @@ function lbhotel_register_meta_boxes() {
     );
 
     add_meta_box(
-        'lbhotel_contact_meta',
-        __( 'Contact & Media', 'lbhotel' ),
-        'lbhotel_render_contact_meta_box',
+        'lbhotel_category_meta',
+        __( 'Category Specific Fields', 'lbhotel' ),
+        'lbhotel_render_category_meta_box',
+        'lbhotel_hotel',
+        'normal',
+        'default'
+    );
+
+    add_meta_box(
+        'lbhotel_media_meta',
+        __( 'Media', 'lbhotel' ),
+        'lbhotel_render_media_meta_box',
         'lbhotel_hotel',
         'side',
         'default'
@@ -240,110 +334,89 @@ function lbhotel_register_meta_boxes() {
 }
 
 /**
- * Render hotel details meta box.
+ * Render global details meta box.
  *
  * @param WP_Post $post Post object.
  */
 function lbhotel_render_details_meta_box( $post ) {
     wp_nonce_field( 'lbhotel_save_meta', 'lbhotel_meta_nonce' );
 
-    $checkin  = get_post_meta( $post->ID, 'lbhotel_checkin_time', true );
-    $checkout = get_post_meta( $post->ID, 'lbhotel_checkout_time', true );
-    $rooms    = get_post_meta( $post->ID, 'lbhotel_rooms_total', true );
-    $price    = get_post_meta( $post->ID, 'lbhotel_avg_price_per_night', true );
-    $stars    = get_post_meta( $post->ID, 'lbhotel_star_rating', true );
-    $breakfast= get_post_meta( $post->ID, 'lbhotel_has_free_breakfast', true );
-    $parking  = get_post_meta( $post->ID, 'lbhotel_has_parking', true );
+    echo '<p class="description">' . esc_html__( 'These fields apply to every virtualized place regardless of category.', 'lbhotel' ) . '</p>';
 
-    echo '<p><label for="lbhotel_checkin_time"><strong>' . esc_html__( 'Check-in Time', 'lbhotel' ) . '</strong></label><br />';
-    echo '<input type="time" id="lbhotel_checkin_time" name="lbhotel_checkin_time" value="' . esc_attr( $checkin ?: lbhotel_get_option( 'default_checkin_time' ) ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_checkout_time"><strong>' . esc_html__( 'Check-out Time', 'lbhotel' ) . '</strong></label><br />';
-    echo '<input type="time" id="lbhotel_checkout_time" name="lbhotel_checkout_time" value="' . esc_attr( $checkout ?: lbhotel_get_option( 'default_checkout_time' ) ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_rooms_total"><strong>' . esc_html__( 'Total Rooms', 'lbhotel' ) . '</strong></label><br />';
-    echo '<input type="number" min="0" id="lbhotel_rooms_total" name="lbhotel_rooms_total" value="' . esc_attr( $rooms ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_avg_price_per_night"><strong>' . esc_html__( 'Average Price per Night', 'lbhotel' ) . '</strong></label><br />';
-    echo '<input type="number" step="0.01" id="lbhotel_avg_price_per_night" name="lbhotel_avg_price_per_night" value="' . esc_attr( $price ) . '" /> ' . esc_html( lbhotel_get_option( 'default_currency' ) ) . '</p>';
-
-    echo '<p><label for="lbhotel_star_rating"><strong>' . esc_html__( 'Star Rating', 'lbhotel' ) . '</strong></label><br />';
-    echo '<select id="lbhotel_star_rating" name="lbhotel_star_rating">';
-    echo '<option value="">' . esc_html__( 'Select rating', 'lbhotel' ) . '</option>';
-    for ( $i = 1; $i <= 5; $i++ ) {
-        printf(
-            '<option value="%1$s" %2$s>%3$s</option>',
-            esc_attr( $i ),
-            selected( (int) $stars, $i, false ),
-            esc_html( sprintf( _n( '%d Star', '%d Stars', $i, 'lbhotel' ), $i ) )
-        );
+    foreach ( lbhotel_get_global_fields_by_section( 'details' ) as $meta_key => $definition ) {
+        $value = get_post_meta( $post->ID, $meta_key, true );
+        lbhotel_render_meta_input_field( $meta_key, $definition, $value );
     }
-    echo '</select></p>';
-
-    echo '<p><label><input type="checkbox" name="lbhotel_has_free_breakfast" value="1" ' . checked( (bool) $breakfast, true, false ) . ' /> ' . esc_html__( 'Includes free breakfast', 'lbhotel' ) . '</label></p>';
-    echo '<p><label><input type="checkbox" name="lbhotel_has_parking" value="1" ' . checked( (bool) $parking, true, false ) . ' /> ' . esc_html__( 'On-site parking available', 'lbhotel' ) . '</label></p>';
 }
 
 /**
- * Render location meta box.
+ * Render the location meta box.
  *
- * @param WP_Post $post Post.
+ * @param WP_Post $post Post object.
  */
 function lbhotel_render_location_meta_box( $post ) {
-    $address = get_post_meta( $post->ID, 'lbhotel_address', true );
-    $city    = get_post_meta( $post->ID, 'lbhotel_city', true );
-    $region  = get_post_meta( $post->ID, 'lbhotel_region', true );
-    $postal  = get_post_meta( $post->ID, 'lbhotel_postal_code', true );
-    $country = get_post_meta( $post->ID, 'lbhotel_country', true );
-    $lat     = get_post_meta( $post->ID, 'lbhotel_latitude', true );
-    $lng     = get_post_meta( $post->ID, 'lbhotel_longitude', true );
+    echo '<p class="description">' . esc_html__( 'Provide precise location information so visitors can find the place easily.', 'lbhotel' ) . '</p>';
 
-    echo '<p><label for="lbhotel_address">' . esc_html__( 'Street Address', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_address" name="lbhotel_address" value="' . esc_attr( $address ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_city">' . esc_html__( 'City', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_city" name="lbhotel_city" value="' . esc_attr( $city ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_region">' . esc_html__( 'Region/State', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_region" name="lbhotel_region" value="' . esc_attr( $region ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_postal_code">' . esc_html__( 'Postal Code', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_postal_code" name="lbhotel_postal_code" value="' . esc_attr( $postal ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_country">' . esc_html__( 'Country', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_country" name="lbhotel_country" value="' . esc_attr( $country ) . '" /></p>';
-
-    echo '<div class="lbhotel-location-coordinates">';
-    echo '<p><label for="lbhotel_latitude">' . esc_html__( 'Latitude', 'lbhotel' ) . '</label><br />';
-    echo '<input type="number" step="0.000001" class="widefat" id="lbhotel_latitude" name="lbhotel_latitude" value="' . esc_attr( $lat ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_longitude">' . esc_html__( 'Longitude', 'lbhotel' ) . '</label><br />';
-    echo '<input type="number" step="0.000001" class="widefat" id="lbhotel_longitude" name="lbhotel_longitude" value="' . esc_attr( $lng ) . '" /></p>';
-    echo '</div>';
+    foreach ( lbhotel_get_global_fields_by_section( 'location' ) as $meta_key => $definition ) {
+        $value = get_post_meta( $post->ID, $meta_key, true );
+        lbhotel_render_meta_input_field( $meta_key, $definition, $value );
+    }
 }
 
 /**
- * Render contact meta box.
+ * Render the category-specific meta box.
  *
- * @param WP_Post $post Post.
+ * @param WP_Post $post Post object.
  */
-function lbhotel_render_contact_meta_box( $post ) {
-    $phone      = get_post_meta( $post->ID, 'lbhotel_contact_phone', true );
-    $tour       = get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true );
-    $booking    = get_post_meta( $post->ID, 'lbhotel_booking_url', true );
+function lbhotel_render_category_meta_box( $post ) {
+    $categories         = lbhotel_get_place_category_labels();
+    $category_fields    = lbhotel_get_category_field_definitions();
+    $selected_categories = wp_get_post_terms( $post->ID, 'lbhotel_place_category', array( 'fields' => 'slugs' ) );
+    if ( is_wp_error( $selected_categories ) ) {
+        $selected_categories = array();
+    }
+
+    echo '<p class="description">' . esc_html__( 'Select one or more categories in the taxonomy box to reveal the relevant fields below.', 'lbhotel' ) . '</p>';
+
+    foreach ( $categories as $slug => $label ) {
+        $fields_for_category = lbhotel_get_fields_for_category( $slug );
+
+        if ( empty( $fields_for_category ) ) {
+            continue;
+        }
+
+        $is_active = in_array( $slug, $selected_categories, true );
+        $classes   = 'lbhotel-category-field';
+
+        if ( $is_active ) {
+            $classes .= ' is-active';
+        }
+
+        $term     = get_term_by( 'slug', $slug, 'lbhotel_place_category' );
+        $term_id  = ( $term && ! is_wp_error( $term ) ) ? (string) $term->term_id : '';
+
+        echo '<div class="' . esc_attr( $classes ) . '" data-category="' . esc_attr( $slug ) . '" data-term-id="' . esc_attr( $term_id ) . '"' . ( $is_active ? '' : ' style="display:none;"' ) . '>';
+        echo '<h4>' . esc_html( $label ) . '</h4>';
+
+        foreach ( $fields_for_category as $meta_key => $definition ) {
+            $value = get_post_meta( $post->ID, $meta_key, true );
+            lbhotel_render_meta_input_field( $meta_key, $definition, $value );
+        }
+
+        echo '</div>';
+    }
+}
+
+/**
+ * Render the media meta box (gallery uploads).
+ *
+ * @param WP_Post $post Post object.
+ */
+function lbhotel_render_media_meta_box( $post ) {
     $gallery    = get_post_meta( $post->ID, 'lbhotel_gallery_images', true );
     $gallery    = lbhotel_sanitize_gallery_images( $gallery );
     $max_images = lbhotel_get_gallery_max_images();
     $remaining  = max( 0, $max_images - count( $gallery ) );
-
-    echo '<p><label for="lbhotel_contact_phone">' . esc_html__( 'Contact phone', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat" id="lbhotel_contact_phone" name="lbhotel_contact_phone" value="' . esc_attr( $phone ) . '" /></p>';
-
-    echo '<p><label for="lbhotel_booking_url">' . esc_html__( 'Booking URL', 'lbhotel' ) . '</label><br />';
-    echo '<input type="url" class="widefat" id="lbhotel_booking_url" name="lbhotel_booking_url" value="' . esc_attr( $booking ) . '" placeholder="https://" /></p>';
-
-    echo '<p><label for="lbhotel_virtual_tour_url">' . esc_html__( 'Virtual tour URL', 'lbhotel' ) . '</label><br />';
-    echo '<input type="url" class="widefat" id="lbhotel_virtual_tour_url" name="lbhotel_virtual_tour_url" value="' . esc_attr( $tour ) . '" placeholder="https://" /></p>';
 
     echo '<div id="lbhotel-gallery-field" class="lbhotel-gallery-field" data-max="' . esc_attr( $max_images ) . '">';
     echo '<p class="lbhotel-gallery-label"><label for="lbhotel_gallery_upload">' . esc_html__( 'Gallery images', 'lbhotel' ) . '</label></p>';
@@ -405,44 +478,28 @@ function lbhotel_save_meta( $post_id, $post ) {
         return;
     }
 
-    $fields = array(
-        'lbhotel_address'            => 'sanitize_text_field',
-        'lbhotel_city'               => 'sanitize_text_field',
-        'lbhotel_region'             => 'sanitize_text_field',
-        'lbhotel_postal_code'        => 'sanitize_text_field',
-        'lbhotel_country'            => 'sanitize_text_field',
-        'lbhotel_checkin_time'       => 'lbhotel_sanitize_time',
-        'lbhotel_checkout_time'      => 'lbhotel_sanitize_time',
-        'lbhotel_rooms_total'        => 'lbhotel_sanitize_int',
-        'lbhotel_avg_price_per_night'=> 'lbhotel_sanitize_decimal',
-        'lbhotel_star_rating'        => 'lbhotel_sanitize_int',
-        'lbhotel_contact_phone'      => 'lbhotel_sanitize_phone',
-        'lbhotel_virtual_tour_url'   => 'esc_url_raw',
-        'lbhotel_booking_url'        => 'esc_url_raw',
-        'lbhotel_latitude'           => 'lbhotel_sanitize_decimal',
-        'lbhotel_longitude'          => 'lbhotel_sanitize_decimal',
-    );
+    $global_fields   = lbhotel_get_global_field_definitions();
+    $category_fields = lbhotel_get_category_field_definitions();
 
-    foreach ( $fields as $meta_key => $sanitize ) {
-        if ( isset( $_POST[ $meta_key ] ) ) {
-            $raw = wp_unslash( $_POST[ $meta_key ] );
-            if ( '' === trim( (string) $raw ) ) {
-                delete_post_meta( $post_id, $meta_key );
-                continue;
-            }
+    foreach ( $global_fields as $meta_key => $definition ) {
+        if ( 'gallery' === ( $definition['input'] ?? '' ) ) {
+            continue;
+        }
 
-            $value = call_user_func( $sanitize, $raw );
-            if ( 'lbhotel_star_rating' === $meta_key ) {
-                $value = max( 0, min( 5, (int) $value ) );
-            }
-            update_post_meta( $post_id, $meta_key, $value );
+        lbhotel_save_single_meta_field( $post_id, $meta_key, $definition );
+    }
+
+    $selected_categories = lbhotel_get_submitted_category_slugs( $post_id );
+
+    foreach ( $category_fields as $meta_key => $definition ) {
+        $applies = empty( $definition['applies_to'] ) || array_intersect( $definition['applies_to'], $selected_categories );
+
+        if ( $applies ) {
+            lbhotel_save_single_meta_field( $post_id, $meta_key, $definition );
         } else {
             delete_post_meta( $post_id, $meta_key );
         }
     }
-
-    update_post_meta( $post_id, 'lbhotel_has_free_breakfast', isset( $_POST['lbhotel_has_free_breakfast'] ) );
-    update_post_meta( $post_id, 'lbhotel_has_parking', isset( $_POST['lbhotel_has_parking'] ) );
 
     $existing_gallery = array();
     if ( isset( $_POST['lbhotel_existing_gallery'] ) ) {
@@ -522,56 +579,5 @@ function lbhotel_save_meta( $post_id, $post ) {
     } else {
         delete_post_meta( $post_id, 'lbhotel_gallery_images' );
     }
-
 }
 
-/**
- * Output quick edit fields.
- *
- * @param string $column_name Column name.
- * @param string $post_type   Post type.
- */
-function lbhotel_quick_edit_fields( $column_name, $post_type ) {
-    if ( 'lbhotel_hotel' !== $post_type ) {
-        return;
-    }
-
-    if ( 'lbhotel_star_rating' === $column_name ) {
-        echo '<fieldset class="inline-edit-col-right"><div class="inline-edit-col"><label class="alignleft"><span class="title">' . esc_html__( 'Star Rating', 'lbhotel' ) . '</span>';
-        echo '<span class="input-text-wrap"><select name="lbhotel_star_rating">';
-        echo '<option value="">' . esc_html__( 'Select', 'lbhotel' ) . '</option>';
-        for ( $i = 1; $i <= 5; $i++ ) {
-            echo '<option value="' . esc_attr( $i ) . '">' . esc_html( $i ) . '</option>';
-        }
-        echo '</select></span></label></div></fieldset>';
-    }
-
-    if ( 'lbhotel_city' === $column_name ) {
-        echo '<fieldset class="inline-edit-col-right"><div class="inline-edit-col"><label class="alignleft"><span class="title">' . esc_html__( 'City', 'lbhotel' ) . '</span>';
-        echo '<span class="input-text-wrap"><input type="text" name="lbhotel_city" value="" /></span></label></div></fieldset>';
-    }
-}
-
-/**
- * Save quick edit fields.
- *
- * @param int     $post_id Post ID.
- * @param WP_Post $post    Post object.
- */
-function lbhotel_save_quick_edit_meta( $post_id, $post ) {
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-        return;
-    }
-
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
-        return;
-    }
-
-    if ( isset( $_POST['lbhotel_star_rating'] ) ) {
-        update_post_meta( $post_id, 'lbhotel_star_rating', lbhotel_sanitize_int( wp_unslash( $_POST['lbhotel_star_rating'] ) ) );
-    }
-
-    if ( isset( $_POST['lbhotel_city'] ) ) {
-        update_post_meta( $post_id, 'lbhotel_city', sanitize_text_field( wp_unslash( $_POST['lbhotel_city'] ) ) );
-    }
-}

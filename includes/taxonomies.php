@@ -13,72 +13,45 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Register hotel taxonomies.
  */
 function lbhotel_register_taxonomies() {
-    $hotel_type_labels = array(
-        'name'              => _x( 'Hotel Types', 'taxonomy general name', 'lbhotel' ),
-        'singular_name'     => _x( 'Hotel Type', 'taxonomy singular name', 'lbhotel' ),
-        'search_items'      => __( 'Search Hotel Types', 'lbhotel' ),
-        'all_items'         => __( 'All Hotel Types', 'lbhotel' ),
-        'parent_item'       => __( 'Parent Hotel Type', 'lbhotel' ),
-        'parent_item_colon' => __( 'Parent Hotel Type:', 'lbhotel' ),
-        'edit_item'         => __( 'Edit Hotel Type', 'lbhotel' ),
-        'update_item'       => __( 'Update Hotel Type', 'lbhotel' ),
-        'add_new_item'      => __( 'Add New Hotel Type', 'lbhotel' ),
-        'new_item_name'     => __( 'New Hotel Type Name', 'lbhotel' ),
-        'menu_name'         => __( 'Hotel Types', 'lbhotel' ),
+    $category_labels = array(
+        'name'              => _x( 'Virtual Place Categories', 'taxonomy general name', 'lbhotel' ),
+        'singular_name'     => _x( 'Virtual Place Category', 'taxonomy singular name', 'lbhotel' ),
+        'search_items'      => __( 'Search Categories', 'lbhotel' ),
+        'all_items'         => __( 'All Categories', 'lbhotel' ),
+        'parent_item'       => __( 'Parent Category', 'lbhotel' ),
+        'parent_item_colon' => __( 'Parent Category:', 'lbhotel' ),
+        'edit_item'         => __( 'Edit Category', 'lbhotel' ),
+        'update_item'       => __( 'Update Category', 'lbhotel' ),
+        'add_new_item'      => __( 'Add New Category', 'lbhotel' ),
+        'new_item_name'     => __( 'New Category Name', 'lbhotel' ),
+        'menu_name'         => __( 'Categories', 'lbhotel' ),
     );
 
     register_taxonomy(
-        'lbhotel_hotel_type',
+        'lbhotel_place_category',
         array( 'lbhotel_hotel' ),
         array(
             'hierarchical'      => true,
-            'labels'            => $hotel_type_labels,
+            'labels'            => $category_labels,
             'show_ui'           => true,
             'show_admin_column' => true,
             'show_in_rest'      => true,
-            'rewrite'           => array( 'slug' => 'hotel-type' ),
+            'rewrite'           => array( 'slug' => 'virtual-place-category' ),
         )
     );
 
-    $location_labels = array(
-        'name'              => _x( 'Hotel Locations', 'taxonomy general name', 'lbhotel' ),
-        'singular_name'     => _x( 'Hotel Location', 'taxonomy singular name', 'lbhotel' ),
-        'search_items'      => __( 'Search Locations', 'lbhotel' ),
-        'all_items'         => __( 'All Locations', 'lbhotel' ),
-        'parent_item'       => __( 'Parent Location', 'lbhotel' ),
-        'parent_item_colon' => __( 'Parent Location:', 'lbhotel' ),
-        'edit_item'         => __( 'Edit Location', 'lbhotel' ),
-        'update_item'       => __( 'Update Location', 'lbhotel' ),
-        'add_new_item'      => __( 'Add New Location', 'lbhotel' ),
-        'new_item_name'     => __( 'New Location Name', 'lbhotel' ),
-        'menu_name'         => __( 'Hotel Locations', 'lbhotel' ),
-    );
-
-    register_taxonomy(
-        'lbhotel_location',
-        array( 'lbhotel_hotel' ),
-        array(
-            'hierarchical'      => true,
-            'labels'            => $location_labels,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'show_in_rest'      => true,
-            'rewrite'           => array( 'slug' => 'hotel-location' ),
-        )
-    );
-
-    lbhotel_ensure_default_hotel_types();
+    lbhotel_ensure_default_place_categories();
 }
 
 /**
- * Ensure default hotel types exist.
+ * Ensure default place categories exist.
  */
-function lbhotel_ensure_default_hotel_types() {
-    $defaults = array( 'Boutique', 'Business', 'Resort', 'Hostel', 'Apartment' );
+function lbhotel_ensure_default_place_categories() {
+    $categories = lbhotel_get_place_category_labels();
 
-    foreach ( $defaults as $type ) {
-        if ( ! term_exists( $type, 'lbhotel_hotel_type' ) ) {
-            wp_insert_term( $type, 'lbhotel_hotel_type' );
+    foreach ( $categories as $slug => $label ) {
+        if ( ! term_exists( $slug, 'lbhotel_place_category' ) ) {
+            wp_insert_term( $label, 'lbhotel_place_category', array( 'slug' => $slug ) );
         }
     }
 }

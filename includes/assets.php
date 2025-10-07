@@ -30,7 +30,7 @@ function lbhotel_enqueue_public_assets() {
     $post     = get_post();
     $content  = $post ? $post->post_content : '';
 
-    if ( is_singular( 'lbhotel_hotel' ) || is_post_type_archive( 'lbhotel_hotel' ) ) {
+    if ( is_singular( 'lbhotel_hotel' ) || is_post_type_archive( 'lbhotel_hotel' ) || is_tax( 'lbhotel_place_category' ) ) {
         wp_enqueue_style( 'lbhotel-public' );
         wp_enqueue_script( 'lbhotel-public' );
 
@@ -63,11 +63,7 @@ function lbhotel_enqueue_admin_assets( $hook ) {
 
     }
 
-    if ( 'lbhotel_hotel_page_hotel-import-export' === $hook ) {
-        wp_enqueue_style( 'lbhotel-admin' );
-    }
-
-    if ( 'lbhotel_hotel_page_hotel-import-export' === $hook ) {
+    if ( 'lbhotel_hotel_page_places-import-export' === $hook ) {
         wp_enqueue_style( 'lbhotel-admin' );
     }
 }
