@@ -168,6 +168,12 @@ function lbhotel_render_settings_page() {
         return;
     }
 
+    $active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general';
+    $tabs       = array(
+        'general'       => __( 'General', 'lbhotel' ),
+        'import-export' => __( 'Import / Export', 'lbhotel' ),
+    );
+
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__( 'Le Bon Hotel Settings', 'lbhotel' ) . '</h1>';
 
