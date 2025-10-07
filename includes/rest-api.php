@@ -1,6 +1,6 @@
 <?php
 /**
- * REST API endpoints for Le Bon Hotel.
+ * REST API endpoints for Virtual Maroc places.
  *
  * @package LeBonHotel
  */
@@ -15,26 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 function lbhotel_register_rest_routes() {
     add_action( 'rest_api_init', function () {
         register_rest_route(
-            'lbhotel/v1',
-            '/hotels',
+            'virtualmaroc/v1',
+            '/places',
             array(
                 'methods'             => WP_REST_Server::READABLE,
-                'callback'            => 'lbhotel_rest_get_hotels',
+                'callback'            => 'lbhotel_rest_get_places',
                 'permission_callback' => '__return_true',
                 'args'                => array(
-                    'city'       => array(
+                    'city'     => array(
                         'sanitize_callback' => 'sanitize_text_field',
                     ),
-                    'stars'      => array(
-                        'sanitize_callback' => 'absint',
-                    ),
-                    'hotel_type' => array(
+                    'category' => array(
                         'sanitize_callback' => 'sanitize_text_field',
                     ),
-                    'per_page'   => array(
+                    'search'   => array(
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'per_page' => array(
                         'sanitize_callback' => 'absint',
                     ),
-                    'page'       => array(
+                    'page'     => array(
                         'sanitize_callback' => 'absint',
                     ),
                 ),
@@ -42,11 +42,11 @@ function lbhotel_register_rest_routes() {
         );
 
         register_rest_route(
-            'lbhotel/v1',
-            '/hotels/(?P<id>\d+)',
+            'virtualmaroc/v1',
+            '/places/(?P<id>\d+)',
             array(
                 'methods'             => WP_REST_Server::READABLE,
-                'callback'            => 'lbhotel_rest_get_hotel',
+                'callback'            => 'lbhotel_rest_get_place',
                 'permission_callback' => '__return_true',
                 'args'                => array(
                     'context' => array(
@@ -59,12 +59,12 @@ function lbhotel_register_rest_routes() {
 }
 
 /**
- * Get hotels collection.
+ * Get a paginated collection of virtual places.
  *
  * @param WP_REST_Request $request Request instance.
  * @return WP_REST_Response
  */
-function lbhotel_rest_get_hotels( WP_REST_Request $request ) {
+function lbhotel_rest_get_places( WP_REST_Request $request ) {
     $args = array(
         'post_type'      => 'lbhotel_hotel',
         'post_status'    => 'publish',
@@ -85,35 +85,32 @@ function lbhotel_rest_get_hotels( WP_REST_Request $request ) {
         );
     }
 
-    if ( $request->get_param( 'stars' ) ) {
-        $meta_query[] = array(
-            'key'   => 'lbhotel_star_rating',
-            'value' => absint( $request->get_param( 'stars' ) ),
-        );
-    }
-
     if ( ! empty( $meta_query ) ) {
         $args['meta_query'] = $meta_query;
     }
 
-    if ( $request->get_param( 'hotel_type' ) ) {
+    if ( $request->get_param( 'category' ) ) {
         $args['tax_query'] = array(
             array(
-                'taxonomy' => 'lbhotel_hotel_type',
+                'taxonomy' => 'lbhotel_place_category',
                 'field'    => 'slug',
-                'terms'    => sanitize_text_field( $request->get_param( 'hotel_type' ) ),
+                'terms'    => sanitize_text_field( $request->get_param( 'category' ) ),
             ),
         );
     }
 
-    $query = new WP_Query( $args );
-    $hotels = array();
-
-    foreach ( $query->posts as $post ) {
-        $hotels[] = lbhotel_prepare_hotel_for_response( $post, $request );
+    if ( $request->get_param( 'search' ) ) {
+        $args['s'] = sanitize_text_field( $request->get_param( 'search' ) );
     }
 
-    $response = rest_ensure_response( $hotels );
+    $query  = new WP_Query( $args );
+    $places = array();
+
+    foreach ( $query->posts as $post ) {
+        $places[] = lbhotel_prepare_place_for_response( $post, $request );
+    }
+
+    $response = rest_ensure_response( $places );
     $response->header( 'X-WP-Total', (int) $query->found_posts );
     $response->header( 'X-WP-TotalPages', (int) $query->max_num_pages );
 
@@ -121,80 +118,90 @@ function lbhotel_rest_get_hotels( WP_REST_Request $request ) {
 }
 
 /**
- * Get single hotel.
+ * Get a single virtual place.
  *
- * @param WP_REST_Request $request Request.
- * @return WP_REST_Response
+ * @param WP_REST_Request $request Request instance.
+ * @return WP_REST_Response|WP_Error
  */
-function lbhotel_rest_get_hotel( WP_REST_Request $request ) {
+function lbhotel_rest_get_place( WP_REST_Request $request ) {
     $post = get_post( (int) $request['id'] );
 
     if ( ! $post || 'lbhotel_hotel' !== $post->post_type || 'publish' !== $post->post_status ) {
-        return new WP_Error( 'lbhotel_not_found', __( 'Hotel not found.', 'lbhotel' ), array( 'status' => 404 ) );
+        return new WP_Error( 'lbhotel_not_found', __( 'Place not found.', 'lbhotel' ), array( 'status' => 404 ) );
     }
 
-    return rest_ensure_response( lbhotel_prepare_hotel_for_response( $post, $request ) );
+    return rest_ensure_response( lbhotel_prepare_place_for_response( $post, $request ) );
 }
 
 /**
- * Prepare hotel for response.
+ * Prepare a single place payload for the REST API.
  *
  * @param WP_Post         $post    Post object.
- * @param WP_REST_Request $request Request.
+ * @param WP_REST_Request $request Request instance.
  * @return array
  */
-function lbhotel_prepare_hotel_for_response( $post, WP_REST_Request $request ) {
-    $meta = array(
-        'address'             => get_post_meta( $post->ID, 'lbhotel_address', true ),
-        'city'                => get_post_meta( $post->ID, 'lbhotel_city', true ),
-        'region'              => get_post_meta( $post->ID, 'lbhotel_region', true ),
-        'postal_code'         => get_post_meta( $post->ID, 'lbhotel_postal_code', true ),
-        'country'             => get_post_meta( $post->ID, 'lbhotel_country', true ),
-        'checkin_time'        => get_post_meta( $post->ID, 'lbhotel_checkin_time', true ),
-        'checkout_time'       => get_post_meta( $post->ID, 'lbhotel_checkout_time', true ),
-        'rooms_total'         => (int) get_post_meta( $post->ID, 'lbhotel_rooms_total', true ),
-        'avg_price_per_night' => get_post_meta( $post->ID, 'lbhotel_avg_price_per_night', true ),
-        'has_free_breakfast'  => (bool) get_post_meta( $post->ID, 'lbhotel_has_free_breakfast', true ),
-        'has_parking'         => (bool) get_post_meta( $post->ID, 'lbhotel_has_parking', true ),
-        'star_rating'         => (int) get_post_meta( $post->ID, 'lbhotel_star_rating', true ),
-        'gallery_images'      => get_post_meta( $post->ID, 'lbhotel_gallery_images', true ),
-        'virtual_tour_url'    => get_post_meta( $post->ID, 'lbhotel_virtual_tour_url', true ),
-        'contact_phone'       => get_post_meta( $post->ID, 'lbhotel_contact_phone', true ),
-        'booking_url'         => get_post_meta( $post->ID, 'lbhotel_booking_url', true ),
-    );
+function lbhotel_prepare_place_for_response( $post, WP_REST_Request $request ) {
+    $definitions = lbhotel_get_all_field_definitions();
+    $meta        = array();
 
-    $terms = wp_get_post_terms( $post->ID, array( 'lbhotel_hotel_type', 'lbhotel_location' ), array( 'fields' => 'all_with_object_id' ) );
+    foreach ( $definitions as $meta_key => $definition ) {
+        $value    = get_post_meta( $post->ID, $meta_key, true );
+        $type     = isset( $definition['type'] ) ? $definition['type'] : 'string';
+        $input    = isset( $definition['input'] ) ? $definition['input'] : 'text';
+        $rest_key = lbhotel_rest_format_meta_key( $meta_key );
 
-    $hotel_types = array();
-    $locations   = array();
+        if ( 'gallery' === $input ) {
+            $images  = lbhotel_sanitize_gallery_images( $value );
+            $payload = array();
 
-    foreach ( $terms as $term ) {
-        if ( 'lbhotel_hotel_type' === $term->taxonomy ) {
-            $hotel_types[] = array(
-                'id'   => $term->term_id,
-                'name' => $term->name,
-                'slug' => $term->slug,
-            );
-        } elseif ( 'lbhotel_location' === $term->taxonomy ) {
-            $locations[] = array(
-                'id'   => $term->term_id,
-                'name' => $term->name,
-                'slug' => $term->slug,
-            );
+            foreach ( $images as $image_id ) {
+                $url = wp_get_attachment_image_url( $image_id, 'large' );
+
+                if ( $url ) {
+                    $payload[] = array(
+                        'id'  => $image_id,
+                        'url' => $url,
+                    );
+                }
+            }
+
+            $meta[ $rest_key ] = $payload;
+            continue;
+        }
+
+        if ( '' === $value || null === $value ) {
+            $meta[ $rest_key ] = '';
+            continue;
+        }
+
+        if ( 'number' === $type ) {
+            $meta[ $rest_key ] = (float) $value;
+        } elseif ( 'integer' === $type ) {
+            $meta[ $rest_key ] = (int) $value;
+        } else {
+            $meta[ $rest_key ] = $value;
         }
     }
 
+    $terms = wp_get_post_terms( $post->ID, 'lbhotel_place_category' );
+    $categories = array();
+
+    foreach ( $terms as $term ) {
+        $categories[] = array(
+            'id'   => $term->term_id,
+            'name' => $term->name,
+            'slug' => $term->slug,
+        );
+    }
+
     $data = array(
-        'id'          => $post->ID,
-        'title'       => get_the_title( $post ),
-        'permalink'   => get_permalink( $post ),
-        'excerpt'     => wp_trim_words( $post->post_content, 30 ),
-        'thumbnail'   => get_the_post_thumbnail_url( $post, 'large' ),
-        'star_rating' => $meta['star_rating'],
-        'meta'        => $meta,
-        'hotel_types' => $hotel_types,
-        'locations'   => $locations,
-        'currency'    => lbhotel_get_option( 'default_currency' ),
+        'id'         => $post->ID,
+        'title'      => get_the_title( $post ),
+        'permalink'  => get_permalink( $post ),
+        'excerpt'    => wp_trim_words( $post->post_content, 30 ),
+        'thumbnail'  => get_the_post_thumbnail_url( $post, 'large' ),
+        'categories' => $categories,
+        'meta'       => $meta,
     );
 
     if ( has_post_thumbnail( $post ) ) {
@@ -204,71 +211,17 @@ function lbhotel_prepare_hotel_for_response( $post, WP_REST_Request $request ) {
         );
     }
 
-    if ( $request->get_param( 'context' ) === 'map' ) {
-        $lat = get_post_meta( $post->ID, 'lbhotel_latitude', true );
-        $lng = get_post_meta( $post->ID, 'lbhotel_longitude', true );
-
-        if ( $lat && $lng ) {
-            $data['lat'] = (float) $lat;
-            $data['lng'] = (float) $lng;
-        }
-    }
-
     return $data;
 }
 
 /**
- * Provide schema example for documentation.
+ * Normalize a meta key for REST output.
  *
- * @return array
+ * @param string $meta_key Raw meta key.
+ * @return string
  */
-function lbhotel_rest_hotel_schema_example() {
-    return array(
-        'id'        => 42,
-        'title'     => 'Le Bon Hotel Central',
-        'permalink' => 'https://example.com/hotel/le-bon-hotel-central',
-        'star_rating' => 4,
-        'meta'      => array(
-            'address'             => '123 Boulevard Hassan II',
-            'city'                => 'Casablanca',
-            'region'              => 'Casablanca-Settat',
-            'postal_code'         => '20000',
-            'country'             => 'Morocco',
-            'checkin_time'        => '14:00',
-            'checkout_time'       => '12:00',
-            'rooms_total'         => 120,
-            'avg_price_per_night' => 850.00,
-            'has_free_breakfast'  => true,
-            'has_parking'         => true,
-            'star_rating'         => 4,
-            'gallery_images'      => array( 54, 55, 56 ),
-            'virtual_tour_url'    => 'https://example.com/virtual-tour',
-            'contact_phone'       => '+212 5 22 33 44 55',
-            'booking_url'         => 'https://bookings.example.com/le-bon-hotel-central',
-            'rooms'               => array(
-                array(
-                    'name'       => 'Deluxe Suite',
-                    'price'      => 1200.00,
-                    'capacity'   => 3,
-                    'images'     => array( 'https://example.com/suite.jpg' ),
-                    'availability' => 'Available',
-                ),
-            ),
-        ),
-        'hotel_types' => array(
-            array(
-                'id'   => 3,
-                'name' => 'Boutique',
-                'slug' => 'boutique',
-            ),
-        ),
-        'locations' => array(
-            array(
-                'id'   => 7,
-                'name' => 'Casablanca',
-                'slug' => 'casablanca',
-            ),
-        ),
-        'currency' => 'MAD',
-    );
+function lbhotel_rest_format_meta_key( $meta_key ) {
+    $meta_key = preg_replace( '/^lbhotel_/', '', $meta_key );
+
+    return $meta_key;
 }

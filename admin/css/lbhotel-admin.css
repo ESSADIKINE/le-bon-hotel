@@ -70,15 +70,31 @@
 }
 
 /* Placeholder for hotel icon replacements in admin columns */
-.column-lbhotel_star_rating::before {
-    content: '\2605';
-    color: #d4a017;
+.column-lbhotel_primary_category::before {
+    content: '\1F4CD';
     margin-right: 4px;
 }
 
 .column-lbhotel_city::before {
     content: '\1F3D9';
     margin-right: 4px;
+}
+
+.lbhotel-category-field {
+    background: #f8fafc;
+    border: 1px solid #dce3ec;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: none;
+}
+
+.lbhotel-category-field.is-active {
+    display: block;
+}
+
+.lbhotel-category-field h4 {
+    margin: 0 0 8px;
 }
 
 .lbhotel-import-export-page .lbhotel-page-intro {
