@@ -27,7 +27,6 @@ $meta_keys = array(
     'lbhotel_virtual_tour_url',
     'lbhotel_contact_phone',
     'lbhotel_booking_url',
-    'lbhotel_rooms',
     'lbhotel_latitude',
     'lbhotel_longitude',
 );

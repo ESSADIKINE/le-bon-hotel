@@ -61,13 +61,9 @@ function lbhotel_enqueue_admin_assets( $hook ) {
 
         wp_enqueue_media();
 
-        wp_localize_script(
-            'lbhotel-admin',
-            'lbHotelRooms',
-            array(
-                'nonce' => wp_create_nonce( 'lbhotel_rooms_nonce' ),
-            )
-        );
+    }
 
+    if ( 'lbhotel_hotel_page_hotel-import-export' === $hook ) {
+        wp_enqueue_style( 'lbhotel-admin' );
     }
 }

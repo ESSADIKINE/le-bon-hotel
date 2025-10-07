@@ -78,10 +78,6 @@ function lbhotel_register_meta_fields() {
             'type'              => 'string',
             'sanitize_callback' => 'esc_url_raw',
         ),
-        'lbhotel_rooms'              => array(
-            'type'              => 'array',
-            'sanitize_callback' => 'lbhotel_sanitize_rooms',
-        ),
         'lbhotel_latitude'           => array(
             'type'              => 'number',
             'sanitize_callback' => 'lbhotel_sanitize_decimal',
@@ -234,15 +230,6 @@ function lbhotel_register_meta_boxes() {
     );
 
     add_meta_box(
-        'lbhotel_rooms_meta',
-        __( 'Rooms & Suites', 'lbhotel' ),
-        'lbhotel_render_rooms_meta_box',
-        'lbhotel_hotel',
-        'normal',
-        'default'
-    );
-
-    add_meta_box(
         'lbhotel_contact_meta',
         __( 'Contact & Media', 'lbhotel' ),
         'lbhotel_render_contact_meta_box',
@@ -333,61 +320,6 @@ function lbhotel_render_location_meta_box( $post ) {
     echo '<p><label for="lbhotel_longitude">' . esc_html__( 'Longitude', 'lbhotel' ) . '</label><br />';
     echo '<input type="number" step="0.000001" class="widefat" id="lbhotel_longitude" name="lbhotel_longitude" value="' . esc_attr( $lng ) . '" /></p>';
     echo '</div>';
-}
-
-/**
- * Render rooms meta box.
- *
- * @param WP_Post $post Post.
- */
-function lbhotel_render_rooms_meta_box( $post ) {
-    $rooms = get_post_meta( $post->ID, 'lbhotel_rooms', true );
-
-    if ( empty( $rooms ) ) {
-        $rooms = array();
-    }
-
-    echo '<div id="lbhotel-rooms-manager" class="lbhotel-rooms-manager" data-locale-add="' . esc_attr__( 'Add room type', 'lbhotel' ) . '" data-locale-remove="' . esc_attr__( 'Remove', 'lbhotel' ) . '">';
-
-    foreach ( $rooms as $index => $room ) {
-        lbhotel_render_room_row( $index, $room );
-    }
-
-    if ( empty( $rooms ) ) {
-        lbhotel_render_room_row( 0, array() );
-    }
-
-    echo '<button type="button" class="button lbhotel-add-room">' . esc_html__( 'Add room type', 'lbhotel' ) . '</button>';
-    echo '<input type="hidden" name="lbhotel_rooms_json" id="lbhotel_rooms_json" value="' . esc_attr( wp_json_encode( $rooms ) ) . '" />';
-    echo '</div>';
-}
-
-/**
- * Render a single room row.
- *
- * @param int   $index Index.
- * @param array $room Room data.
- */
-function lbhotel_render_room_row( $index, $room ) {
-    $name        = isset( $room['name'] ) ? $room['name'] : '';
-    $price       = isset( $room['price'] ) ? $room['price'] : '';
-    $capacity    = isset( $room['capacity'] ) ? $room['capacity'] : '';
-    $images      = isset( $room['images'] ) ? implode( ',', (array) $room['images'] ) : '';
-    $availability= isset( $room['availability'] ) ? $room['availability'] : '';
-
-    echo '<div class="lbhotel-room" data-index="' . esc_attr( $index ) . '">';
-    echo '<p><label>' . esc_html__( 'Room name', 'lbhotel' ) . '</label><br />';
-    echo '<input type="text" class="widefat lbhotel-room-name" value="' . esc_attr( $name ) . '" /></p>';
-
-    echo '<div class="lbhotel-room-grid">';
-    echo '<p><label>' . esc_html__( 'Price', 'lbhotel' ) . '</label><br /><input type="number" step="0.01" class="lbhotel-room-price" value="' . esc_attr( $price ) . '" /></p>';
-    echo '<p><label>' . esc_html__( 'Capacity', 'lbhotel' ) . '</label><br /><input type="number" class="lbhotel-room-capacity" value="' . esc_attr( $capacity ) . '" /></p>';
-    echo '<p><label>' . esc_html__( 'Availability', 'lbhotel' ) . '</label><br /><input type="text" class="lbhotel-room-availability" value="' . esc_attr( $availability ) . '" placeholder="' . esc_attr__( 'e.g. Available, Sold out', 'lbhotel' ) . '" /></p>';
-    echo '</div>';
-
-    echo '<p><label>' . esc_html__( 'Image URLs or IDs (comma separated)', 'lbhotel' ) . '</label><br /><input type="text" class="widefat lbhotel-room-images" value="' . esc_attr( $images ) . '" /></p>';
-    echo '<button type="button" class="button-link-delete lbhotel-remove-room">' . esc_html__( 'Remove', 'lbhotel' ) . '</button>';
-    echo '<hr /></div>';
 }
 
 /**
@@ -591,10 +523,6 @@ function lbhotel_save_meta( $post_id, $post ) {
         delete_post_meta( $post_id, 'lbhotel_gallery_images' );
     }
 
-    if ( isset( $_POST['lbhotel_rooms_json'] ) ) {
-        $rooms = lbhotel_sanitize_rooms( wp_unslash( $_POST['lbhotel_rooms_json'] ) );
-        update_post_meta( $post_id, 'lbhotel_rooms', $rooms );
-    }
 }
 
 /**

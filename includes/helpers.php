@@ -85,54 +85,6 @@ function lbhotel_sanitize_decimal( $value ) {
 }
 
 /**
- * Ensure rooms JSON is valid structure.
- *
- * @param mixed $value Raw value.
- * @return array
- */
-function lbhotel_sanitize_rooms( $value ) {
-    if ( is_string( $value ) ) {
-        $value = json_decode( wp_unslash( $value ), true );
-    }
-
-    if ( ! is_array( $value ) ) {
-        return array();
-    }
-
-    $rooms = array();
-
-    foreach ( $value as $room ) {
-        if ( empty( $room['name'] ) ) {
-            continue;
-        }
-
-        $rooms[] = array(
-            'name'         => sanitize_text_field( $room['name'] ),
-            'price'        => isset( $room['price'] ) ? lbhotel_sanitize_decimal( $room['price'] ) : 0,
-            'capacity'     => isset( $room['capacity'] ) ? lbhotel_sanitize_int( $room['capacity'] ) : 0,
-            'images'       => isset( $room['images'] ) && is_array( $room['images'] ) ? array_map( 'lbhotel_sanitize_room_image', $room['images'] ) : array(),
-            'availability' => isset( $room['availability'] ) ? sanitize_text_field( $room['availability'] ) : '',
-        );
-    }
-
-    return $rooms;
-}
-
-/**
- * Sanitize a room image value (ID or URL).
- *
- * @param mixed $value Image value.
- * @return mixed
- */
-function lbhotel_sanitize_room_image( $value ) {
-    if ( is_numeric( $value ) ) {
-        return absint( $value );
-    }
-
-    return esc_url_raw( $value );
-}
-
-/**
  * Bootstrap Gutenberg blocks (placeholder for future block registration).
  */
 function lbhotel_bootstrap_blocks() {

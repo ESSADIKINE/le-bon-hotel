@@ -24,7 +24,6 @@ class LBHotel_Meta_Test extends WP_UnitTestCase {
         $_POST['lbhotel_has_free_breakfast']    = '1';
         $_POST['lbhotel_has_parking']           = '1';
         $_POST['lbhotel_rooms_total']           = '80';
-        $_POST['lbhotel_rooms_json']            = wp_json_encode( array( array( 'name' => 'Suite', 'price' => '2000', 'capacity' => 3, 'availability' => 'Available', 'images' => array() ) ) );
 
         lbhotel_save_meta( $post_id, get_post( $post_id ) );
 
@@ -32,10 +31,6 @@ class LBHotel_Meta_Test extends WP_UnitTestCase {
         $this->assertSame( 5, (int) get_post_meta( $post_id, 'lbhotel_star_rating', true ) );
         $this->assertSame( '+212 6 11 22 33 44', get_post_meta( $post_id, 'lbhotel_contact_phone', true ) );
         $this->assertSame( 80, (int) get_post_meta( $post_id, 'lbhotel_rooms_total', true ) );
-        $rooms = get_post_meta( $post_id, 'lbhotel_rooms', true );
-        $this->assertIsArray( $rooms );
-        $this->assertSame( 'Suite', $rooms[0]['name'] );
-
         unset( $_POST );
     }
 }
