@@ -219,15 +219,21 @@ get_header();
                                 }
 
                                 $rating_value  = lbhotel_get_rating_value( $post_id );
-                                $rating_markup = lbhotel_get_rating_markup(
-                                    $rating_value,
-                                    array(
-                                        'show_value' => true,
-                                        'class'      => 'lbhotel-rating lbhotel-rating--compact',
-                                    )
-                                );
+                                $rating_markup = '';
 
-                                $excerpt = get_the_excerpt();
+                                if ( $rating_value > 0 ) {
+                                    $rating_rounded = max( 0, min( 5, (int) round( $rating_value ) ) );
+                                    $stars_markup   = '';
+
+                                    for ( $i = 0; $i < $rating_rounded; $i++ ) {
+                                        $stars_markup .= '<span aria-hidden="true">★</span>';
+                                    }
+
+                                    $rating_markup  = '<div class="lbhotel-info-card__stars" aria-label="' . esc_attr( sprintf( _n( '%d star', '%d stars', $rating_rounded, 'lbhotel' ), $rating_rounded ) ) . '">';
+                                    $rating_markup .= $stars_markup;
+                                    $rating_markup .= '<span class="lbhotel-info-card__stars-text">' . esc_html( sprintf( '%d/5', $rating_rounded ) ) . '</span>';
+                                    $rating_markup .= '</div>';
+                                }
 
                                 $highlights = array();
                                 if ( ! empty( $category_display['highlights'] ) && is_array( $category_display['highlights'] ) ) {
@@ -270,7 +276,7 @@ get_header();
                                     }
                                 }
 
-                                $info_lines = array();
+                                $meta_rows = array();
 
                                 $price_text = '';
 
@@ -290,7 +296,8 @@ get_header();
 
                                         if ( $price_display ) {
                                             $price_text = $currency_code ? sprintf( '%s %s', $currency_code, $price_display ) : $price_display;
-                                            $info_lines[] = array(
+                                            $meta_rows[] = array(
+                                                'type'  => 'price',
                                                 'label' => __( 'Average price per night', 'lbhotel' ),
                                                 'value' => $price_text,
                                             );
@@ -298,30 +305,23 @@ get_header();
                                     }
                                 }
 
-                                if ( empty( $info_lines ) ) {
-                                    $primary_highlight = reset( $highlights );
-
-                                    if ( $primary_highlight ) {
-                                        $info_lines[] = array(
-                                            'label'     => $primary_highlight['label'],
-                                            'value'     => $primary_highlight['value'],
-                                            'multiline' => ! empty( $primary_highlight['multiline'] ),
+                                if ( ! empty( $highlights ) ) {
+                                    foreach ( $highlights as $highlight ) {
+                                        $meta_rows[] = array_merge(
+                                            $highlight,
+                                            array( 'type' => 'meta' )
                                         );
                                     }
                                 }
 
-                                if ( empty( $info_lines ) && ! empty( $details ) ) {
-                                    $primary_detail = reset( $details );
-
-                                    if ( $primary_detail ) {
-                                        $info_lines[] = array(
-                                            'label'     => $primary_detail['label'],
-                                            'value'     => $primary_detail['value'],
-                                            'multiline' => ! empty( $primary_detail['multiline'] ),
+                                if ( ! empty( $details ) ) {
+                                    foreach ( $details as $detail ) {
+                                        $meta_rows[] = array_merge(
+                                            $detail,
+                                            array( 'type' => 'meta' )
                                         );
                                     }
                                 }
-                            }
 
                                 $action_buttons = array();
 
@@ -446,31 +446,29 @@ get_header();
                                         <?php endif; ?>
 
                                         <?php if ( $rating_markup ) : ?>
-                                            <div class="lbhotel-info-card__stars">
-                                                <?php echo $rating_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                                            </div>
+                                            <?php echo $rating_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                                         <?php endif; ?>
 
-                                        <?php if ( $excerpt ) : ?>
-                                            <p class="lbhotel-info-card__excerpt"><?php echo esc_html( wp_trim_words( $excerpt, 25 ) ); ?></p>
-                                        <?php endif; ?>
-
-                                        <?php foreach ( $info_lines as $line ) : ?>
-                                            <p class="lbhotel-info-card__meta">
-                                                <?php if ( ! empty( $line['label'] ) ) : ?>
-                                                    <span class="lbhotel-info-card__meta-label"><?php echo esc_html( $line['label'] ); ?>:</span>
-                                                <?php endif; ?>
-                                                <span class="lbhotel-info-card__meta-value">
-                                                    <?php
-                                                    $value = isset( $line['value'] ) ? $line['value'] : '';
-                                                    if ( ! empty( $line['multiline'] ) ) {
-                                                        echo wp_kses_post( nl2br( esc_html( $value ) ) );
-                                                    } else {
-                                                        echo esc_html( $value );
-                                                    }
-                                                    ?>
-                                                </span>
-                                            </p>
+                                        <?php foreach ( $meta_rows as $row ) : ?>
+                                            <?php if ( 'price' === $row['type'] ) : ?>
+                                                <p class="lbhotel-info-card__price"><?php echo esc_html( sprintf( __( '%1$s: %2$s', 'lbhotel' ), $row['label'], $row['value'] ) ); ?></p>
+                                            <?php else : ?>
+                                                <p class="lbhotel-info-card__meta">
+                                                    <?php if ( ! empty( $row['label'] ) ) : ?>
+                                                        <span class="lbhotel-info-card__meta-label"><?php echo esc_html( $row['label'] ); ?>:</span>
+                                                    <?php endif; ?>
+                                                    <span class="lbhotel-info-card__meta-value">
+                                                        <?php
+                                                        $value = isset( $row['value'] ) ? $row['value'] : '';
+                                                        if ( ! empty( $row['multiline'] ) ) {
+                                                            echo wp_kses_post( nl2br( esc_html( $value ) ) );
+                                                        } else {
+                                                            echo esc_html( $value );
+                                                        }
+                                                        ?>
+                                                    </span>
+                                                </p>
+                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </div>
 
