@@ -1,8 +1,8 @@
 <?php
 /**
- * Taxonomy registration for Le Bon Hotel.
+ * Taxonomy registration for Virtual Maroc.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

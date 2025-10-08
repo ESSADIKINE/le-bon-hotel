@@ -2,7 +2,7 @@
 /**
  * Archive template for Virtual Maroc places.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -570,6 +570,3 @@ get_header();
         <?php if ( function_exists( 'astra_sidebar_primary' ) ) { astra_sidebar_primary(); } ?>
     </div>
 </div>
-
-<?php
-get_footer();

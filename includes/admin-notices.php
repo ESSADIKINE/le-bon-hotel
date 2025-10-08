@@ -2,7 +2,7 @@
 /**
  * Admin notice helpers.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

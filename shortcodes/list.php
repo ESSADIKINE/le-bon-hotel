@@ -5,7 +5,7 @@
  * @var WP_Query $query Query with hotels.
  * @var array    $atts  Shortcode attributes.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! isset( $query ) || ! $query instanceof WP_Query ) {

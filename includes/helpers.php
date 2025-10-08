@@ -1,8 +1,8 @@
 <?php
 /**
- * Helper utilities for Le Bon Hotel.
+ * Helper utilities for Virtual Maroc.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

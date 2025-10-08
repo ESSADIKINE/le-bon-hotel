@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name:       Le Bon Hotel
- * Plugin URI:        https://example.com/le-bon-hotel
+ * Plugin Name:       Virtual Maroc
+ * Plugin URI:        https://example.com/virtual-maroc
  * Description:       Complete hotel directory toolkit for managing listings, booking information, and showcasing hotels on the front end.
  * Version:           1.0.0
- * Author:            Le Bon Plugins
+ * Author:            Virtual Maroc Plugins
  * Author URI:        https://example.com
  * Text Domain:       lbhotel
  * Domain Path:       /languages
  * Requires at least: 5.8
  * Requires PHP:      7.4
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

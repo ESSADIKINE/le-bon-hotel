@@ -2,7 +2,7 @@
 /**
  * Admin meta boxes and meta registration.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

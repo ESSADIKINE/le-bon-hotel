@@ -2,7 +2,7 @@
 /**
  * Import and export tools for Virtual Maroc places.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

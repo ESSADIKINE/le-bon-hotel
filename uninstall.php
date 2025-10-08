@@ -1,6 +1,6 @@
 <?php
 /**
- * Uninstall cleanup for Le Bon Hotel.
+ * Uninstall cleanup for Virtual Maroc.
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
