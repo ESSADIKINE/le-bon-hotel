@@ -2,7 +2,7 @@
 /**
  * Asset registration and enqueueing.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

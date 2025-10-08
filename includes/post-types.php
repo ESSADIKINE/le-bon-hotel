@@ -2,7 +2,7 @@
 /**
  * Custom post type registration.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

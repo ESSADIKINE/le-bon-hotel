@@ -2,7 +2,7 @@
 /**
  * Shortcode registration for hotel listings.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

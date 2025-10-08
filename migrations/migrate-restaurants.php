@@ -2,7 +2,7 @@
 /**
  * Migration helpers from the legacy restaurant plugin.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

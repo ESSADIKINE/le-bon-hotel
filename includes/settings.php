@@ -1,8 +1,8 @@
 <?php
 /**
- * Settings page for Le Bon Hotel.
+ * Settings page for Virtual Maroc.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -175,7 +175,7 @@ function lbhotel_render_settings_page() {
     );
 
     echo '<div class="wrap">';
-    echo '<h1>' . esc_html__( 'Le Bon Hotel Settings', 'lbhotel' ) . '</h1>';
+    echo '<h1>' . esc_html__( 'Virtual Maroc Settings', 'lbhotel' ) . '</h1>';
 
     echo '<form action="options.php" method="post">';
     settings_fields( 'lbhotel_settings_group' );

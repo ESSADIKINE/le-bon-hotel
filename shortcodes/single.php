@@ -4,7 +4,7 @@
  *
  * @var WP_Post $post The hotel post.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! isset( $post ) || ! $post instanceof WP_Post ) {

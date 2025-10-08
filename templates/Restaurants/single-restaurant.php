@@ -2,7 +2,7 @@
 /**
  * restaurants single template loader.
  *
- * @package LeBonHotel
+ * @package VirtualMaroc
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,4 +1,4 @@
-=== Le Bon Hotel ===
+=== Virtual Maroc ===
 Contributors: lebonplugins
 Requires at least: 5.8
 Tested up to: 6.4
@@ -7,7 +7,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Le Bon Hotel transforms WordPress into a hotel directory complete with REST API integration, booking widgets, and beautiful front-end listings.
+Virtual Maroc transforms WordPress into a hotel directory complete with REST API integration, booking widgets, and beautiful front-end listings.
 
 == Description ==
 
@@ -36,7 +36,7 @@ Fetch hotels with `GET /wp-json/lbhotel/v1/hotels`. Example response schema:
 ```
 {
   "id": 42,
-  "title": "Le Bon Hotel Central",
+  "title": "Virtual Maroc Central",
   "permalink": "https://example.com/hotel/le-bon-hotel-central",
   "star_rating": 4,
   "currency": "MAD",
@@ -60,4 +60,4 @@ The `lbhotel_migrate_from_restaurant()` helper maps restaurant meta (address, ra
 
 == Uninstall ==
 
-Removing the plugin through the WordPress UI deletes plugin options and custom metadata created by Le Bon Hotel.
+Removing the plugin through the WordPress UI deletes plugin options and custom metadata created by Virtual Maroc.
